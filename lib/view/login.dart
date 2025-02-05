@@ -1,0 +1,286 @@
+import 'package:eventapp/controller/auth_controller.dart';
+import 'package:eventapp/controller/validateEmail.dart';
+import 'package:eventapp/utills/appcolors.dart';
+import 'package:eventapp/view/forgetpage.dart';
+import 'package:eventapp/view/user/location_acc.dart';
+import 'package:eventapp/view/user/signUp.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:gif/gif.dart';
+
+import '../componets/button.dart';
+import '../componets/text_field.dart';
+import '../componets/text_style.dart';
+import '../generated/assets.dart';
+import '../utills/font_constant.dart';
+import '../utills/stringconstant.dart';
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
+  late GifController _controller;
+  //final FirebaseAuthService authService = FirebaseAuthService();
+
+  final TextEditingController _emailController = TextEditingController();
+
+  final TextEditingController _passwordController = TextEditingController();
+
+  final AuthController authController = Get.put(AuthController());
+
+  String _selectedUserType = "Audience";
+
+  @override
+  void dispose(){
+    _controller.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+  //late AuthController authController;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = GifController(vsync: this);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _controller.reset();
+    });
+
+    //authController = Get.put(AuthController());
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        body: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Column(
+            children: [
+              Container(
+                height: height,
+                width: width,
+                color: Colors.black87,
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: Gif(
+                        image: const AssetImage("assets/images/BackGif.gif"),
+                        controller: _controller,
+                        fit: BoxFit.cover,
+                        autostart: Autostart.loop,
+                        onFetchCompleted: () {
+                          _controller.reset();
+                          _controller.forward();
+                        },
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Image.asset(
+                              Assets.imagesFlutterIcon,
+                              height: 60,
+                              width: 60,
+                            ),
+                            const SizedBox(height: 10.0),
+                            Center(
+                              child: TextStyleHelper.CustomText(
+                                text: "Let's Get Started",
+                                color: AppColors.whiteColor,
+                                fontWeight: FontWeight.w600,
+                                fontSize: FontSizes.heading2,
+                                fontFamily: 'bold',
+                              ),
+                            ),
+                            const SizedBox(height: 2.0),
+                            Center(
+                              child: TextStyleHelper.CustomText(
+                                text: "Sign up or log in to see what's happening near you",
+                                color: AppColors.lightGrey,
+                                fontWeight: FontWeight.w600,
+                                fontSize: FontSizes.caption,
+                                fontFamily: 'regular',
+                              ),
+                            ),
+                            const SizedBox(height: 10.0),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+
+
+                                ChoiceChip(
+                                  label: TextStyleHelper.CustomText(
+                                    text: "Audience",
+                                    color: _selectedUserType== "Audience" ? Colors.black : AppColors.whiteColor,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                    fontFamily: 'regular',
+                                  ),
+                                  showCheckmark: false,
+                                  selectedColor: AppColors.primaryColor,
+                                  selected: _selectedUserType == "Audience",
+                                  onSelected: (selected) {
+                                    setState(() {
+                                      _selectedUserType = "Audience";
+                                    });
+                                  },
+                                ),
+
+                                const SizedBox(width: 10),
+
+                                ChoiceChip(
+                                  label: TextStyleHelper.CustomText(
+                                    text: "Organizer",
+                                    color: _selectedUserType== "Organizer" ? Colors.black : AppColors.whiteColor,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                    fontFamily: 'regular',
+                                  ),
+                                  showCheckmark: false,
+                                  selectedColor: AppColors.primaryColor,
+                                  selected: _selectedUserType == "Organizer",
+                                  onSelected: (selected) {
+                                    setState(() {
+                                      _selectedUserType = "Organizer";
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10.0),
+                            CustomTextField(
+                              controller: _emailController,
+                              icon: Icons.email_outlined,
+                              hintText: CustomString().Email,
+                            ),
+
+                            const SizedBox(height: 10.0),
+                            CustomTextField(
+                              controller: _passwordController,
+                              icon: Icons.lock,
+                              hintText: "Password",
+                              //obscureText: true,
+                            ),
+
+                            const SizedBox(height: 16.0),
+
+                          Center(
+                            child: InkWell(
+                              onTap: () {
+                                Get.to(Forgetpage());
+                              },
+                              child: TextStyleHelper.CustomText(
+                                text: "Forgot Password?",
+                                color: AppColors.primaryColor,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18,
+                                fontFamily: Assets.fontsPoppinsBold,
+                              ),
+                            ),
+                          ),
+
+                            const SizedBox(height: 16.0),
+                            // Obx(() =>
+                            // //authController.isLoading.value? Center(child: CircularProgressIndicator(),)
+                            //     /*:*/ CustomButton(
+                            //     label: 'Continue',
+                            //     onPressed: (){
+                            //       validateEmail(
+                            //         emailController: _emailController,
+                            //         passwordController: _passwordController, // Pass password controller
+                            //         context: context,
+                            //         userType: _selectedUserType,
+                            //         //authController: authController, // Pass AuthController
+                            //       );
+
+                                  //authController.login(email: _emailController.text.trim(), password: _passwordController.text.trim());
+                        CustomButton(
+                            label: 'Continue',
+                            onPressed: (){
+                              validateEmail(
+                                emailController: _emailController,
+                                passwordController: _passwordController, // Pass password controller
+                                context: context,
+                                userType: _selectedUserType,
+                                //authController: authController, // Pass AuthController
+                              );
+                              _signIn();
+                            }
+                            ),
+
+                            const SizedBox(height: 16,),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                TextStyleHelper.CustomText(
+                                  text: "Does not have account?",
+                                  color: AppColors.lightGrey,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  fontFamily: Assets.fontsPoppinsBold,
+                                ),
+
+                                SizedBox(width: 10,),
+
+                                InkWell(
+                                  onTap: () {
+                                    Get.to(SignUpPage());
+                                  },
+                                  child: TextStyleHelper.CustomText(
+                                    text: "Sign Up",
+                                    color: AppColors.primaryColor,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18,
+                                    fontFamily: Assets.fontsPoppinsBold,
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _signIn() async{
+    String email = _emailController.text;
+    String password = _passwordController.text;
+
+    User? user = await authController.signInWithEmailAndPassword(email, password);
+
+    if(user!= null){
+      print("User is successfully signin");
+      Get.offAll(Location());
+    }else{
+      Get.snackbar("Sign Up Error","An error occurred", snackPosition: SnackPosition.BOTTOM);
+    }
+  }
+}
