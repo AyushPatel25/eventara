@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eventapp/controller/auth_controller.dart';
+import 'package:eventapp/controller/login_cont.dart';
 import 'package:eventapp/controller/validateEmail.dart';
 import 'package:eventapp/utills/appcolors.dart';
 import 'package:eventapp/view/forgetpage.dart';
@@ -7,7 +9,9 @@ import 'package:eventapp/view/user/signUp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:gif/gif.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../componets/button.dart';
 import '../componets/text_field.dart';
@@ -32,6 +36,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   final TextEditingController _passwordController = TextEditingController();
 
   final AuthController authController = Get.put(AuthController());
+
+  final GetStorage box = GetStorage();
+
+
 
   String _selectedUserType = "Audience";
 
@@ -174,12 +182,23 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             ),
 
                             const SizedBox(height: 10.0),
-                            CustomTextField(
+                            Obx(() => CustomTextField(
                               controller: _passwordController,
                               icon: Icons.lock,
-                              hintText: "Password",
-                              //obscureText: true,
-                            ),
+                              hintText: "Enter your password",
+                              obscureText: authController.hidePassword.value,
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  authController.hidePassword.toggle();
+                                },
+                                icon: Icon(
+                                  authController.hidePassword.value ? Iconsax.eye_slash : Iconsax.eye,
+                                  color: AppColors.lightGrey,
+                                ),
+                              ),
+                            )),
+
+
 
                             const SizedBox(height: 16.0),
 
@@ -270,17 +289,40 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     );
   }
 
-  void _signIn() async{
-    String email = _emailController.text;
-    String password = _passwordController.text;
+  void _signIn() async {
+    String email = _emailController.text.trim();
+    String password = _passwordController.text.trim();
 
-    User? user = await authController.signInWithEmailAndPassword(email, password);
+    try {
+      UserCredential credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-    if(user!= null){
-      print("User is successfully signin");
-      Get.offAll(Location());
-    }else{
-      Get.snackbar("Sign Up Error","An error occurred", snackPosition: SnackPosition.BOTTOM);
+      User? user = credential.user;
+
+      if (user != null) {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+
+        if (userDoc.exists) {
+
+          final box = GetStorage();
+          box.write('isLoggedIn', true);
+          box.write('uid', user.uid);
+          box.write('username', userDoc['username']);
+          box.write('email', userDoc['email']);
+
+
+          Get.offAll(() => Location());
+        } else {
+          Get.snackbar("Login Error", "User data not found in database",
+              snackPosition: SnackPosition.BOTTOM);
+        }
+      }
+    } on FirebaseAuthException catch (e) {
+      Get.snackbar("Login Failed", e.message ?? "Invalid email or password",
+          snackPosition: SnackPosition.BOTTOM);
     }
   }
+
 }

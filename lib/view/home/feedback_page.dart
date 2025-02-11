@@ -22,6 +22,7 @@ class FeedbackPage extends StatelessWidget {
     
     Get.dialog(
       Dialog(
+        backgroundColor: AppColors.greyColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: Padding(
             padding: const EdgeInsets.all(16),

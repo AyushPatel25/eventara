@@ -6,14 +6,18 @@ class TextStyleHelper{
         required Color color,
         required FontWeight fontWeight,
         String? fontFamily,
-        required double fontSize}) {
+        required double fontSize,
+        TextOverflow? overflow,
+        int? maxLines}) {
     return Text(
       text,
       style: TextStyle(
           fontSize: fontSize,
           fontFamily: fontFamily ?? "regular",
           fontWeight: fontWeight,
-          color: color),
+          color: color,
+          overflow: overflow,
+      ),
     );
   }
 }

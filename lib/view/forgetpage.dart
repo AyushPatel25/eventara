@@ -31,6 +31,7 @@ class Forgetpage extends StatelessWidget {
               padding: EdgeInsets.all(20),
             child: Column(
               children: [
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: forgetController.emailController,
                   decoration: InputDecoration(

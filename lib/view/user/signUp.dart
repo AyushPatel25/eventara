@@ -157,8 +157,11 @@
 import 'package:eventapp/view/user/location_acc.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
+import '../../componets/text_field.dart';
 import '../../componets/text_style.dart';
+import '../../controller/auth_controller.dart';
 import '../../controller/signup_cont.dart';
 import '../../generated/assets.dart';
 import '../../utills/appcolors.dart';
@@ -167,6 +170,9 @@ import '../../utills/stringconstant.dart';
 
 class SignUpPage extends StatelessWidget {
   final SignUpController signUpController = Get.put(SignUpController());
+  final TextEditingController _passwordController = TextEditingController();
+
+  final AuthController authController = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -195,7 +201,7 @@ class SignUpPage extends StatelessWidget {
                     color: AppColors.whiteColor,
                     fontWeight: FontWeight.w600,
                     fontSize: 25,
-                    fontFamily: Assets.fontsPoppinsBold,
+                    fontFamily: 'bold',
                   ),
                   const SizedBox(height: 16),
                 TextFormField(
@@ -218,7 +224,7 @@ class SignUpPage extends StatelessWidget {
                           borderSide: BorderSide.none,
                         ),
                       ),
-                  validator: (value) => value!.isEmpty ? "Please enter your username" : null,
+                  validator: (value) => value!.isEmpty ? "Enter your username" : null,
                 ),
                 SizedBox(height: 10),
                 TextFormField(
@@ -253,8 +259,17 @@ class SignUpPage extends StatelessWidget {
                   obscureText: true,
                       decoration: InputDecoration(
                         prefixIcon: Icon(Icons.lock, color: Colors.white),
-                        hintText: "Enter your Password",
+                        hintText: "Enter your password",
                         hintStyle: TextStyle(color: AppColors.lightGrey),
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            authController.hidePassword.toggle();
+                          },
+                          icon: Icon(
+                            authController.hidePassword.value ? Iconsax.eye_slash : Iconsax.eye,
+                            color: AppColors.lightGrey,
+                          ),
+                        ),
                         filled: true,
                         fillColor: AppColors.greyColor,
                         enabledBorder: OutlineInputBorder(
@@ -271,6 +286,8 @@ class SignUpPage extends StatelessWidget {
                       validator: (value) =>
                       value!.length < 6 ? "Password must be 6+ characters" : null,
                     ),
+
+
                 SizedBox(height: 40),
                 Obx(() => ElevatedButton(
                   onPressed: () {
@@ -292,6 +309,9 @@ class SignUpPage extends StatelessWidget {
                       ? CircularProgressIndicator(color: Colors.white)
                       : Text("Sign Up", style: TextStyle(color: Colors.black,fontFamily: 'bold', fontSize: 17),),
                 )),
+                // const SizedBox(height: 40,),
+                //Image.asset(Assets.imagesSignUp,),
+
               ],
             ),
           ),

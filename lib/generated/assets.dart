@@ -12,8 +12,11 @@ class Assets {
   static const String imagesLogo = 'assets/images/logo.jpg';
   static const String imagesLottieAnim = 'assets/images/lottie_anim.json';
   static const String imagesMaps = 'assets/images/maps.jpeg';
+  static const String imagesNoEvent = 'assets/images/noEvent.jpg';
   static const String imagesPoster = 'assets/images/poster.png';
+  static const String imagesSignUp = 'assets/images/SignUp.jpg';
   static const String imagesTicket = 'assets/images/ticket.png';
   static const String imagesTicketRot = 'assets/images/ticket_rot.png';
+  static const String imagesVector = 'assets/images/Vector.jpg';
 
 }

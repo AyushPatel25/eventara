@@ -1,5 +1,8 @@
 import 'package:eventapp/componets/button.dart';
+import 'package:eventapp/controller/profile_cont.dart';
+import 'package:eventapp/controller/signup_cont.dart';
 import 'package:eventapp/view/home/edit_profile.dart';
+import 'package:eventapp/view/user/signUp.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
@@ -9,7 +12,11 @@ import '../../generated/assets.dart';
 import '../../utills/appcolors.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+  ProfilePage({super.key});
+
+  final ProfileController profileController = Get.put(ProfileController());
+  final SignUpController signUpController = Get.put(SignUpController());
+
 
 
   @override
@@ -40,15 +47,17 @@ class ProfilePage extends StatelessWidget {
                   ),
                   const SizedBox(height: 10,),
 
+                  Obx((){
+                    return TextStyleHelper.CustomText(
+                        text: profileController.username.value,
+                        color: AppColors.whiteColor,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 25,
+                        fontFamily: Assets.fontsPoppinsBold
+                    );
+                  }),
                   TextStyleHelper.CustomText(
-                    text: "User",
-                    color: AppColors.whiteColor,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 25,
-                    fontFamily: Assets.fontsPoppinsBold
-                  ),
-                  TextStyleHelper.CustomText(
-                      text: "abc@gmail.com",
+                      text: profileController.email.value,
                       color: AppColors.lightGrey,
                       fontWeight: FontWeight.w400,
                       fontSize: 20,
@@ -139,6 +148,7 @@ class ProfilePage extends StatelessWidget {
 
                   Divider(color: AppColors.divider,),
                   GestureDetector(
+                    onTap: profileController.showLogoutConfirmation,
                     child: ListTile(
                       leading: Container(
                         //padding: EdgeInsets.symmetric(horizontal: 20, vertical: 6),
