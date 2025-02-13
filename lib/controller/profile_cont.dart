@@ -21,6 +21,9 @@ class ProfileController extends GetxController {
 
   RxString username = "Loading...".obs;
   RxString email = "Loading...".obs;
+  RxString uid = ''.obs;
+
+  var name = ''.obs;
 
   @override
   void onInit() {
@@ -33,6 +36,7 @@ class ProfileController extends GetxController {
     if (user != null) {
       DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
       if (userDoc.exists) {
+        uid.value = userDoc['uid'];
         username.value = userDoc['username'];
         email.value = userDoc['email'];
 
@@ -45,6 +49,13 @@ class ProfileController extends GetxController {
     }
   }
 
+  Future<void> updateUserName(String uid, String newName) async{
+    if(newName.isNotEmpty){
+      await _firestore.collection('users').doc(uid).update({'username': newName});
+      name.value = newName;
+      Get.snackbar("Success", "Profile updated successfully", backgroundColor: Colors.green);
+    }
+  }
   Future<void> logout() async {
     await _auth.signOut();
     box.erase();
@@ -130,50 +141,5 @@ class ProfileController extends GetxController {
     );
 
 
-    // Get.defaultDialog(
-    //
-    //     title: 'Log Out',
-    //     titleStyle: TextStyle(color: AppColors.primaryColor,
-    //         fontWeight: FontWeight.w600,
-    //         fontSize: 18,
-    //         fontFamily: Assets.fontsPoppinsBold),
-    //
-    //     middleText: 'Are you sure you want to log out?',
-    //     middleTextStyle: TextStyle(
-    //       color: AppColors.lightGrey,
-    //         fontWeight: FontWeight.w600,
-    //         fontSize: 16,
-    //         fontFamily: Assets.fontsPoppinsRegular
-    //     ),
-    //   //radius: 10,
-    //   backgroundColor: Colors.black,
-    //   titlePadding: EdgeInsets.only(left: 20, right: 20, top: 20),
-    //   //contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-    //
-    //   actions: [
-    //     TextButton(
-    //         onPressed: (){
-    //           Get.back();
-    //         },
-    //         child: TextStyleHelper.CustomText(
-    //             text: 'Cancel',
-    //             color: AppColors.whiteColor,
-    //             fontWeight: FontWeight.w600,
-    //             fontSize: 16,
-    //             fontFamily: Assets.fontsPoppinsRegular
-    //         ),
-    //     ),
-    //     TextButton(
-    //       onPressed: logout,
-    //       child: TextStyleHelper.CustomText(
-    //           text: 'Log Out',
-    //           color: AppColors.whiteColor,
-    //           fontWeight: FontWeight.w600,
-    //           fontSize: 16,
-    //           fontFamily: Assets.fontsPoppinsRegular
-    //       ),
-    //     )
-    //   ]
-    // );
   }
 }

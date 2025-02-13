@@ -33,39 +33,46 @@ class FavouritePage extends GetView<FavouriteController> {
           ),
         ),
             SliverToBoxAdapter(
-              child: Obx((){
-                if(homeController.favoriteEvents.isEmpty){
+              child: Obx(() {
+                if (controller.favoriteEvents.isEmpty) {
                   return Padding(
                     padding: const EdgeInsets.only(top: 50),
                     child: Center(
                       child: TextStyleHelper.CustomText(
-                          text: "No liked events yet!",
-                          color: AppColors.whiteColor,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 20,
-                          fontFamily: Assets.fontsPoppinsBold,
+                        text: "No liked events yet!",
+                        color: AppColors.whiteColor,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 20,
+                        fontFamily: Assets.fontsPoppinsBold,
                       ),
                     ),
                   );
                 }
-                return GridView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                  itemCount: homeController.favoriteEvents.length,
 
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 1,
-                        mainAxisExtent: 320,
-                        mainAxisSpacing: 16
-                    ),
-                    itemBuilder: (context, index){
-                      int eventIndex = homeController.favoriteEvents.elementAt(index);
-                      return Cardwidget(index: eventIndex);
-                    }
+                return GridView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: controller.favoriteEvents.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 1,
+                    mainAxisExtent: 320,
+                    mainAxisSpacing: 16,
+                  ),
+                  itemBuilder: (context, index) {
+                    String eventId = controller.favoriteEvents.elementAt(index);
+                    int eventIndex = homeController.events.indexWhere(
+                            (event) => event.eventId.toString() == eventId
+                    );
+
+                    if (eventIndex == -1) return SizedBox();
+
+                    return Cardwidget(index: eventIndex);
+                  },
                 );
               }),
-            )
-        ],
+            ),
+
+          ],
         ),
       ),
     );

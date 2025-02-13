@@ -1,6 +1,9 @@
+import 'package:avatar_plus/avatar_plus.dart';
 import 'package:eventapp/componets/button.dart';
 import 'package:eventapp/componets/text_field.dart';
+import 'package:eventapp/controller/profile_cont.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../../componets/text_style.dart';
@@ -8,7 +11,10 @@ import '../../generated/assets.dart';
 import '../../utills/appcolors.dart';
 
 class EditProfile extends StatelessWidget {
-  const EditProfile({super.key});
+  EditProfile({super.key});
+
+  final ProfileController profileController = Get.put(ProfileController());
+  TextEditingController usernameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -28,79 +34,104 @@ class EditProfile extends StatelessWidget {
           body: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: SizedBox(
-                        width: 120,
-                        height: 120,
-                        child: Icon(Iconsax.profile_circle, size: 100,),
+                child: Obx(() {
+                  usernameController.text = profileController.username.value;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: SizedBox(
+                          width: 120,
+                          height: 120,
+                          child: Obx((){
+                            return CircleAvatar(
+                              radius: 60,
+                              backgroundImage: NetworkImage("https://ui-avatars.com/api/?name=${Uri.encodeComponent(profileController.username.value)}&background=2C2C2E&color=DAFF7B"),
+                            );
+                          })
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 30,),
+                      const SizedBox(height: 30,),
 
-                    TextStyleHelper.CustomText(
-                        text: "Name",
-                        color: AppColors.whiteColor,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16,
-                        fontFamily: Assets.fontsPoppinsRegular
-                    ),
-                    const SizedBox(height: 10,),
-                    CustomTextField(icon: Iconsax.profile_circle_copy, hintText: "Enter name"),
-
-                    const SizedBox(height: 20,),
-
-                    TextStyleHelper.CustomText(
-                        text: "Phone number",
-                        color: AppColors.whiteColor,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16,
-                        fontFamily: Assets.fontsPoppinsRegular
-                    ),
-                    const SizedBox(height: 10,),
-                    CustomTextField(icon: Iconsax.call_copy, hintText: "Enter phone number"),
-
-                    const SizedBox(height: 20,),
-
-                    TextStyleHelper.CustomText(
-                        text: "Email",
-                        color: AppColors.whiteColor,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16,
-                        fontFamily: Assets.fontsPoppinsRegular
-                    ),
-                    const SizedBox(height: 10,),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 15),
-                      height: 55,
-                      decoration: BoxDecoration(
-                        color: AppColors.greyColor,
-                        borderRadius: BorderRadius.circular(10),
-                        border:
-                        Border.all(color: AppColors.lightGrey, width: 1),
+                      TextStyleHelper.CustomText(
+                          text: "Name",
+                          color: AppColors.whiteColor,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 16,
+                          fontFamily: Assets.fontsPoppinsRegular
                       ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.mail_outline_rounded, color: AppColors.lightGrey),
-                          SizedBox(width: 15),
-                          TextStyleHelper.CustomText(
-                              text: "abc2gmail.com",
-                              color: AppColors.lightGrey,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 16,
-                              fontFamily: Assets.fontsPoppinsRegular),
-                        ],
+                      const SizedBox(height: 10,),
+
+
+                      CustomTextField(icon: Iconsax.profile_circle_copy,
+                          hintText: "Enter name",
+                        controller: usernameController,
                       ),
-                    ),
-                    const SizedBox(height: 60,),
-                    CustomButton(label: "Update profile", onPressed: (){}),
-                  ],
+
+                      const SizedBox(height: 20,),
+
+                      TextStyleHelper.CustomText(
+                          text: "Phone number",
+                          color: AppColors.whiteColor,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 16,
+                          fontFamily: Assets.fontsPoppinsRegular
+                      ),
+                      const SizedBox(height: 10,),
+                      CustomTextField(icon: Iconsax.call_copy,
+                          hintText: "Enter phone number"),
+
+                      const SizedBox(height: 20,),
+
+                      TextStyleHelper.CustomText(
+                          text: "Email",
+                          color: AppColors.whiteColor,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 16,
+                          fontFamily: Assets.fontsPoppinsRegular
+                      ),
+                      const SizedBox(height: 10,),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 15),
+                        height: 55,
+                        decoration: BoxDecoration(
+                          color: AppColors.greyColor,
+                          borderRadius: BorderRadius.circular(10),
+                          border:
+                          Border.all(color: AppColors.lightGrey, width: 1),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.mail_outline_rounded, color: AppColors
+                                .lightGrey),
+                            SizedBox(width: 15),
+                            TextStyleHelper.CustomText(
+                                text: profileController.email.value,
+                                color: AppColors.lightGrey,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 16,
+                                fontFamily: Assets.fontsPoppinsRegular),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 60,),
+                    ],
+                  );
+                }),
                 ),
             ),
+          bottomNavigationBar: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: CustomButton(
+                label: "Update profile",
+                onPressed: () async {
+                  profileController.updateUserName(profileController.uid.value, usernameController.text);
+                  Get.snackbar("Success", "Profile updated successfully", backgroundColor: Colors.green);
+                  profileController.fetchUserData();
+                }
+            ),
           ),
-        ),
+          ),
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:eventapp/componets/text_field.dart';
 import 'package:eventapp/componets/text_style.dart';
 import 'package:eventapp/controller/event_details_cont.dart';
 import 'package:eventapp/controller/home_cont.dart';
+import 'package:eventapp/controller/profile_cont.dart';
 import 'package:eventapp/generated/assets.dart';
 import 'package:eventapp/utills/appcolors.dart';
 import 'package:eventapp/view/home/filter_page.dart';
@@ -23,6 +24,7 @@ class HomePage extends StatelessWidget {
   HomeController homeController = Get.put(HomeController());
   LocationController locationController = Get.put(LocationController());
   EventDetailsController eventDetailsController = Get.put(EventDetailsController());
+  ProfileController profileController = Get.put(ProfileController());
 
   List list = ["All", "Concert", "Comedy", "Sport", "Party", "Show"];
 
@@ -101,11 +103,17 @@ class HomePage extends StatelessWidget {
                       onTap: (){
                         Get.to(ProfilePage());
                       },
-                      child: Icon(
-                        Iconsax.profile_circle_copy,
-                        color: AppColors.whiteColor,
-                        size: 25,
-                      )),
+                      child: SizedBox(
+                          width: 25,
+                          height: 25,
+                          child: Obx((){
+                            return CircleAvatar(
+                              radius: 60,
+                              backgroundImage: NetworkImage("https://ui-avatars.com/api/?name=${Uri.encodeComponent(profileController.username.value)}&background=2C2C2E&color=DAFF7B"),
+                            );
+                          })
+                      ),
+                  ),
                   SizedBox(width: 20),
                 ],
               ),

@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../controller/favourite_cont.dart';
 import '../generated/assets.dart';
 
 class Cardwidget extends StatelessWidget {
@@ -17,14 +18,14 @@ class Cardwidget extends StatelessWidget {
   Cardwidget({required this.index});
 
   final HomeController homeController = Get.find<HomeController>();
-  final EventDetailsController eventDetailsController = Get.put(EventDetailsController());
-
-
+  final FavouriteController favouriteController =
+      Get.put(FavouriteController());
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (homeController.events.isEmpty || index >= homeController.events.length) {
+      if (homeController.events.isEmpty ||
+          index >= homeController.events.length) {
         print("ERROR: No event found at index $index");
         return Center(
           child: Text(
@@ -38,8 +39,8 @@ class Cardwidget extends StatelessWidget {
 
       return GestureDetector(
         onTap: () {
-            print("Opening Event Details for eventId: ${event.eventId}");
-            Get.to(() => EventDetails(), arguments: {'eventId': event.eventId});
+          print("Opening Event Details for eventId: ${event.eventId}");
+          Get.to(() => EventDetails(), arguments: {'eventId': event.eventId});
         },
         child: Padding(
           padding: EdgeInsets.all(20),
@@ -53,7 +54,6 @@ class Cardwidget extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-
                     ClipRRect(
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(20),
@@ -61,14 +61,13 @@ class Cardwidget extends StatelessWidget {
                       ),
                       child: FadeInImage(
                         placeholder:
-                        AssetImage("assets/images/placeholder.png"),
+                            AssetImage("assets/images/placeholder.png"),
                         image: NetworkImage(event.eventImage),
                         fit: BoxFit.cover,
                         imageErrorBuilder: (context, error, stackTrace) {
                           return Center(
-                            child: Icon(Icons.error,
-                                color: Colors.red,
-                                size: 50),
+                            child:
+                                Icon(Icons.error, color: Colors.red, size: 50),
                           );
                         },
                         placeholderErrorBuilder: (context, error, stackTrace) {
@@ -118,9 +117,11 @@ class Cardwidget extends StatelessWidget {
                                           color: AppColors.lightGrey,
                                           fontWeight: FontWeight.w600,
                                           fontSize: 15,
-                                          fontFamily: Assets.fontsPoppinsRegular,
+                                          fontFamily:
+                                              Assets.fontsPoppinsRegular,
                                           maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
                                     ),
                                     SizedBox(width: 5),
@@ -167,21 +168,54 @@ class Cardwidget extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Obx(() => IconButton(
-                    onPressed: () {
-                      homeController.toggleFavourite(index);
-                    },
-                    icon: Icon(
-                      homeController.favoriteEvents.contains(index)
-                          ? Iconsax.heart
-                          : Iconsax.heart_copy,
-                      color: homeController.favoriteEvents.contains(index)
-                          ? Colors.red
-                          : AppColors.whiteColor,
-                    ),
-                  )),
+                  child: Obx(() {
+                    bool isFav = favouriteController.favoriteEvents.contains(event.eventId.toString());
+
+                    return IconButton(
+                      onPressed: () {
+                        favouriteController.toggleFavourite(event.eventId.toString());
+                      },
+                      icon: Icon(
+                        isFav ? Iconsax.heart : Iconsax.heart_copy,
+                        color: isFav ? Colors.red : Colors.white,
+                      ),
+                    );
+                  }),
                 ),
               ),
+
+              // Positioned(
+              //   top: 10,
+              //   right: 10,
+              //   child: Container(
+              //     height: 40,
+              //     width: 40,
+              //     decoration: BoxDecoration(
+              //       color: Colors.black,
+              //       borderRadius: BorderRadius.circular(8),
+              //       boxShadow: [
+              //         BoxShadow(
+              //           color: Colors.black,
+              //           offset: Offset(0, -1),
+              //           blurRadius: 8,
+              //         ),
+              //       ],
+              //     ),
+              //     child: Obx(() => IconButton(
+              //       onPressed: () {
+              //         homeController.toggleFavourite(index);
+              //       },
+              //       icon: Icon(
+              //         homeController.favoriteEvents.contains(index)
+              //             ? Iconsax.heart
+              //             : Iconsax.heart_copy,
+              //         color: homeController.favoriteEvents.contains(index)
+              //             ? Colors.red
+              //             : AppColors.whiteColor,
+              //       ),
+              //     )),
+              //   ),
+              // ),
 
               // Event Date Box
               Positioned(

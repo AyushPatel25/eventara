@@ -1,186 +1,4 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:google_maps_flutter/google_maps_flutter.dart';
-//
-// class EventModel {
-//   final String ageLimit;
-//   final String arrangement;
-//   final Map<String, dynamic> artist;
-//   final List<Artist> artist1;
-//   final String category;
-//   final String eventDate;
-//   final String expiryDate;
-//   final String description;
-//   final String duration;
-//   final int eventId;
-//   final String eventImage;
-//   final String language;
-//   final String layout;
-//   final String location;
-//   final Map<String, TicketType> ticketTypes;
-//   final String time;
-//   final String title;
-//   final LatLng venue;
-//
-//   EventModel({
-//     required this.ageLimit,
-//     required this.arrangement,
-//     required this.artist,
-//     required this.artist1,
-//     required this.category,
-//     required this.eventDate,
-//     required this.expiryDate,
-//     required this.description,
-//     required this.duration,
-//     required this.eventId,
-//     required this.eventImage,
-//     required this.language,
-//     required this.layout,
-//     required this.location,
-//     required this.ticketTypes,
-//     required this.time,
-//     required this.title,
-//     required this.venue,
-//   });
-//
-//   factory EventModel.fromJson(Map<String, dynamic> json) {
-//     return EventModel(
-//       ageLimit: json['ageLimit'] ?? '',
-//       arrangement: json['arrangement'] ?? '',
-//       artist: json['artist'] ?? {},
-//       artist1: (json['artist1'] as List?)?.map((e) => Artist.fromJson(e)).toList() ?? [],
-//       category: json['category'] ?? '',
-//       eventDate: json['eventDate'] ?? '',
-//       expiryDate: json['expiryDate'] ?? '',
-//       description: json['description'] ?? '',
-//       duration: json['duration'] ?? '',
-//       eventId: json['eventId'] ?? 0,
-//       eventImage: json['eventImage'] ?? '',
-//       language: json['language'] ?? '',
-//       layout: json['layout'] ?? '',
-//       location: json['location'] ?? '',
-//       ticketTypes: (json['ticketTypes'] as Map<String, dynamic>?)?.map(
-//             (key, value) => MapEntry(key, TicketType.fromJson(value)),
-//       ) ?? {},
-//       time: json['time'] ?? '',
-//       title: json['title'] ?? '',
-//       venue: _parseVenue(json['venue']), // ✅ Fix applied here
-//     );
-//   }
-//
-//
-//
-//
-//   // factory EventModel.fromJson(Map<String, dynamic> json) {
-//   //   return EventModel(
-//   //     ageLimit: json['ageLimit'] ?? '',
-//   //     arrangement: json['arrangement'] ?? '',
-//   //     artist: json['artist'] ?? {},
-//   //     artist1: (json['artist1'] as List?)
-//   //         ?.map((e) => Artist.fromJson(e))
-//   //         .toList() ?? [],
-//   //     // Corrected parsing
-//   //     category: json['category'] ?? '',
-//   //     eventDate: json['eventDate'] ?? '',
-//   //     expiryDate: json['expiryDate'] ?? '',
-//   //     description: json['description'] ?? '',
-//   //     duration: json['duration'] ?? '',
-//   //     eventId: json['eventId'] ?? 0,
-//   //     eventImage: json['eventImage'] ?? '',
-//   //     language: json['language'] ?? '',
-//   //     layout: json['layout'] ?? '',
-//   //     location: json['location'] ?? '',
-//   //     ticketTypes: (json['ticketTypes'] as Map<String, dynamic>?)?.map(
-//   //           (key, value) => MapEntry(key, TicketType.fromJson(value)),
-//   //     ) ?? {},
-//   //     time: json['time'] ?? '',
-//   //     title: json['title'] ?? '',
-//   //     venue: _parseVenue(json['venue']),
-//   //   );
-//   // }
-//
-//   Map<String, dynamic> toJson() {
-//     return {
-//       'age limit': ageLimit,
-//       'arrangement': arrangement,
-//       'artist': {
-//         'artist1': artist1.map((e) => e.toJson()).toList(),
-//       },
-//       'category': category,
-//       'eventDate': eventDate,
-//       'expiryDate': expiryDate,
-//       'description': description,
-//       'duration': duration,
-//       'eventId': eventId,
-//       'eventImage': eventImage,
-//       'language': language,
-//       'layout': layout,
-//       'location': location,
-//       'ticketTypes': ticketTypes.map((key, value) =>
-//           MapEntry(key, value.toJson())),
-//       'time': time,
-//       'title': title,
-//       'venue': [venue.latitude, venue.longitude],
-//     };
-//   }
-//
-//   static LatLng _parseVenue(dynamic venue) {
-//     if (venue is List && venue.length == 2) {
-//       return LatLng(venue[0], venue[1]); // Directly extracting values
-//     } else if (venue is String) {
-//       // Handle string format like "21.15534° N, 72.76881° E"
-//       List<String> coords = venue.replaceAll(RegExp(r'[^\d.,-]'), '').split(
-//           ',');
-//       if (coords.length == 2) {
-//         double? lat = double.tryParse(coords[0]);
-//         double? lng = double.tryParse(coords[1]);
-//         if (lat != null && lng != null) return LatLng(lat, lng);
-//       }
-//     }
-//     return LatLng(0.0, 0.0); // Default fallback
-//   }
-// }
-//
-//   class Artist {
-//   final String imageUrl;
-//   final String name;
-//
-//   Artist({required this.imageUrl, required this.name});
-//
-//   factory Artist.fromJson(dynamic json) {
-//     return Artist(
-//       imageUrl: json[0] ?? '',
-//       name: json[1] ?? '',
-//     );
-//   }
-//
-//   Map<String, dynamic> toJson() {
-//     return {
-//       'imageUrl': imageUrl,
-//       'name': name,
-//     };
-//   }
-// }
-//
-// class TicketType {
-//   final int available;
-//   final int price;
-//
-//   TicketType({required this.available, required this.price});
-//
-//   factory TicketType.fromJson(Map<String, dynamic> json) {
-//     return TicketType(
-//       available: json['available'] ?? 0,
-//       price: json['price'] ?? 0,
-//     );
-//   }
-//
-//   Map<String, dynamic> toJson() {
-//     return {
-//       'available': available,
-//       'price': price,
-//     };
-//   }
-// }
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -209,7 +27,6 @@ class EventModel {
   EventModel({
     required this.ageLimit,
     required this.arrangement,
-    // required this.artist,
     required this.artists,
     required this.category,
     required this.eventDate,
@@ -234,12 +51,6 @@ class EventModel {
       ageLimit: json['ageLimit'] ?? '',
       arrangement: json['arrangement'] ?? '',
       artists: (json['artists'] as List?)?.map((e) => Artist.fromJson(e)).toList() ?? [], // ✅ Fix applied here
-
-
-      // artist: json['artist'] ?? {},
-      // artist1: (json['artist1'] as List?)
-      //     ?.map((e) => Artist.fromJson(e))
-      //     .toList() ?? [],
       category: json['category'] ?? '',
       eventDate: json['eventDate'] ?? '',
       expiryDate: json['expiryDate'] ?? '',
@@ -267,9 +78,6 @@ class EventModel {
     Map<String, dynamic> data = {
       'ageLimit': ageLimit,
       'arrangement': arrangement,
-      // 'artist': {
-      //   'artist1': artist1.map((e) => e.toJson()).toList(),
-      // },
       'artists': artists.map((e) => e.toJson()).toList(),
       'category': category,
       'eventDate': eventDate,
@@ -295,13 +103,12 @@ class EventModel {
 
   String getDay() {
     List<String> parts = eventDate.split(" ");
-    return parts.isNotEmpty ? parts[0] : "--"; // Extracts "23"
+    return parts.isNotEmpty ? parts[0] : "--";
   }
 
-  /// **Extracts the Month (e.g., "Mar") from "23 Mar 2025"**
   String getMonth() {
     List<String> parts = eventDate.split(" ");
-    return parts.length > 1 ? parts[1] : "--"; // Extracts "Mar"
+    return parts.length > 1 ? parts[1] : "--";
   }
 
   int getStartingPrice() {
@@ -365,27 +172,6 @@ class Artist {
 }
 
 
-//   class Artist {
-//   final String imageUrl;
-//   final String name;
-//
-//   Artist({required this.imageUrl, required this.name});
-//
-//   factory Artist.fromJson(dynamic json) {
-//     print("🎭 Artist Data: $json");
-//     return Artist(
-//       imageUrl: json[0] ?? '',
-//       name: json[1] ?? '',
-//     );
-//   }
-//
-//   Map<String, dynamic> toJson() {
-//     return {
-//       'imageUrl': imageUrl,
-//       'name': name,
-//     };
-//   }
-// }
 
 class TicketType {
   final int available;

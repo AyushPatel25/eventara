@@ -14,81 +14,74 @@ class Ticketcard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx((){
+    return Obx(() {
       var category = buyTicketController.categories[index];
       return Card(
         color: AppColors.greyColor,
         margin: EdgeInsets.all(20),
-
         child: Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
-
+          padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
           child: Row(
             children: [
               Container(
                 height: 120,
                 width: 60,
                 decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
                   color: AppColors.primaryColor,
                   borderRadius: BorderRadius.only(topRight: Radius.circular(120), bottomRight: Radius.circular(120)),
-
                 ),
                 child: Center(
                   child: RotatedBox(
-                      quarterTurns: 3,
+                    quarterTurns: 3,
                     child: TextStyleHelper.CustomText(
-                        text: category.name,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 20,
-                        fontFamily: Assets.fontsPoppinsBold
+                      text: category.name,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 20,
+                      fontFamily: Assets.fontsPoppinsBold,
                     ),
                   ),
-                )
+                ),
               ),
-              SizedBox(width: 15,),
+              SizedBox(width: 15),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   TextStyleHelper.CustomText(
-                      text: "Available: ${category.availableSpots.value} sports",
-                      color: Colors.red,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16,
-                      fontFamily: Assets.fontsPoppinsBold
+                    text: "Available: ${category.availableSpots.value} spots",
+                    color: Colors.red,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 16,
+                    fontFamily: Assets.fontsPoppinsBold,
                   ),
-                  SizedBox(height: 2,),
-
+                  SizedBox(height: 2),
                   TextStyleHelper.CustomText(
-                      text: "\u{20B9}${category.price} x ${category.selectedTickets.value} = \u{20B9}${category.price * category.selectedTickets.value}",
-                      color: AppColors.whiteColor,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 18,
-                      fontFamily: Assets.fontsPoppinsBold
+                    text: "\u{20B9}${category.price} x ${category.selectedTickets.value} = \u{20B9}${category.price * category.selectedTickets.value}",
+                    color: AppColors.whiteColor,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 18,
+                    fontFamily: Assets.fontsPoppinsBold,
                   ),
-                  SizedBox(height: 10,),
-
+                  SizedBox(height: 10),
                   Row(
                     children: [
                       ElevatedButton(
                         onPressed: () => buyTicketController.increment(index),
-                        child: Text("+", style: TextStyle(color: AppColors.whiteColor, fontSize: 20, fontFamily: Assets.fontsPoppinsBold)),
+                        child: Text("+", style: TextStyle(color: AppColors.whiteColor, fontSize: 20)),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: TextStyleHelper.CustomText(
-                            text: "${category.selectedTickets.value}",
-                            color: AppColors.primaryColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 20,
-                            fontFamily: Assets.fontsPoppinsBold
+                          text: "${category.selectedTickets.value}",
+                          color: AppColors.primaryColor,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20,
+                          fontFamily: Assets.fontsPoppinsBold,
                         ),
                       ),
                       ElevatedButton(
                         onPressed: () => buyTicketController.decrement(index),
-                        child: Text("-", style: TextStyle(color: AppColors.whiteColor, fontSize: 20, fontFamily: Assets.fontsPoppinsBold)),
+                        child: Text("-", style: TextStyle(color: AppColors.whiteColor, fontSize: 20)),
                       ),
                     ],
                   ),
@@ -101,3 +94,4 @@ class Ticketcard extends StatelessWidget {
     });
   }
 }
+

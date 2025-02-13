@@ -1,3 +1,4 @@
+import 'package:avatar_plus/avatar_plus.dart';
 import 'package:eventapp/componets/button.dart';
 import 'package:eventapp/controller/profile_cont.dart';
 import 'package:eventapp/controller/signup_cont.dart';
@@ -43,7 +44,12 @@ class ProfilePage extends StatelessWidget {
                   SizedBox(
                     width: 120,
                     height: 120,
-                    child: Icon(Iconsax.profile_circle, size: 100,),
+                    child: Obx((){
+                      return CircleAvatar(
+                        radius: 60,
+                        backgroundImage: NetworkImage("https://ui-avatars.com/api/?name=${Uri.encodeComponent(profileController.username.value)}&background=2C2C2E&color=DAFF7B"),
+                      );
+                    })
                   ),
                   const SizedBox(height: 10,),
 
@@ -56,13 +62,15 @@ class ProfilePage extends StatelessWidget {
                         fontFamily: Assets.fontsPoppinsBold
                     );
                   }),
-                  TextStyleHelper.CustomText(
-                      text: profileController.email.value,
-                      color: AppColors.lightGrey,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 20,
-                      fontFamily: Assets.fontsPoppinsBold
-                  ),
+                  Obx((){
+                    return TextStyleHelper.CustomText(
+                        text: profileController.email.value,
+                        color: AppColors.lightGrey,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 20,
+                        fontFamily: Assets.fontsPoppinsBold
+                    );
+                  }),
                   const SizedBox(height: 10,),
 
                   SizedBox(
