@@ -46,7 +46,7 @@ class EditProfile extends StatelessWidget {
                           child: Obx((){
                             return CircleAvatar(
                               radius: 60,
-                              backgroundImage: NetworkImage("https://ui-avatars.com/api/?name=${Uri.encodeComponent(profileController.username.value)}&background=2C2C2E&color=DAFF7B"),
+                              backgroundImage: NetworkImage("https://ui-avatars.com/api/?name=${Uri.encodeComponent(profileController.username.value)}&background=B0B0B0&color=00000"),
                             );
                           })
                         ),

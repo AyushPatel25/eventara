@@ -27,7 +27,7 @@ class TicketPage extends GetView<TicketController> {
                   text: 'Tickets',
                   color: AppColors.whiteColor,
                   fontWeight: FontWeight.w700,
-                  fontSize: 30,
+                  fontSize: 25,
                   fontFamily: Assets.fontsPoppinsBold,
                 ),
               ),
@@ -42,13 +42,13 @@ class TicketPage extends GetView<TicketController> {
                   labelColor: AppColors.whiteColor,
                   labelStyle: TextStyle(
                     fontWeight: FontWeight.w400,
-                    fontSize: 15,
+                    fontSize: 14,
                     fontFamily: Assets.fontsPoppinsBold,
                   ),
                   unselectedLabelColor: AppColors.lightGrey,
                   unselectedLabelStyle: TextStyle(
                     fontWeight: FontWeight.w400,
-                    fontSize: 15,
+                    fontSize: 14,
                     fontFamily: Assets.fontsPoppinsBold,
                   ),
                   tabs: const [

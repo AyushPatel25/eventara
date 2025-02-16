@@ -47,7 +47,7 @@ class ProfilePage extends StatelessWidget {
                     child: Obx((){
                       return CircleAvatar(
                         radius: 60,
-                        backgroundImage: NetworkImage("https://ui-avatars.com/api/?name=${Uri.encodeComponent(profileController.username.value)}&background=2C2C2E&color=DAFF7B"),
+                        backgroundImage: NetworkImage("https://ui-avatars.com/api/?name=${Uri.encodeComponent(profileController.username.value)}&background=B0B0B0&color=00000"),
                       );
                     })
                   ),
@@ -58,7 +58,7 @@ class ProfilePage extends StatelessWidget {
                         text: profileController.username.value,
                         color: AppColors.whiteColor,
                         fontWeight: FontWeight.w600,
-                        fontSize: 25,
+                        fontSize: 18,
                         fontFamily: Assets.fontsPoppinsBold
                     );
                   }),
@@ -67,7 +67,7 @@ class ProfilePage extends StatelessWidget {
                         text: profileController.email.value,
                         color: AppColors.lightGrey,
                         fontWeight: FontWeight.w400,
-                        fontSize: 20,
+                        fontSize: 16,
                         fontFamily: Assets.fontsPoppinsBold
                     );
                   }),
@@ -91,31 +91,31 @@ class ProfilePage extends StatelessWidget {
                     child: ListTile(
                       leading: Container(
                         //padding: EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-                        height: 45,
-                        width: 45,
+                        height: 40,
+                        width: 40,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           color: AppColors.greyColor,
                         ),
 
-                        child: Icon(Iconsax.bill_copy, size: 25, color: AppColors.lightGrey,),
+                        child: Icon(Iconsax.bill_copy, size: 18, color: AppColors.lightGrey,),
                       ),
                       title: TextStyleHelper.CustomText(
                           text: "Terms of Service",
                           color: AppColors.lightGrey,
                           fontWeight: FontWeight.w400,
-                          fontSize: 20,
+                          fontSize: 16,
                           fontFamily: Assets.fontsPoppinsBold
                       ),
                       trailing: Container(
                         //padding: EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-                          height: 35,
-                          width: 35,
+                          height: 30,
+                          width: 30,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
                             color: AppColors.greyColor,
                           ),
-                        child: Icon(Icons.arrow_forward_ios, size: 20, color: AppColors.lightGrey,),
+                        child: Icon(Icons.arrow_forward_ios, size: 18, color: AppColors.lightGrey,),
                     ),
                     ),
                   ),
@@ -125,31 +125,31 @@ class ProfilePage extends StatelessWidget {
                     child: ListTile(
                       leading: Container(
                         //padding: EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-                        height: 45,
-                        width: 45,
+                        height: 40,
+                        width: 40,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           color: AppColors.greyColor,
                         ),
 
-                        child: Icon(Iconsax.lock_copy, size: 25, color: AppColors.lightGrey,),
+                        child: Icon(Iconsax.lock_copy, size: 18, color: AppColors.lightGrey,),
                       ),
                       title: TextStyleHelper.CustomText(
                           text: "Privacy policy",
                           color: AppColors.lightGrey,
                           fontWeight: FontWeight.w400,
-                          fontSize: 20,
+                          fontSize: 16,
                           fontFamily: Assets.fontsPoppinsBold
                       ),
                       trailing: Container(
                         //padding: EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-                        height: 35,
-                        width: 35,
+                        height: 30,
+                        width: 30,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           color: AppColors.greyColor,
                         ),
-                        child: Icon(Icons.arrow_forward_ios, size: 20, color: AppColors.lightGrey,),
+                        child: Icon(Icons.arrow_forward_ios, size: 18, color: AppColors.lightGrey,),
                       ),
                     ),
                   ),
@@ -160,31 +160,31 @@ class ProfilePage extends StatelessWidget {
                     child: ListTile(
                       leading: Container(
                         //padding: EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-                        height: 45,
-                        width: 45,
+                        height: 40,
+                        width: 40,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           color: AppColors.greyColor,
                         ),
 
-                        child: Icon(Iconsax.logout_1_copy, size: 20, color: AppColors.lightGrey,),
+                        child: Icon(Iconsax.logout_1_copy, size: 18, color: AppColors.lightGrey,),
                       ),
                       title: TextStyleHelper.CustomText(
                           text: "Logout",
                           color: AppColors.lightGrey,
                           fontWeight: FontWeight.w400,
-                          fontSize: 20,
+                          fontSize: 16,
                           fontFamily: Assets.fontsPoppinsBold
                       ),
                       trailing: Container(
                         //padding: EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-                        height: 35,
-                        width: 35,
+                        height: 30,
+                        width: 30,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           color: AppColors.greyColor,
                         ),
-                        child: Icon(Icons.arrow_forward_ios, size: 20, color: AppColors.lightGrey,),
+                        child: Icon(Icons.arrow_forward_ios, size: 18, color: AppColors.lightGrey,),
                       ),
                     ),
                   ),

@@ -25,7 +25,7 @@ class CustomButton extends StatelessWidget{
           borderRadius: BorderRadius.circular(10),
         ),
         //padding: EdgeInsets.symmetric(vertical: 14, horizontal: 20)
-        minimumSize: Size.fromHeight(53),
+        minimumSize: Size.fromHeight(43),
       ),
         onPressed: onPressed,
         //icon:Icon(icon, color: Colors.black) ,

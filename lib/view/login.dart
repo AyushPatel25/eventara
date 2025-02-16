@@ -99,17 +99,16 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       alignment: Alignment.bottomCenter,
                       child: SingleChildScrollView(
                         physics: const BouncingScrollPhysics(),
-                        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Image.asset(
-                              Assets.imagesFlutterIcon,
-                              height: 60,
-                              width: 60,
+                              Assets.imagesApptitle,
+                              height: 85,
+                              width: 85,
                             ),
-                            const SizedBox(height: 10.0),
                             Center(
                               child: TextStyleHelper.CustomText(
                                 text: "Let's Get Started",
@@ -211,7 +210,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 text: "Forgot Password?",
                                 color: AppColors.primaryColor,
                                 fontWeight: FontWeight.w600,
-                                fontSize: 18,
+                                fontSize: 14,
                                 fontFamily: Assets.fontsPoppinsBold,
                               ),
                             ),
@@ -269,7 +268,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                     text: "Sign Up",
                                     color: AppColors.primaryColor,
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 18,
+                                    fontSize: 14,
                                     fontFamily: Assets.fontsPoppinsBold,
                                   ),
                                 ),

@@ -36,17 +36,17 @@ class Forgetpage extends StatelessWidget {
                   controller: forgetController.emailController,
                   decoration: InputDecoration(
                     prefixIcon: Icon(
-                        Icons.email_outlined, color: Colors.white),
+                        Icons.email_outlined, color: AppColors.lightGrey),
                     hintText: CustomString().Email,
                     hintStyle: TextStyle(color: AppColors.lightGrey),
                     filled: true,
                     fillColor: AppColors.greyColor,
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: AppColors.whiteColor),),
+                      borderSide: BorderSide(color: AppColors.lightGrey),),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: AppColors.whiteColor),),
+                      borderSide: BorderSide(color: AppColors.lightGrey),),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide.none,
@@ -69,7 +69,7 @@ class Forgetpage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     //padding: EdgeInsets.symmetric(vertical: 14, horizontal: 20)
-                    minimumSize: Size.fromHeight(53),
+                    minimumSize: Size.fromHeight(43),
                   ),
                   child: forgetController.isLoading.value
                       ? CircularProgressIndicator(color: Colors.white)

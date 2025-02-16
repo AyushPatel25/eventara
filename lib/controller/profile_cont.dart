@@ -82,7 +82,7 @@ class ProfileController extends GetxController {
                 ),
                 TextStyleHelper.CustomText(
                     text: "Log Out",
-                    color: AppColors.primaryColor,
+                    color: AppColors.whiteColor,
                     fontWeight: FontWeight.w600,
                     fontSize: 20,
                     fontFamily: Assets.fontsPoppinsBold),
@@ -91,7 +91,7 @@ class ProfileController extends GetxController {
                 ),
                 TextStyleHelper.CustomText(
                     text: "Are you sure you want to log out?",
-                    color: AppColors.whiteColor,
+                    color: AppColors.lightGrey,
                     fontWeight: FontWeight.w400,
                     fontSize: 16,
                     fontFamily: Assets.fontsPoppinsBold),

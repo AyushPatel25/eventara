@@ -69,16 +69,16 @@ class LocationBottomSheet extends StatelessWidget {
               decoration: InputDecoration(
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: AppColors.whiteColor),
+                  borderSide: BorderSide(color: AppColors.lightGrey),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: AppColors.whiteColor),
+                  borderSide: BorderSide(color: AppColors.lightGrey),
                 ),
-                prefixIcon: Icon(Icons.search, color: AppColors.whiteColor),
+                prefixIcon: Icon(Icons.search, color: AppColors.lightGrey),
                 hintText: "Search ${locationController.currentType.value}",
                 hintStyle: TextStyle(
-                  color: Colors.grey,
+                  color: AppColors.lightGrey,
                   fontFamily: 'regular',
                 ),
                 filled: true,
@@ -155,7 +155,7 @@ class LocationBottomSheet extends StatelessWidget {
 
                         if (locationController.selectedCity.isNotEmpty) {
                           locationController.displayList.clear();
-                          Get.back();
+                          Get.offAll(DashboardPage());
 
                         }
                       }
@@ -201,7 +201,7 @@ class LocationBottomSheet extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  minimumSize: const Size.fromHeight(53),
+                  minimumSize: const Size.fromHeight(43),
                 ),
               ),
             ),

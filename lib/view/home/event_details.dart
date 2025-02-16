@@ -66,7 +66,7 @@ class EventDetails extends StatelessWidget {
                             style: TextStyle(
                               color: AppColors.whiteColor,
                               fontWeight: FontWeight.w600,
-                              fontSize: 20,
+                              fontSize: 16,
                               fontFamily: Assets.fontsPoppinsBold,
                             ),
                             maxLines: 1,
@@ -114,7 +114,7 @@ class EventDetails extends StatelessWidget {
                             highlightColor: Colors.grey[500]!,
                             child: Container(
                               width: double.infinity,
-                              height: 200, // Adjust height based on design
+                              height: 200,
                               color: Colors.grey[300],
                             ),
                           );
@@ -133,7 +133,7 @@ class EventDetails extends StatelessWidget {
                       style: TextStyle(
                         color: AppColors.whiteColor,
                         fontWeight: FontWeight.w600,
-                        fontSize: 25,
+                        fontSize: 20,
                         fontFamily: Assets.fontsPoppinsBold,
                       ),
                     ),
@@ -145,7 +145,7 @@ class EventDetails extends StatelessWidget {
                   padding: EdgeInsets.all(20),
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-                    height: 130,
+                    height: 120,
                     width: double.infinity,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(25),
@@ -170,7 +170,7 @@ class EventDetails extends StatelessWidget {
                                     "${event.eventDate} | ${event.time} onwards",
                                 color: AppColors.whiteColor,
                                 fontWeight: FontWeight.w600,
-                                fontSize: 18,
+                                fontSize: 16,
                                 fontFamily: Assets.fontsPoppinsRegular),
                           ],
                         ),
@@ -197,12 +197,12 @@ class EventDetails extends StatelessWidget {
                             FittedBox(
                               child: Container(
                                 height: 25,
-                                width: 290,
+                                width: 275,
                                 child: TextStyleHelper.CustomText(
                                     text: event.location,
                                     color: AppColors.whiteColor,
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 18,
+                                    fontSize: 16,
                                     fontFamily: Assets.fontsPoppinsRegular,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,),
@@ -223,7 +223,7 @@ class EventDetails extends StatelessWidget {
                       text: 'About the event',
                       color: AppColors.whiteColor,
                       fontWeight: FontWeight.w600,
-                      fontSize: 20,
+                      fontSize: 18,
                       fontFamily: Assets.fontsPoppinsBold),
                 ),
               ),
@@ -239,17 +239,17 @@ class EventDetails extends StatelessWidget {
                       trimCollapsedText: " Read more ",
                       trimExpandedText: " Read less ",
                       lessStyle: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           fontFamily: Assets.fontsPoppinsBold,
                           fontWeight: FontWeight.w600,
                           color: AppColors.whiteColor),
                       moreStyle: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           fontFamily: Assets.fontsPoppinsBold,
                           fontWeight: FontWeight.w600,
                           color: AppColors.whiteColor),
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 14,
                         fontFamily: Assets.fontsPoppinsRegular,
                         fontWeight: FontWeight.w400,
                         color: AppColors.lightGrey,
@@ -300,7 +300,7 @@ class EventDetails extends StatelessWidget {
                                     text: event.language,
                                     color: AppColors.whiteColor,
                                     fontWeight: FontWeight.w400,
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     fontFamily: Assets.fontsPoppinsRegular),
                               ],
                             ),
@@ -343,7 +343,7 @@ class EventDetails extends StatelessWidget {
                                     text: event.duration,
                                     color: AppColors.whiteColor,
                                     fontWeight: FontWeight.w400,
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     fontFamily: Assets.fontsPoppinsRegular),
                               ],
                             ),
@@ -386,7 +386,7 @@ class EventDetails extends StatelessWidget {
                                     text: event.ageLimit,
                                     color: AppColors.whiteColor,
                                     fontWeight: FontWeight.w400,
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     fontFamily: Assets.fontsPoppinsRegular),
                               ],
                             ),
@@ -429,7 +429,7 @@ class EventDetails extends StatelessWidget {
                                     text: event.category,
                                     color: AppColors.whiteColor,
                                     fontWeight: FontWeight.w400,
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     fontFamily: Assets.fontsPoppinsRegular),
                               ],
                             ),
@@ -472,7 +472,7 @@ class EventDetails extends StatelessWidget {
                                     text: event.layout,
                                     color: AppColors.whiteColor,
                                     fontWeight: FontWeight.w400,
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     fontFamily: Assets.fontsPoppinsRegular),
                               ],
                             ),
@@ -515,7 +515,7 @@ class EventDetails extends StatelessWidget {
                                     text: event.arrangement,
                                     color: AppColors.whiteColor,
                                     fontWeight: FontWeight.w400,
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     fontFamily: Assets.fontsPoppinsRegular),
                               ],
                             ),
@@ -530,10 +530,10 @@ class EventDetails extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
                   child: TextStyleHelper.CustomText(
-                      text: 'Artist/Host',
+                      text: 'Artist',
                       color: AppColors.whiteColor,
                       fontWeight: FontWeight.w600,
-                      fontSize: 20,
+                      fontSize: 18,
                       fontFamily: Assets.fontsPoppinsBold),
                 ),
               ),
@@ -548,10 +548,10 @@ class EventDetails extends StatelessWidget {
                       // Fetch & Display Artists
                       Obx(() {
                         final event = eventDetailsController.event.value;
-                        if (event == null || event.artists.isEmpty) { // ✅ Updated from artist1 to artists
+                        if (event == null || event.artists.isEmpty) {
                           return Text(
                             "No artists available",
-                            style: TextStyle(color: AppColors.lightGrey, fontSize: 16),
+                            style: TextStyle(color: AppColors.lightGrey, fontSize: 14),
                           );
                         }
 
@@ -559,9 +559,9 @@ class EventDetails extends StatelessWidget {
                           height: 141,
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
-                            itemCount: event.artists.length, // ✅ Updated from artist1 to artists
+                            itemCount: event.artists.length,
                             itemBuilder: (context, index) {
-                              final artist = event.artists[index]; // ✅ Correct artist reference
+                              final artist = event.artists[index];
 
                               return Padding(
                                 padding: EdgeInsets.only(right: 20),
@@ -571,14 +571,14 @@ class EventDetails extends StatelessWidget {
                                     CircleAvatar(
                                       radius: 55,
                                       backgroundColor: AppColors.greyColor,
-                                      backgroundImage: NetworkImage(artist.artistImage), // ✅ Updated field name
+                                      backgroundImage: NetworkImage(artist.artistImage),
                                     ),
                                     const SizedBox(height: 10),
                                     TextStyleHelper.CustomText(
-                                      text: artist.artistName, // ✅ Updated field name
+                                      text: artist.artistName,
                                       color: AppColors.whiteColor,
                                       fontWeight: FontWeight.w600,
-                                      fontSize: 15,
+                                      fontSize: 14,
                                       fontFamily: Assets.fontsPoppinsRegular,
                                     ),
                                   ],
@@ -600,7 +600,7 @@ class EventDetails extends StatelessWidget {
                       text: 'Venue',
                       color: AppColors.whiteColor,
                       fontWeight: FontWeight.w600,
-                      fontSize: 20,
+                      fontSize: 18,
                       fontFamily: Assets.fontsPoppinsBold),
                 ),
               ),
@@ -658,14 +658,14 @@ class EventDetails extends StatelessWidget {
                                       text: "Get Direction",
                                       color: AppColors.whiteColor,
                                       fontWeight: FontWeight.w500,
-                                      fontSize: 20,
+                                      fontSize: 16,
                                       fontFamily: Assets.fontsPoppinsBold),
                                   SizedBox(
                                     width: 10,
                                   ),
                                   Icon(
                                     Icons.directions,
-                                    size: 20,
+                                    size: 16,
                                     color: AppColors.whiteColor,
                                   ),
                                 ],
@@ -774,7 +774,7 @@ class EventDetails extends StatelessWidget {
                       text: "\u{20B9}${event.getStartingPrice()}",
                       color: AppColors.whiteColor,
                       fontWeight: FontWeight.w600,
-                      fontSize: 20,
+                      fontSize: 18,
                       fontFamily: Assets.fontsPoppinsRegular,
                     ),
                   ],

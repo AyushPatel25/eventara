@@ -66,6 +66,16 @@ dependencies:
   shimmer: ^3.0.0
   get_storage: ^2.1.1
   avatar_plus: ^0.0.5
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: "AppIcon"
+  image_path: "assets/images/iconlogo.png"
+  min_sdk_android: 21
+  remove_alpha_ios: true
+  adaptive_icon_background: "#000000"
+  adaptive_icon_foreground: "assets/images/iconlogo.png"
 
 
 # flutter_native_splash-development.yaml
@@ -129,3 +139,5 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+

@@ -47,6 +47,7 @@ class Cardwidget extends StatelessWidget {
           child: Stack(
             children: [
               Container(
+                //height: MediaQuery.of(context).size.height * 0.3,
                 decoration: BoxDecoration(
                   color: AppColors.greyColor,
                   borderRadius: BorderRadius.circular(20),
@@ -59,28 +60,31 @@ class Cardwidget extends StatelessWidget {
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20),
                       ),
-                      child: FadeInImage(
-                        placeholder:
-                            AssetImage("assets/images/placeholder.png"),
-                        image: NetworkImage(event.eventImage),
-                        fit: BoxFit.cover,
-                        imageErrorBuilder: (context, error, stackTrace) {
-                          return Center(
-                            child:
-                                Icon(Icons.error, color: Colors.red, size: 50),
-                          );
-                        },
-                        placeholderErrorBuilder: (context, error, stackTrace) {
-                          return Shimmer.fromColors(
-                            baseColor: Colors.grey[800]!,
-                            highlightColor: Colors.grey[500]!,
-                            child: Container(
-                              width: double.infinity,
-                              height: 200,
-                              color: Colors.grey[300],
-                            ),
-                          );
-                        },
+                      child: Opacity(
+                        opacity: 0.8,
+                        child: FadeInImage(
+                          placeholder:
+                              AssetImage("assets/images/placeholder.png"),
+                          image: NetworkImage(event.eventImage),
+                          fit: BoxFit.cover,
+                          imageErrorBuilder: (context, error, stackTrace) {
+                            return Center(
+                              child:
+                                  Icon(Icons.error, color: Colors.red, size: 50),
+                            );
+                          },
+                          placeholderErrorBuilder: (context, error, stackTrace) {
+                            return Shimmer.fromColors(
+                              baseColor: Colors.grey[800]!,
+                              highlightColor: Colors.grey[500]!,
+                              child: Container(
+                                width: double.infinity,
+                                height: 200,
+                                color: Colors.grey[300],
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                     Padding(
@@ -96,7 +100,7 @@ class Cardwidget extends StatelessWidget {
                                   text: event.title,
                                   color: AppColors.whiteColor,
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 20,
+                                  fontSize: 16,
                                   fontFamily: Assets.fontsPoppinsBold,
                                 ),
                                 SizedBox(height: 5),
@@ -105,7 +109,7 @@ class Cardwidget extends StatelessWidget {
                                     Icon(
                                       Icons.location_on_rounded,
                                       color: AppColors.lightGrey,
-                                      size: 15,
+                                      size: 14,
                                     ),
                                     SizedBox(width: 2),
                                     FittedBox(
@@ -116,7 +120,7 @@ class Cardwidget extends StatelessWidget {
                                           text: event.location,
                                           color: AppColors.lightGrey,
                                           fontWeight: FontWeight.w600,
-                                          fontSize: 15,
+                                          fontSize: 14,
                                           fontFamily:
                                               Assets.fontsPoppinsRegular,
                                           maxLines: 1,
@@ -128,14 +132,14 @@ class Cardwidget extends StatelessWidget {
                                     Icon(
                                       Icons.access_time_filled_rounded,
                                       color: AppColors.lightGrey,
-                                      size: 15,
+                                      size: 14,
                                     ),
                                     SizedBox(width: 2),
                                     TextStyleHelper.CustomText(
                                       text: event.time,
                                       color: AppColors.lightGrey,
                                       fontWeight: FontWeight.w600,
-                                      fontSize: 15,
+                                      fontSize: 14,
                                       fontFamily: Assets.fontsPoppinsRegular,
                                     ),
                                   ],
@@ -177,7 +181,7 @@ class Cardwidget extends StatelessWidget {
                       },
                       icon: Icon(
                         isFav ? Iconsax.heart : Iconsax.heart_copy,
-                        color: isFav ? Colors.red : Colors.white,
+                        color: isFav ? Colors.red.withOpacity(0.8) : Colors.white,
                       ),
                     );
                   }),
@@ -219,11 +223,11 @@ class Cardwidget extends StatelessWidget {
 
               // Event Date Box
               Positioned(
-                top: 170,
+                top: 150,
                 right: 10,
                 child: Container(
-                  height: 60,
-                  width: 50,
+                  height: 50,
+                  width: 40,
                   decoration: BoxDecoration(
                     color: Colors.black,
                     borderRadius: BorderRadius.circular(8),
@@ -253,14 +257,14 @@ class Cardwidget extends StatelessWidget {
                         text: event.getDay(),
                         color: AppColors.whiteColor,
                         fontWeight: FontWeight.w600,
-                        fontSize: 20,
+                        fontSize: 18,
                         fontFamily: Assets.fontsPoppinsBold,
                       ),
                       TextStyleHelper.CustomText(
                         text: event.getMonth(),
                         color: AppColors.lightGrey,
                         fontWeight: FontWeight.w600,
-                        fontSize: 15,
+                        fontSize: 12,
                         fontFamily: Assets.fontsPoppinsRegular,
                       ),
                     ],

@@ -44,7 +44,7 @@ class HomePage extends StatelessWidget {
                   child: Obx(() => Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Icon(Icons.location_on_rounded),
+                      Icon(Icons.location_on_rounded, color: AppColors.whiteColor,),
                       const SizedBox(
                         width: 10,
                       ),
@@ -62,7 +62,7 @@ class HomePage extends StatelessWidget {
                                   : "Select location"),
                               color: AppColors.whiteColor,
                               fontWeight: FontWeight.w600,
-                              fontSize: 20,
+                              fontSize: 14,
                               fontFamily: Assets.fontsPoppinsBold),
                           TextStyleHelper.CustomText(
                               text: locationController
@@ -74,12 +74,12 @@ class HomePage extends StatelessWidget {
                                   ? locationController.state.value
                                   : "for better usage"),
                               color: AppColors.whiteColor,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                              fontFamily: Assets.fontsPoppinsBold),
+                              fontWeight: FontWeight.w400,
+                              fontSize: 11,
+                              fontFamily: Assets.fontsPoppinsRegular),
                         ],
                       ),
-                      Icon(Icons.arrow_forward_ios),
+                      Icon(Icons.arrow_forward_ios, color: AppColors.whiteColor),
                     ],
                   )),
                   onTap: () {
@@ -104,12 +104,12 @@ class HomePage extends StatelessWidget {
                         Get.to(ProfilePage());
                       },
                       child: SizedBox(
-                          width: 25,
-                          height: 25,
+                          width: 30,
+                          height: 30,
                           child: Obx((){
                             return CircleAvatar(
                               radius: 60,
-                              backgroundImage: NetworkImage("https://ui-avatars.com/api/?name=${Uri.encodeComponent(profileController.username.value)}&background=2C2C2E&color=DAFF7B"),
+                              backgroundImage: NetworkImage("https://ui-avatars.com/api/?name=${Uri.encodeComponent(profileController.username.value)}&background=B0B0B0&color=00000"),
                             );
                           })
                       ),
@@ -130,7 +130,7 @@ class HomePage extends StatelessWidget {
                 ),*/
                 flexibleSpace: FlexibleSpaceBar(
                   background: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 7, 20, 0),
+                      padding: const EdgeInsets.fromLTRB(20, 7, 20, 4),
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 15),
                         height: 50,
@@ -138,7 +138,7 @@ class HomePage extends StatelessWidget {
                           color: Colors.black,
                           borderRadius: BorderRadius.circular(10),
                           border:
-                          Border.all(color: AppColors.lightGrey, width: 2),
+                          Border.all(color: AppColors.lightGrey, width: 1),
                         ),
                         child: GestureDetector(
                           onTap: () {
@@ -152,7 +152,7 @@ class HomePage extends StatelessWidget {
                                   text: "Search events",
                                   color: AppColors.lightGrey,
                                   fontWeight: FontWeight.w400,
-                                  fontSize: 16,
+                                  fontSize: 14,
                                   fontFamily: Assets.fontsPoppinsRegular),
                             ],
                           ),
@@ -216,7 +216,7 @@ class HomePage extends StatelessWidget {
                                               ? Colors.black
                                               : AppColors.lightGrey,
                                           fontWeight: FontWeight.w500,
-                                          fontSize: 15,
+                                          fontSize: 14,
                                           fontFamily: homeController
                                               .indexCategory.value ==
                                               index
@@ -243,7 +243,7 @@ class HomePage extends StatelessWidget {
                       text: 'Top picks',
                       color: AppColors.whiteColor,
                       fontWeight: FontWeight.w600,
-                      fontSize: 25,
+                      fontSize: 20,
                       fontFamily: Assets.fontsPoppinsBold),
                 ),
               ),
@@ -308,7 +308,7 @@ class HomePage extends StatelessWidget {
                       text: homeController.selectedCategory.value + " Events",
                       color: AppColors.whiteColor,
                       fontWeight: FontWeight.w600,
-                      fontSize: 25,
+                      fontSize: 20,
                       fontFamily: Assets.fontsPoppinsBold),
                   ),
                 ),

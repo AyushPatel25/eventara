@@ -31,13 +31,13 @@ class CustomTextField extends StatelessWidget {
       cursorColor: AppColors.whiteColor,
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: AppColors.whiteColor),),
+          borderSide: BorderSide(color: AppColors.lightGrey),),
         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: AppColors.whiteColor),),
-        prefixIcon: Icon(icon, color: AppColors.whiteColor),
+          borderSide: BorderSide(color: AppColors.lightGrey),),
+        prefixIcon: Icon(icon, color: AppColors.lightGrey),
         hintText: hintText,
         hintStyle: TextStyle(color: Colors.grey,
-                    fontFamily: 'regular'),
+                    fontFamily: 'regular', fontSize: 14),
           suffixIcon: suffixIcon,
         filled: true,
         fillColor: AppColors.greyColor,
@@ -47,7 +47,7 @@ class CustomTextField extends StatelessWidget {
         ),
         labelText: label,
         labelStyle: TextStyle(
-          color: AppColors.whiteColor,
+          color: AppColors.lightGrey,
           fontFamily: 'regular',
         )
       ),

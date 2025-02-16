@@ -208,17 +208,17 @@ class SignUpPage extends StatelessWidget {
                   controller: signUpController.usernameController,
                   decoration: InputDecoration(
                         prefixIcon: Icon(
-                            Icons.person, color: AppColors.whiteColor),
+                            Icons.person, color: AppColors.lightGrey),
                         hintText: "Enter your full name",
                         hintStyle: TextStyle(color: AppColors.lightGrey),
                         filled: true,
                         fillColor: AppColors.greyColor,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(color: AppColors.whiteColor),),
+                          borderSide: BorderSide(color: AppColors.lightGrey),),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(color: AppColors.whiteColor),),
+                          borderSide: BorderSide(color: AppColors.lightGrey),),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -231,17 +231,17 @@ class SignUpPage extends StatelessWidget {
                   controller: signUpController.emailController,
                   decoration: InputDecoration(
                         prefixIcon: Icon(
-                            Icons.email_outlined, color: Colors.white),
+                            Icons.email_outlined, color: AppColors.lightGrey),
                         hintText: CustomString().Email,
                         hintStyle: TextStyle(color: AppColors.lightGrey),
                         filled: true,
                         fillColor: AppColors.greyColor,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(color: AppColors.whiteColor),),
+                          borderSide: BorderSide(color: AppColors.lightGrey),),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(color: AppColors.whiteColor),),
+                          borderSide: BorderSide(color: AppColors.lightGrey),),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -258,7 +258,7 @@ class SignUpPage extends StatelessWidget {
                   controller: signUpController.passwordController,
                   obscureText: true,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.lock, color: Colors.white),
+                        prefixIcon: Icon(Icons.lock, color: AppColors.lightGrey),
                         hintText: "Enter your password",
                         hintStyle: TextStyle(color: AppColors.lightGrey),
                         suffixIcon: IconButton(
@@ -274,10 +274,10 @@ class SignUpPage extends StatelessWidget {
                         fillColor: AppColors.greyColor,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(color: AppColors.whiteColor),),
+                          borderSide: BorderSide(color: AppColors.lightGrey),),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(color: AppColors.whiteColor),),
+                          borderSide: BorderSide(color: AppColors.lightGrey),),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -303,10 +303,10 @@ class SignUpPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     //padding: EdgeInsets.symmetric(vertical: 14, horizontal: 20)
-                    minimumSize: Size.fromHeight(53),
+                    minimumSize: Size.fromHeight(43),
                   ),
                   child: signUpController.isLoading.value
-                      ? CircularProgressIndicator(color: Colors.white)
+                      ? CircularProgressIndicator(color: AppColors.primaryColor)
                       : Text("Sign Up", style: TextStyle(color: Colors.black,fontFamily: 'bold', fontSize: 17),),
                 )),
                 // const SizedBox(height: 40,),

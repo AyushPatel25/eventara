@@ -45,8 +45,8 @@ class Location extends StatelessWidget {
                               fontFamily: Assets.fontsPoppinsBold,
                               fontSize: FontSizes.button,
                               fontWeight: FontWeight.w600,
-                            ),)
-                        ),
+                            ),),
+                                                  ),
                       ],
                     ),
                     const SizedBox(height: 490,),

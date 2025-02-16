@@ -36,26 +36,29 @@ Widget ImageSlider({required int index}) {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(25),
-          child: FadeInImage(
-            placeholder: AssetImage("assets/images/placeholder.png"),
-            image: NetworkImage(event.eventImage),
-            fit: BoxFit.cover,
-            imageErrorBuilder: (context, error, stackTrace) {
-              return Center(
-                child: Icon(Icons.error, color: Colors.red, size: 50),
-              );
-            },
-            placeholderErrorBuilder: (context, error, stackTrace) {
-              return Shimmer.fromColors(
-                baseColor: Colors.grey[800]!,
-                highlightColor: Colors.grey[500]!,
-                child: Container(
-                  width: double.infinity,
-                  height: 200,
-                  color: Colors.grey[300],
-                ),
-              );
-            },
+          child: Opacity(
+            opacity: 0.8,
+            child: FadeInImage(
+              placeholder: AssetImage("assets/images/placeholder.png"),
+              image: NetworkImage(event.eventImage),
+              fit: BoxFit.cover,
+              imageErrorBuilder: (context, error, stackTrace) {
+                return Center(
+                  child: Icon(Icons.error, color: Colors.red, size: 50),
+                );
+              },
+              placeholderErrorBuilder: (context, error, stackTrace) {
+                return Shimmer.fromColors(
+                  baseColor: Colors.grey[800]!,
+                  highlightColor: Colors.grey[500]!,
+                  child: Container(
+                    width: double.infinity,
+                    height: 200,
+                    color: Colors.grey[300],
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),

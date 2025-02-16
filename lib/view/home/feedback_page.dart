@@ -29,7 +29,7 @@ class FeedbackPage extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Lottie.asset(Assets.imagesLottieAnim,
+              Lottie.asset(Assets.imagesStarLottie,
                 width: 120,
                 height: 120,
                 fit: BoxFit.fill,
@@ -106,7 +106,7 @@ class FeedbackPage extends StatelessWidget {
                         text: "What is you rate?",
                         color: AppColors.whiteColor,
                         fontWeight: FontWeight.w600,
-                        fontSize: 20,
+                        fontSize: 18,
                         fontFamily: Assets.fontsPoppinsBold
                       ),
                     ),
@@ -117,7 +117,7 @@ class FeedbackPage extends StatelessWidget {
                       itemPadding: const EdgeInsets.symmetric(horizontal: 5),
                         direction: Axis.horizontal,
                         minRating: 1,
-                        itemBuilder: (context, index) => Icon(Icons.star, color: AppColors.primaryColor,),
+                        itemBuilder: (context, index) => Icon(Icons.star, color: Colors.amber.withOpacity(0.8),),
                         onRatingUpdate: (value) {
 
                         }
@@ -129,14 +129,14 @@ class FeedbackPage extends StatelessWidget {
                       text: "Please share your opinion",
                       color: AppColors.whiteColor,
                       fontWeight: FontWeight.w600,
-                      fontSize: 20,
+                      fontSize: 18,
                       fontFamily: Assets.fontsPoppinsBold,
                     ),
                     TextStyleHelper.CustomText(
                       text: "about the event",
                       color: AppColors.whiteColor,
                       fontWeight: FontWeight.w600,
-                      fontSize: 20,
+                      fontSize: 18,
                       fontFamily: Assets.fontsPoppinsBold,
                     ),
 
@@ -148,17 +148,17 @@ class FeedbackPage extends StatelessWidget {
                       minLines: 3,
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(color: AppColors.whiteColor),),
+                          borderSide: BorderSide(color: AppColors.lightGrey),),
                         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(color: AppColors.whiteColor),),
+                          borderSide: BorderSide(color: AppColors.lightGrey),),
                         hintText: "Write your feedback",
-                        hintStyle: TextStyle(color: Colors.grey,
+                        hintStyle: TextStyle(color: AppColors.lightGrey,
                             fontFamily: 'regular'),
                         filled: true,
                         fillColor: AppColors.greyColor,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(color: AppColors.primaryColor),
+                          borderSide: BorderSide(color: AppColors.lightGrey),
                         ),
                     )
                     ),

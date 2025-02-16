@@ -62,35 +62,38 @@ class DashboardPage extends StatelessWidget {
                     ]
                 )
             ),*/
-            /*bottomNavigationBar:*/ Obx(
-                () => BottomNavigationBar(
-                  backgroundColor: Colors.black,
-                  unselectedItemColor: AppColors.lightGrey,
-                  selectedItemColor: AppColors.whiteColor,
-                  onTap: controller.selectedIndex.call,
-                  currentIndex: controller.selectedIndex.value,
-                  showSelectedLabels: false,
-                  showUnselectedLabels: false,
-                  type: BottomNavigationBarType.fixed,
-                  items: [
-                    _bottomNavigationBarItem(
-                      icon: Iconsax.home_copy,
-                      label: 'Home',
-                    ),
-                    _bottomNavigationBarItem(
-                      icon: Iconsax.heart_copy,
-                      label: 'Favourite',
-                    ),
-                    _bottomNavigationBarItem(
-                      icon: Iconsax.calendar_1_copy,
-                      label: 'Event',
-                    ),
-                    _bottomNavigationBarItem(
-                      icon: Iconsax.ticket_copy,
-                      label: 'Ticket',
-                    )
-                  ]),
-          ),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 0),
+                  child: Divider(
+                    color: AppColors.greyColor,
+                    thickness: 1,
+                    height: 1,
+                  ),
+                ),
+                Obx(
+                      () => BottomNavigationBar(
+                    backgroundColor: Colors.black,
+                    unselectedItemColor: AppColors.lightGrey,
+                    selectedItemColor: AppColors.whiteColor,
+                    onTap: controller.selectedIndex.call,
+                    currentIndex: controller.selectedIndex.value,
+                    showSelectedLabels: false,
+                    showUnselectedLabels: false,
+                    type: BottomNavigationBarType.fixed,
+                    items: [
+                      _bottomNavigationBarItem(icon: Iconsax.home_copy, label: 'Home'),
+                      _bottomNavigationBarItem(icon: Iconsax.heart_copy, label: 'Favourite'),
+                      _bottomNavigationBarItem(icon: Iconsax.calendar_1_copy, label: 'Event'),
+                      _bottomNavigationBarItem(icon: Iconsax.ticket_copy, label: 'Ticket'),
+                    ],
+                  ),
+                ),
+              ],
+            )
+
           );
         }
         );

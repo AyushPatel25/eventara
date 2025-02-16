@@ -28,7 +28,7 @@ class EventPage extends GetView<EventController> {
                   text: 'Events',
                   color: AppColors.whiteColor,
                   fontWeight: FontWeight.w700,
-                  fontSize: 30,
+                  fontSize: 25,
                   fontFamily: Assets.fontsPoppinsBold,
                 ),
               ),

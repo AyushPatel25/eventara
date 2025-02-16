@@ -1,5 +1,6 @@
 import 'package:eventapp/componets/button.dart';
 import 'package:eventapp/controller/eticket_cont.dart';
+import 'package:eventapp/view/home/dashboard_page.dart';
 import 'package:eventapp/view/home/event_details.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,8 +27,7 @@ class Eticket extends StatelessWidget {
             automaticallyImplyLeading: false,
             leading: IconButton(
                 onPressed: (){
-                  Get.back();
-                  Get.back();
+                  Get.offAll(DashboardPage());
                 },
                 icon: Icon(Icons.arrow_back)
             ),
@@ -111,7 +111,7 @@ class Eticket extends StatelessWidget {
                                                         style: TextStyle(
                                                           color: AppColors.whiteColor,
                                                           fontWeight: FontWeight.w600,
-                                                          fontSize: 25,
+                                                          fontSize: 20,
                                                           fontFamily: Assets.fontsPoppinsBold,
                                                         ),
                                                         maxLines: 1,
