@@ -4,30 +4,29 @@ import 'package:eventapp/model/event_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../view/home/eticket.dart';
+
 class BuyTicketController extends GetxController {
   var categories = <TicketCategory>[].obs;
-
   var isLoading = true.obs;
   var event = Rxn<EventModel>();
+  var selectedCategoryIndex = RxnInt(); // Stores the selected category index
+  var totalSelectedTickets = 0.obs; // Track total selected tickets
 
   @override
   void onInit() {
     super.onInit();
-
     int? eventId = Get.arguments?['eventId'];
     if (eventId != null) {
-      print(eventId);
       fetchEventDetails(eventId);
     } else {
-      Get.snackbar("Error", "Event ID not found", );
+      Get.snackbar("Error", "Event ID not found");
     }
-
   }
 
   Future<void> fetchEventDetails(int eventId) async {
     try {
       isLoading.value = true;
-
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('eventDetails')
           .where('eventId', isEqualTo: eventId)
@@ -49,25 +48,52 @@ class BuyTicketController extends GetxController {
         }).toList()
           ..sort((a, b) => b.price.compareTo(a.price));
 
-
-        print("Ticket Categories Loaded: ${categories.value}");
+        selectedCategoryIndex.value = null;
+        totalSelectedTickets.value = 0;
       } else {
-        print("No event found for eventId: $eventId");
         Get.snackbar("Error", "Event not found", backgroundColor: Colors.red);
       }
     } catch (e) {
-      print("Error fetching event details: $e");
       Get.snackbar("Error", "Failed to load event", backgroundColor: Colors.red);
     } finally {
       isLoading.value = false;
     }
   }
 
-  Future<void> purchase(int index) async {
-    try {
-      var category = categories[index];
+  void increment(int index) {
+    if (selectedCategoryIndex.value == null || selectedCategoryIndex.value == index) {
+      if (totalSelectedTickets.value < 10 && categories[index].selectedTickets.value < categories[index].availableSpots.value) {
+        categories[index].selectedTickets.value++;
+        totalSelectedTickets.value++;
+        selectedCategoryIndex.value = index;
+      }
+    } else {
+      Get.snackbar("Error", "You can only select tickets from one category at a time.", backgroundColor: Colors.red);
+    }
+  }
 
-      if (category.selectedTickets.value > 0 && category.availableSpots.value >= category.selectedTickets.value) {
+  void decrement(int index) {
+    if (categories[index].selectedTickets.value > 0) {
+      categories[index].selectedTickets.value--;
+      totalSelectedTickets.value--;
+
+      if (categories[index].selectedTickets.value == 0) {
+        selectedCategoryIndex.value = null; // Reset category selection when no tickets are selected
+      }
+    }
+  }
+
+  Future<void> purchase() async {
+    if (selectedCategoryIndex.value == null || totalSelectedTickets.value == 0) {
+      Get.snackbar("Error", "Please select at least one ticket", backgroundColor: Colors.red);
+      return;
+    }
+
+    int index = selectedCategoryIndex.value!;
+    var category = categories[index];
+
+    try {
+      if (category.availableSpots.value >= category.selectedTickets.value) {
         int newAvailable = category.availableSpots.value - category.selectedTickets.value;
 
         await FirebaseFirestore.instance
@@ -77,75 +103,28 @@ class BuyTicketController extends GetxController {
           'ticketTypes.${category.name}.available': newAvailable,
         });
 
-
         categories[index].availableSpots.value = newAvailable;
         categories[index].selectedTickets.value = 0;
+        totalSelectedTickets.value = 0;
+        selectedCategoryIndex.value = null;
 
-        Get.snackbar("Success", "Ticket purchased!", backgroundColor: Colors.green);
+        // Navigate to eTicket page with event details
+        Get.to(() => Eticket(), arguments: {
+          'eventImage': event.value!.eventImage,
+          'eventName': event.value!.title,
+          'eventLocation': event.value!.location,
+          'eventDate': event.value!.eventDate,
+          'ticketCategory': category.name,
+          'ticketPrice': category.price,
+          'ticketCount': totalSelectedTickets.value,
+        });
+
+        Get.snackbar("Success", "Tickets purchased successfully!", backgroundColor: Colors.green);
       } else {
         Get.snackbar("Error", "Not enough tickets available", backgroundColor: Colors.red);
       }
     } catch (e) {
-      print("Error updating Firestore: $e");
       Get.snackbar("Error", "Purchase failed", backgroundColor: Colors.red);
     }
   }
-
-
-  Future<void> buyTicket(String categoryName) async {
-    try {
-      if (!event.value!.ticketTypes.containsKey(categoryName)) {
-        print("Ticket category not found");
-        return;
-      }
-
-      TicketType selectedTicket = event.value!.ticketTypes[categoryName]!;
-
-      if (selectedTicket.available <= 0) {
-        Get.snackbar("Error", "No tickets available", backgroundColor: Colors.red);
-        return;
-      }
-
-      int newAvailable = selectedTicket.available - 1;
-
-      await FirebaseFirestore.instance
-          .collection('eventDetails')
-          .doc(event.value!.eventId.toString())
-          .update({
-        'ticketTypes.$categoryName.available': newAvailable,
-      });
-
-      event.update((val) {
-        if (val != null) {
-          val.ticketTypes[categoryName] = TicketType(
-            available: newAvailable,
-            price: selectedTicket.price,
-          );
-        }
-      });
-
-      fetchEventDetails(event.value!.eventId);
-
-      Get.snackbar("Success", "Ticket purchased!", backgroundColor: Colors.green);
-    } catch (e) {
-      print("Error buying ticket: $e");
-      Get.snackbar("Error", "Purchase failed", backgroundColor: Colors.red);
-    }
-  }
-
-
-
-
-  void increment(int index) {
-    if (categories[index].selectedTickets.value < categories[index].availableSpots.value) {
-      categories[index].selectedTickets.value++;
-    }
-  }
-
-  void decrement(int index) {
-    if (categories[index].selectedTickets.value > 0) {
-      categories[index].selectedTickets.value--;
-    }
-  }
-
 }
