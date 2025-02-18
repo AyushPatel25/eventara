@@ -29,7 +29,6 @@ class HomeController extends GetxController {
     fetchEvents();
   }
 
-  /// 🔹 Fetch Events from Firestore
   Future<void> fetchEvents() async {
     try {
       isLoading.value = true;
@@ -41,7 +40,7 @@ class HomeController extends GetxController {
         return EventModel.fromJson(data);
       }).toList();
 
-      applyFilters(); // Apply filters after fetching data
+      applyFilters();
     } catch (e) {
       print("Error fetching events: $e");
     } finally {
@@ -49,20 +48,17 @@ class HomeController extends GetxController {
     }
   }
 
-  /// 🔹 Update Category Selection
   void updateCategory(int index) {
     indexCategory.value = index;
     selectedCategory.value = _getCategoryName(index);
     applyFilters();
   }
 
-  /// 🔹 Get Category Name by Index
   String _getCategoryName(int index) {
     List<String> categories = ["All", "Concert", "Comedy", "Sport", "Party", "Show"];
     return categories[index];
   }
 
-  /// 🔹 Handle Favorite Toggle
   void toggleFavourite(int index) {
     if (favoriteEvents.contains(index)) {
       favoriteEvents.remove(index);
@@ -71,24 +67,20 @@ class HomeController extends GetxController {
     }
   }
 
-  /// 🔹 Update Page Indicator for Carousel
   void updatePageIndecator(int index) {
     curousalCurrentIndex.value = index;
   }
 
-  /// 🔹 Update Filters for Categories
   void updateFilter(String category, bool isSelected) {
     selectedFilters[category] = isSelected;
     applyFilters();
   }
 
-  /// 🔹 Update Search Query
   void updateSearchQuery(String query) {
     searchQuery.value = query.toLowerCase();
     applyFilters();
   }
 
-  /// 🔹 Apply Filters for Category & Search
   void applyFilters() {
     List<EventModel> tempEvents = List.from(events);
 
@@ -97,7 +89,6 @@ class HomeController extends GetxController {
       tempEvents = tempEvents.where((event) => event.category == selectedCategory.value).toList();
     }
 
-    // Apply Additional Selected Filters
     List<String> selectedCategories = selectedFilters.entries
         .where((entry) => entry.value)
         .map((entry) => entry.key)

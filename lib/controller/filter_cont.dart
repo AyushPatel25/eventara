@@ -15,7 +15,7 @@ class FilterController extends GetxController {
 
   @override
   void onInit() {
-    fetchEvents(); // Fetch events when the controller initializes
+    fetchEvents();
     super.onInit();
   }
 
@@ -24,12 +24,12 @@ class FilterController extends GetxController {
       QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('eventDetails').get();
       List<Map<String, dynamic>> eventList = snapshot.docs.map((doc) {
         var data = doc.data() as Map<String, dynamic>;
-        data['eventId'] = doc.id; // Store Firestore document ID as eventId
+        data['eventId'] = doc.id;
         return data;
       }).toList();
 
       events.assignAll(eventList);
-      filteredEvents.clear(); // Do not display events by default
+      filteredEvents.clear();
     } catch (e) {
       print("Error fetching events: $e");
     }
@@ -63,7 +63,7 @@ class FilterController extends GetxController {
     if (searchQuery.isNotEmpty) {
       tempEvents = tempEvents.where((event) {
         String eventName = event['title'].toString().toLowerCase();
-        String eventDate = event['date'].toString().toLowerCase();
+        String eventDate = event['eventDate'].toString().toLowerCase();
         String artist = event['artistName'].toString().toLowerCase();
         String eventLocation = event['location'].toString().toLowerCase();
         return eventName.contains(searchQuery.value) ||
@@ -73,11 +73,10 @@ class FilterController extends GetxController {
       }).toList();
     }
 
-    // Only update `filteredEvents` if a filter or search is applied
     if (isFilterApplied) {
       filteredEvents.assignAll(tempEvents);
     } else {
-      filteredEvents.clear(); // Keep it empty if no filter/search is applied
+      filteredEvents.clear();
     }
   }
 }

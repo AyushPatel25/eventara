@@ -10,7 +10,7 @@ class BuyTicketController extends GetxController {
   var categories = <TicketCategory>[].obs;
   var isLoading = true.obs;
   var event = Rxn<EventModel>();
-  var selectedCategoryIndex = RxnInt(); // Stores the selected category index
+  var selectedCategoryIndex = RxnInt();
   var totalSelectedTickets = 0.obs; // Track total selected tickets
 
   @override
@@ -78,7 +78,7 @@ class BuyTicketController extends GetxController {
       totalSelectedTickets.value--;
 
       if (categories[index].selectedTickets.value == 0) {
-        selectedCategoryIndex.value = null; // Reset category selection when no tickets are selected
+        selectedCategoryIndex.value = null;
       }
     }
   }

@@ -341,14 +341,51 @@ class HomePage extends StatelessWidget {
                         padding: const EdgeInsets.all(80.0),
                         child: Column(
                           children: [
-                            Padding(
-                                padding: EdgeInsets.only(top: 60, bottom: 60),
+                            Image.asset(
+                              Assets.imagesNoEvent,
+                              height: 200,
+                              width: 200,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            TextStyleHelper.CustomText(
+                              text: "No events found!",
+                              color: AppColors.whiteColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              fontFamily: Assets.fontsPoppinsBold,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.greyColor,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    side: BorderSide(color: AppColors.whiteColor, width: 2)
+                                ),
+
+                              ),
+                              onPressed: () {
+
+                                homeController.selectedFilters.keys.forEach((filterName) {
+                                  homeController.updateFilter(filterName, false);
+                                });
+
+                                homeController.indexCategory.value = 0;
+                                homeController.selectedCategory.value == "All";
+                                homeController.updateCategory(0);
+
+                              },
                               child: TextStyleHelper.CustomText(
-                                  text: 'No events available',
-                                  color: AppColors.lightGrey,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 20,
-                                  fontFamily: Assets.fontsPoppinsBold),
+                                text: "Clear filters",
+                                color: AppColors.whiteColor,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                                fontFamily: Assets.fontsPoppinsBold,
+                              ),
                             )
                           ],
                         ),

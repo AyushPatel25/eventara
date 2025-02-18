@@ -10,7 +10,8 @@ import '../../componets/ticketCard.dart';
 import '../../generated/assets.dart';
 
 class BuyticketPage extends StatelessWidget {
-  final BuyTicketController buyTicketController = Get.put(BuyTicketController());
+  final BuyTicketController buyTicketController =
+      Get.put(BuyTicketController());
 
   @override
   Widget build(BuildContext context) {
@@ -19,17 +20,26 @@ class BuyticketPage extends StatelessWidget {
         backgroundColor: Colors.black,
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: CustomButton(
-            label: "Purchase",
-            onPressed: () async {
-              for (int i = 0; i < buyTicketController.categories.length; i++) {
-                if (buyTicketController.categories[i].selectedTickets.value > 0) {
-                  await buyTicketController.purchase();
-                }
-              }
-              Get.to(Eticket());
-            },
-          ),
+          child: Obx(() {
+            return Visibility(
+              visible: buyTicketController.categories.any((category) => category.selectedTickets.value > 0),
+              child: CustomButton(
+                label: "Purchase",
+                onPressed: () async {
+                  for (int i = 0;
+                      i < buyTicketController.categories.length;
+                      i++) {
+                    if (buyTicketController
+                            .categories[i].selectedTickets.value >
+                        0) {
+                      await buyTicketController.purchase();
+                      Get.to(Eticket());
+                    }
+                  }
+                },
+              ),
+            );
+          }),
         ),
         appBar: AppBar(
           backgroundColor: Colors.black,
@@ -46,12 +56,13 @@ class BuyticketPage extends StatelessWidget {
           children: [
             Padding(
               padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-              child: Obx(() {
-                return buildShimmerOrText(
-                  text: "Ticket Details",
-                  isLoading: buyTicketController.isLoading.value,
-                );
-              },
+              child: Obx(
+                () {
+                  return buildShimmerOrText(
+                    text: "Ticket Details",
+                    isLoading: buyTicketController.isLoading.value,
+                  );
+                },
               ),
             ),
             SizedBox(height: 10),
@@ -59,13 +70,14 @@ class BuyticketPage extends StatelessWidget {
               child: Obx(() {
                 if (buyTicketController.isLoading.value) {
                   return ListView.builder(
-                    itemCount: 3, // Show 3 shimmer placeholders
+                    itemCount: 3,
                     itemBuilder: (context, index) {
                       return Shimmer.fromColors(
                         baseColor: Colors.grey[800]!,
                         highlightColor: Colors.grey[500]!,
                         child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          margin: EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
                           height: 100,
                           decoration: BoxDecoration(
                             color: Colors.grey[700],
@@ -89,7 +101,8 @@ class BuyticketPage extends StatelessWidget {
                 return ListView.builder(
                   itemCount: buyTicketController.categories.length,
                   itemBuilder: (context, index) {
-                    return Ticketcard(index: index, buyTicketController: buyTicketController);
+                    return Ticketcard(
+                        index: index, buyTicketController: buyTicketController);
                   },
                 );
               }),
@@ -100,24 +113,23 @@ class BuyticketPage extends StatelessWidget {
     );
   }
 
-  /// Function to apply shimmer or display text based on loading state
   Widget buildShimmerOrText({required String text, required bool isLoading}) {
     return isLoading
         ? Shimmer.fromColors(
-      baseColor: Colors.grey[800]!,
-      highlightColor: Colors.grey[500]!,
-      child: Container(
-        height: 20,
-        width: 150,
-        color: Colors.grey[700],
-      ),
-    )
+            baseColor: Colors.grey[800]!,
+            highlightColor: Colors.grey[500]!,
+            child: Container(
+              height: 20,
+              width: 150,
+              color: Colors.grey[700],
+            ),
+          )
         : TextStyleHelper.CustomText(
-      text: text,
-      color: AppColors.whiteColor,
-      fontWeight: FontWeight.w700,
-      fontSize: 20,
-      fontFamily: Assets.fontsPoppinsBold,
-    );
+            text: text,
+            color: AppColors.whiteColor,
+            fontWeight: FontWeight.w700,
+            fontSize: 20,
+            fontFamily: Assets.fontsPoppinsBold,
+          );
   }
 }

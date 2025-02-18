@@ -19,6 +19,9 @@ class Eticket extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    var eventData = Get.arguments;
+
     return SafeArea(
         child: Scaffold(
           backgroundColor: Colors.black,
@@ -107,7 +110,7 @@ class Eticket extends StatelessWidget {
                                                   Expanded(
                                                     child: FittedBox(
                                                       child: Text(
-                                                        'Arijit Singh Concert In Surat',
+                                                        eventData['eventName'] ?? 'Event Name',
                                                         style: TextStyle(
                                                           color: AppColors.whiteColor,
                                                           fontWeight: FontWeight.w600,

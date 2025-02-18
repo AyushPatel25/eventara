@@ -81,6 +81,11 @@ class Ticketcard extends StatelessWidget {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primaryColor.withOpacity(
                                   category.selectedTickets.value > 0 ? 0.5 : 0.5),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  side: BorderSide(color: AppColors.primaryColor.withOpacity(
+                                      category.selectedTickets.value > 0 ? 1 : 0.5), width: 2)
+                              ),
                             ),
                             onPressed: category.selectedTickets.value > 0
                                 ? () => buyTicketController.decrement(index)
@@ -104,6 +109,11 @@ class Ticketcard extends StatelessWidget {
                                   (isOtherCategorySelected || isMaxTicketsReached || category.selectedTickets.value >= category.availableSpots.value)
                                       ? 0.5
                                       : 0.5),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  side: BorderSide(color: AppColors.primaryColor.withOpacity(
+                                      category.selectedTickets.value > 0 ? 1 : 0.5), width: 2)
+                              ),
                             ),
                             onPressed: (isOtherCategorySelected || isMaxTicketsReached || category.selectedTickets.value >= category.availableSpots.value)
                                 ? null

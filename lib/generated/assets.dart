@@ -8,6 +8,8 @@ class Assets {
   static const String imagesApptitle = 'assets/images/apptitle.png';
   static const String imagesBackGif = 'assets/images/BackGif.gif';
   static const String imagesDarkmap = 'assets/images/darkmap.json';
+  static const String imagesEmptySearch = 'assets/images/emptySearch.png';
+  static const String imagesEmptyState = 'assets/images/emptyState.png';
   static const String imagesEventara = 'assets/images/eventara.jpg';
   static const String imagesFlutterIcon = 'assets/images/flutter-icon.png';
   static const String imagesIconlogo = 'assets/images/iconlogo.png';
