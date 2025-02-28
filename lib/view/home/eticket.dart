@@ -4,6 +4,7 @@ import 'package:eventapp/view/home/dashboard_page.dart';
 import 'package:eventapp/view/home/event_details.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:screenshot/screenshot.dart';
@@ -20,13 +21,32 @@ class Eticket extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    var eventData = Get.arguments;
+    final arguments = Get.arguments;
+
+    print("Received arguments: $arguments");
+
+    final String eventImage = arguments['eventImage'];
+    final String eventName = arguments['eventName'];
+    final String eventLocation = arguments['eventLocation'];
+    final String eventDate = arguments['eventDate'];
+    final String ticketCategory = arguments['ticketCategory'];
+    final String eventTime = arguments['eventTime'];
+    final int ticketPrice = arguments['ticketPrice'];
+    final int ticketCount = arguments['ticketCount'];
+    final String arrangement = arguments['arrangement'];
+    final List<String> ticketNumbers = Get.arguments['ticketNumbers'];
+
+    String qrData = "Event: $eventName\nLocation: $eventLocation\nCategory: $ticketCategory\nPrice: \u{20B9}${ticketPrice.toString()}\nCount: $ticketCount\nArrangement: $arrangement\nTicket No. $ticketNumbers \nEmail: ${GetStorage().read('email')}\nUsername: ${GetStorage().read('username')}";
+    print("Event: $eventName\nLocation: $eventLocation\nCategory: $ticketCategory\nPrice: \u{20B9}${ticketPrice.toString()}\nCount: $ticketCount\nEmail: ${GetStorage().read('email')}\nUsername: ${GetStorage().read('username')}");
+
 
     return SafeArea(
         child: Scaffold(
           backgroundColor: Colors.black,
           appBar: AppBar(
             backgroundColor: Colors.black,
+            surfaceTintColor: Colors.black,
+            //foregroundColor: Colors.black,
             automaticallyImplyLeading: false,
             leading: IconButton(
                 onPressed: (){
@@ -57,103 +77,307 @@ class Eticket extends StatelessWidget {
               ),
             ],
           ),
-          body: Padding(
-              padding: EdgeInsets.all(2),
-                  child: Column(
-                    children: [
-                      Screenshot(
-                        controller: eticketController.screenshotController,
-                        child: Center(
-                          child: Container(
-                            height: 710,
-                            width: 350,
-                            child: Center(
-                              child: Stack(
-                                children: [
-                                  Image.asset(Assets.imagesTicket, height: 710,fit: BoxFit.fill, width: 350,),
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(35, 65, 35, 0),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-
-                                      children: [
-                                        Container(
-                                          width: double.infinity,
-                                        alignment: Alignment.topCenter,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(15),
-                                          color: AppColors.greyColor,
-
-                                        ),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(15),
-                                          child: Image(
-                                            image: AssetImage(Assets.imagesPoster),
-                                            fit: BoxFit.contain,
-                                          ),
-                                        ),
-                                        ),
-                                        SizedBox(height: 20,),
-                                        Container(
-                                          width: double.infinity,
+          body: SingleChildScrollView(
+            child: Padding(
+                padding: EdgeInsets.all(2),
+                    child: Column(
+                      children: [
+                        Screenshot(
+                          controller: eticketController.screenshotController,
+                          child: Center(
+                            child: Container(
+                              height: 710,
+                              width: 350,
+                              child: Center(
+                                child: Stack(
+                                  children: [
+                                    Image.asset(Assets.imagesTicket, height: 710,fit: BoxFit.fill, width: 350,),
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(35, 65, 35, 0),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+            
+                                        children: [
+                                          Container(
+                                            width: double.infinity,
                                           alignment: Alignment.topCenter,
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(15),
-                                            color: Colors.transparent,
-
+                                            color: AppColors.greyColor,
+            
                                           ),
-                                          child: Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: FittedBox(
-                                                      child: Text(
-                                                        eventData['eventName'] ?? 'Event Name',
-                                                        style: TextStyle(
-                                                          color: AppColors.whiteColor,
-                                                          fontWeight: FontWeight.w600,
-                                                          fontSize: 20,
-                                                          fontFamily: Assets.fontsPoppinsBold,
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(15),
+                                            child: Image(
+                                              image: NetworkImage(eventImage),
+                                              fit: BoxFit.contain,
+                                            ),
+                                          ),
+                                          ),
+                                          SizedBox(height: 20,),
+                                          Container(
+                                            width: double.infinity,
+                                            alignment: Alignment.topCenter,
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(15),
+                                              color: Colors.transparent,
+            
+                                            ),
+                                            child: Column(
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: FittedBox(
+                                                        child: Text(
+                                                          eventName,
+                                                          style: TextStyle(
+                                                            color: AppColors.whiteColor,
+                                                            fontWeight: FontWeight.w600,
+                                                            fontSize: 20,
+                                                            fontFamily: Assets.fontsPoppinsBold,
+                                                          ),
+                                                          maxLines: 1,
                                                         ),
-                                                        maxLines: 1,
                                                       ),
                                                     ),
-                                                  ),
-
-                                                ],
-                                              ),
-                                              SizedBox(height: 10,),
-
-                                              Divider(
-                                                color: AppColors.divider,
-                                                thickness: 2,
-                                              ),
-
-                                              SizedBox(height: 10,),
-
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-
-                                                  Container(
-                                                    height: 40,
-                                                    width: 130,
+            
+                                                  ],
+                                                ),
+                                                SizedBox(height: 10,),
+            
+                                                Divider(
+                                                  color: AppColors.divider,
+                                                  thickness: 2,
+                                                ),
+            
+                                                SizedBox(height: 10,),
+            
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+            
+                                                    Container(
+                                                      height: 40,
+                                                      width: 280,
+                                                      child: FittedBox(
+                                                        alignment: Alignment.centerLeft,
+                                                        child: Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: [
+                                                            TextStyleHelper.CustomText(
+                                                                text: 'Location',
+                                                                color: AppColors.lightGrey,
+                                                                fontWeight: FontWeight.w400,
+                                                                fontSize: 12,
+                                                                fontFamily: Assets.fontsPoppinsRegular,
+                                                              maxLines: 1,
+                                                              overflow: TextOverflow.ellipsis,
+                                                            ),
+            
+                                                            TextStyleHelper.CustomText(
+                                                                text: eventLocation,
+                                                                color: AppColors.whiteColor,
+                                                                fontWeight: FontWeight.w400,
+                                                                fontSize: 15,
+                                                                fontFamily: Assets.fontsPoppinsRegular
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+            
+                                                SizedBox(height: 10,),
+            
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+            
+                                                    Container(
+                                                      height: 40,
+                                                      width: 130,
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          TextStyleHelper.CustomText(
+                                                              text: 'Date',
+                                                              color: AppColors.lightGrey,
+                                                              fontWeight: FontWeight.w400,
+                                                              fontSize: 12,
+                                                              fontFamily: Assets.fontsPoppinsRegular
+                                                          ),
+            
+                                                          TextStyleHelper.CustomText(
+                                                              text: eventDate,
+                                                              color: AppColors.whiteColor,
+                                                              fontWeight: FontWeight.w400,
+                                                              fontSize: 15,
+                                                              fontFamily: Assets.fontsPoppinsRegular
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+            
+            
+            
+                                                    Container(
+                                                      height: 40,
+                                                      width: 130,
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          TextStyleHelper.CustomText(
+                                                              text: 'Time',
+                                                              color: AppColors.lightGrey,
+                                                              fontWeight: FontWeight.w400,
+                                                              fontSize: 12,
+                                                              fontFamily: Assets.fontsPoppinsRegular
+                                                          ),
+            
+                                                          TextStyleHelper.CustomText(
+                                                              text: eventTime,
+                                                              color: AppColors.whiteColor,
+                                                              fontWeight: FontWeight.w400,
+                                                              fontSize: 15,
+                                                              fontFamily: Assets.fontsPoppinsRegular
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+            
+                                                SizedBox(height: 10,),
+            
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+            
+                                                    Container(
+                                                      height: 40,
+                                                      width: 130,
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          TextStyleHelper.CustomText(
+                                                              text: 'Category',
+                                                              color: AppColors.lightGrey,
+                                                              fontWeight: FontWeight.w400,
+                                                              fontSize: 12,
+                                                              fontFamily: Assets.fontsPoppinsRegular
+                                                          ),
+            
+                                                          TextStyleHelper.CustomText(
+                                                              text: ticketCategory,
+                                                              color: AppColors.whiteColor,
+                                                              fontWeight: FontWeight.w400,
+                                                              fontSize: 15,
+                                                              fontFamily: Assets.fontsPoppinsRegular
+                                                          ),
+                                                          // TextStyleHelper.CustomText(
+                                                          //     text: 'Seat No.',
+                                                          //     color: AppColors.lightGrey,
+                                                          //     fontWeight: FontWeight.w400,
+                                                          //     fontSize: 12,
+                                                          //     fontFamily: Assets.fontsPoppinsRegular
+                                                          // ),
+                                                          //
+                                                          // TextStyleHelper.CustomText(
+                                                          //     text: "No Seat",
+                                                          //     color: AppColors.whiteColor,
+                                                          //     fontWeight: FontWeight.w400,
+                                                          //     fontSize: 15,
+                                                          //     fontFamily: Assets.fontsPoppinsRegular
+                                                          // ),
+                                                        ],
+                                                      ),
+                                                    ),
+            
+            
+            
+                                                    Container(
+                                                      height: 40,
+                                                      width: 130,
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          TextStyleHelper.CustomText(
+                                                              text: 'Ticket Price',
+                                                              color: AppColors.lightGrey,
+                                                              fontWeight: FontWeight.w400,
+                                                              fontSize: 12,
+                                                              fontFamily: Assets.fontsPoppinsRegular
+                                                          ),
+            
+                                                          TextStyleHelper.CustomText(
+                                                              text: "\u{20B9}${ticketPrice.toString()}",
+                                                              color: AppColors.whiteColor,
+                                                              fontWeight: FontWeight.w400,
+                                                              fontSize: 15,
+                                                              fontFamily: Assets.fontsPoppinsRegular
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+            
+                                                const SizedBox(height: 10,),
+                                                Container(
+                                                  height: 40,
+                                                  width: 280,
+                                                  child: FittedBox(
+                                                    alignment: Alignment.centerLeft,
                                                     child: Column(
                                                       crossAxisAlignment: CrossAxisAlignment.start,
                                                       mainAxisAlignment: MainAxisAlignment.center,
                                                       children: [
                                                         TextStyleHelper.CustomText(
-                                                            text: 'Location',
-                                                            color: AppColors.lightGrey,
-                                                            fontWeight: FontWeight.w400,
-                                                            fontSize: 12,
-                                                            fontFamily: Assets.fontsPoppinsRegular
+                                                          text: 'Seat No.',
+                                                          color: AppColors.lightGrey,
+                                                          fontWeight: FontWeight.w400,
+                                                          fontSize: 12,
+                                                          fontFamily: Assets.fontsPoppinsRegular,
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow.ellipsis,
                                                         ),
-
+            
+                                                        // TextStyleHelper.CustomText(
+                                                        //     text: 'Standing',
+                                                        //     color: AppColors.whiteColor,
+                                                        //     fontWeight: FontWeight.w400,
+                                                        //     fontSize: 15,
+                                                        //     fontFamily: Assets.fontsPoppinsRegular
+                                                        // ),
+                                                        // TextStyleHelper.CustomText(
+                                                        //   text: ticketNumbers.join(', '),
+                                                        //   color: AppColors.whiteColor,
+                                                        //   fontWeight: FontWeight.w400,
+                                                        //   fontSize: 15,
+                                                        //   fontFamily: Assets.fontsPoppinsRegular,
+                                                        //   maxLines: 1,
+                                                        //   overflow: TextOverflow.ellipsis,
+                                                        // ),
+                                                        if(arrangement != 'Standing')
+                                                          TextStyleHelper.CustomText(
+                                                            text: ticketNumbers.join(', '),
+                                                            color: AppColors.whiteColor,
+                                                            fontWeight: FontWeight.w400,
+                                                            fontSize: 15,
+                                                            fontFamily: Assets.fontsPoppinsRegular,
+                                                            maxLines: 1,
+                                                            overflow: TextOverflow.ellipsis,
+                                                          ),
                                                         TextStyleHelper.CustomText(
-                                                            text: "Vesu, Surat",
+                                                            text: 'Standing',
                                                             color: AppColors.whiteColor,
                                                             fontWeight: FontWeight.w400,
                                                             fontSize: 15,
@@ -162,180 +386,60 @@ class Eticket extends StatelessWidget {
                                                       ],
                                                     ),
                                                   ),
-                                                ],
-                                              ),
-
-                                              SizedBox(height: 10,),
-
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-
-                                                  Container(
-                                                    height: 40,
-                                                    width: 130,
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        TextStyleHelper.CustomText(
-                                                            text: 'Date',
-                                                            color: AppColors.lightGrey,
-                                                            fontWeight: FontWeight.w400,
-                                                            fontSize: 12,
-                                                            fontFamily: Assets.fontsPoppinsRegular
-                                                        ),
-
-                                                        TextStyleHelper.CustomText(
-                                                            text: "26/01/2025",
-                                                            color: AppColors.whiteColor,
-                                                            fontWeight: FontWeight.w400,
-                                                            fontSize: 15,
-                                                            fontFamily: Assets.fontsPoppinsRegular
-                                                        ),
-                                                      ],
-                                                    ),
+                                                ),
+            
+                                                const SizedBox(height: 45,),
+                                                Container(
+                                                  alignment: Alignment.bottomCenter,
+                                                  child: Column(
+                                                    children: [
+                                                      QrImageView(
+                                                        data: qrData,
+                                                        version: QrVersions.auto,
+                                                        size: 120,
+                                                        backgroundColor: Colors.transparent,
+                                                        foregroundColor: AppColors.whiteColor,
+                                                      ),
+            
+                                                    ],
                                                   ),
-
-
-
-                                                  Container(
-                                                    height: 40,
-                                                    width: 130,
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        TextStyleHelper.CustomText(
-                                                            text: 'Time',
-                                                            color: AppColors.lightGrey,
-                                                            fontWeight: FontWeight.w400,
-                                                            fontSize: 12,
-                                                            fontFamily: Assets.fontsPoppinsRegular
-                                                        ),
-
-                                                        TextStyleHelper.CustomText(
-                                                            text: "10:00 PM",
-                                                            color: AppColors.whiteColor,
-                                                            fontWeight: FontWeight.w400,
-                                                            fontSize: 15,
-                                                            fontFamily: Assets.fontsPoppinsRegular
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-
-                                              SizedBox(height: 15,),
-
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-
-                                                  Container(
-                                                    height: 40,
-                                                    width: 130,
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        TextStyleHelper.CustomText(
-                                                            text: 'Seat No.',
-                                                            color: AppColors.lightGrey,
-                                                            fontWeight: FontWeight.w400,
-                                                            fontSize: 12,
-                                                            fontFamily: Assets.fontsPoppinsRegular
-                                                        ),
-
-                                                        TextStyleHelper.CustomText(
-                                                            text: "No Seat",
-                                                            color: AppColors.whiteColor,
-                                                            fontWeight: FontWeight.w400,
-                                                            fontSize: 15,
-                                                            fontFamily: Assets.fontsPoppinsRegular
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-
-
-
-                                                  Container(
-                                                    height: 40,
-                                                    width: 130,
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        TextStyleHelper.CustomText(
-                                                            text: 'Gate No.',
-                                                            color: AppColors.lightGrey,
-                                                            fontWeight: FontWeight.w400,
-                                                            fontSize: 12,
-                                                            fontFamily: Assets.fontsPoppinsRegular
-                                                        ),
-
-                                                        TextStyleHelper.CustomText(
-                                                            text: "1-A",
-                                                            color: AppColors.whiteColor,
-                                                            fontWeight: FontWeight.w400,
-                                                            fontSize: 15,
-                                                            fontFamily: Assets.fontsPoppinsRegular
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                    ],
-                                    ),
-                                  ),
-
-                                  Padding(
-                                      padding: const EdgeInsets.fromLTRB(125, 545, 125, 0),
-                                    child: Column(
-                                      children: [
-                                        QrImageView(
-                                          data: "ayush@gmail.com",
-                                          version: QrVersions.auto,
-                                          size: 120,
-                                          backgroundColor: Colors.transparent,
-                                          foregroundColor: AppColors.whiteColor,
-                                        ),
-
                                       ],
+                                      ),
                                     ),
-                                  ),
-                                ],
+            
+            
+            
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      Center(
-                        child: ElevatedButton(
-
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                        Center(
+                          child: ElevatedButton(
+            
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primaryColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              //minimumSize: Size.fromHeight(20),
                             ),
-                            //minimumSize: Size.fromHeight(20),
-                          ),
-                          onPressed: (){
-                            eticketController.captureAndSave();
-                          },
-                          child: Text("Download",
-                            style: TextStyle(color: Colors.black,fontFamily: 'bold', fontSize: 17),
+                            onPressed: (){
+                              eticketController.captureAndSave();
+                            },
+                            child: Text("Download",
+                              style: TextStyle(color: Colors.black,fontFamily: 'bold', fontSize: 17),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+            ),
           ),
         )
     );

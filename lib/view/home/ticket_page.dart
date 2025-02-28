@@ -7,11 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../componets/upcoming_ticket.dart';
 
-class TicketPage extends GetView<TicketController> {
+class TicketPage extends StatelessWidget {
   const TicketPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final TicketController ticketController = Get.put(TicketController());
+
     return DefaultTabController(
       length: 2,
       child: SafeArea(
@@ -31,6 +33,7 @@ class TicketPage extends GetView<TicketController> {
                   fontFamily: Assets.fontsPoppinsBold,
                 ),
               ),
+
               SliverAppBar(
                 pinned: true,
                 surfaceTintColor: Colors.black,
@@ -57,39 +60,77 @@ class TicketPage extends GetView<TicketController> {
                   ],
                 ),
               ),
-              SliverToBoxAdapter(
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.8,
-                  child: TabBarView(
-                    children: [
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 10, right: 10),
-                          child: ListView.separated(
-                            physics: NeverScrollableScrollPhysics(),
-                            padding: EdgeInsets.zero,
-                            itemBuilder: (context, index) => UpcomingTicket(),
-                            separatorBuilder: (context, index) => SizedBox(height: 0),
-                            itemCount: 4,
+
+              SliverFillRemaining(
+                child: TabBarView(
+                  children: [
+                    Obx(() {
+                      if (ticketController.isLoading.value) {
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primaryColor,
                           ),
-                        )
-                      ),
-                      Center(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10, right: 10),
-                            child: ListView.separated(
-                              physics: NeverScrollableScrollPhysics(),
-                              padding: EdgeInsets.zero,
-                              itemBuilder: (context, index) => PastTicket(),
-                              separatorBuilder: (context, index) => SizedBox(height: 0),
-                              itemCount: 4,
-                            ),
-                          )
-                      ),
-                    ],
-                  ),
+                        );
+                      }
+
+                      if (ticketController.upcomingTickets.isEmpty) {
+                        return Center(
+                          child: TextStyleHelper.CustomText(
+                            text: "No Upcoming Tickets",
+                            color: AppColors.whiteColor,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            fontFamily: Assets.fontsPoppinsRegular,
+                          ),
+                        );
+                      }
+
+                      return ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        itemCount: ticketController.upcomingTickets.length,
+                        itemBuilder: (context, index) {
+                          return UpcomingTicket(
+                            ticket: ticketController.upcomingTickets[index],
+                          );
+                        },
+                      );
+                    }),
+
+                    Obx(() {
+                      if (ticketController.isLoading.value) {
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primaryColor,
+                          ),
+                        );
+                      }
+
+                      if (ticketController.pastTickets.isEmpty) {
+                        return Center(
+                          child: TextStyleHelper.CustomText(
+                            text: "No Past Tickets",
+                            color: AppColors.whiteColor,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            fontFamily: Assets.fontsPoppinsRegular,
+                          ),
+                        );
+                      }
+
+                      return ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        itemCount: ticketController.pastTickets.length,
+                        itemBuilder: (context, index) {
+                          return PastTicket(
+                            ticket: ticketController.pastTickets[index],
+                          );
+                        },
+                      );
+                    }),
+                  ],
                 ),
               ),
+
             ],
           ),
         ),
@@ -97,4 +138,3 @@ class TicketPage extends GetView<TicketController> {
     );
   }
 }
-

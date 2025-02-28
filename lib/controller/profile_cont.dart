@@ -49,6 +49,24 @@ class ProfileController extends GetxController {
     }
   }
 
+  // Future<void> fetchOrganizerData() async {
+  //   User? user = _auth.currentUser;
+  //   if (user != null) {
+  //     DocumentSnapshot userDoc = await _firestore.collection('organizers').doc(user.uid).get();
+  //     if (userDoc.exists) {
+  //       uid.value = userDoc['oid'];
+  //       username.value = userDoc['username'];
+  //       email.value = userDoc['email'];
+  //
+  //
+  //       box.write('username', username.value);
+  //       box.write('email', email.value);
+  //     }
+  //   } else {
+  //     Get.snackbar("Error", "User not found", snackPosition: SnackPosition.BOTTOM);
+  //   }
+  // }
+
   Future<void> updateUserName(String uid, String newName) async{
     if(newName.isNotEmpty){
       await _firestore.collection('users').doc(uid).update({'username': newName});

@@ -4,6 +4,9 @@ import 'package:eventapp/controller/login_cont.dart';
 import 'package:eventapp/controller/validateEmail.dart';
 import 'package:eventapp/utills/appcolors.dart';
 import 'package:eventapp/view/forgetpage.dart';
+import 'package:eventapp/view/home/dashboard_page.dart';
+import 'package:eventapp/view/organizer/organizer_dashboard.dart';
+import 'package:eventapp/view/organizer/organizer_home.dart';
 import 'package:eventapp/view/user/location_acc.dart';
 import 'package:eventapp/view/user/signUp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -39,7 +42,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   final GetStorage box = GetStorage();
 
-
+  final RxBool isLoading = false.obs;
 
   String _selectedUserType = "Audience";
 
@@ -148,6 +151,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   onSelected: (selected) {
                                     setState(() {
                                       _selectedUserType = "Audience";
+                                      Get.offAll(Location());
                                     });
                                   },
                                 ),
@@ -218,7 +222,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
                             const SizedBox(height: 16.0),
                             // Obx(() =>
-                            // //authController.isLoading.value? Center(child: CircularProgressIndicator(),)
+                            // authController.isLoading.value? Center(child: CircularProgressIndicator(),)
                             //     /*:*/ CustomButton(
                             //     label: 'Continue',
                             //     onPressed: (){
@@ -231,19 +235,59 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             //       );
 
                                   //authController.login(email: _emailController.text.trim(), password: _passwordController.text.trim());
-                        CustomButton(
-                            label: 'Continue',
-                            onPressed: (){
-                              validateEmail(
-                                emailController: _emailController,
-                                passwordController: _passwordController, // Pass password controller
-                                context: context,
-                                userType: _selectedUserType,
-                                //authController: authController, // Pass AuthController
-                              );
-                              _signIn();
-                            }
-                            ),
+                        // CustomButton(
+                        //     label: 'Continue',
+                        //     onPressed: (){
+                        //       validateEmail(
+                        //         emailController: _emailController,
+                        //         passwordController: _passwordController,
+                        //         context: context,
+                        //         userType: _selectedUserType,
+                        //         //authController: authController,
+                        //       );
+                        //       _signIn();
+                        //       // if(_selectedUserType == "Organizer"){
+                        //       //   _signInOrganizer();
+                        //       // }
+                        //       // else if(_selectedUserType == "Audience"){
+                        //       //   _signIn();
+                        //       // }
+                        //     }
+                        //     ),
+                            Obx(() => ElevatedButton(
+                              onPressed: () {
+                                validateEmail(
+                                  emailController: _emailController,
+                                  passwordController: _passwordController,
+                                  context: context,
+                                  userType: _selectedUserType,
+                                            //authController: authController,
+                                );
+                                if(_selectedUserType == "Organizer"){
+                                  _signInOrganizer();
+                                }
+                                else if(_selectedUserType == "Audience"){
+                                  _signIn();
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primaryColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                minimumSize: Size.fromHeight(43),
+                              ),
+                              child: isLoading.value
+                                  ? CircularProgressIndicator(color: Colors.black)
+                                  : Text(
+                                "Continue",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'bold',
+                                    fontSize: 17
+                                ),
+                              ),
+                            )),
 
                             const SizedBox(height: 16,),
 
@@ -288,9 +332,53 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     );
   }
 
+  void _signInOrganizer() async {
+    String email = _emailController.text.trim();
+    String password = _passwordController.text.trim();
+
+    try {
+      UserCredential credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      User? user = credential.user;
+
+      if (user != null) {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('organizers').doc(user.uid).get();
+
+        if (userDoc.exists) {
+
+          final box = GetStorage();
+          box.write('isLoggedIn', true);
+          box.write('oid', user.uid);
+          box.write('organizerName', userDoc['organizerName']);
+          box.write('organizerEmail', userDoc['organizerEmail']);
+
+          Get.offAll(OrganizerDashboard());
+
+          // if(_selectedUserType == "Organizer"){
+          //   Get.offAll(DashboardPage());
+          // }
+          // else if(_selectedUserType == "Audience"){
+          //   Get.offAll(() => Location());
+          // }
+        } else {
+          Get.snackbar("Login Error", "User data not found in database",
+              snackPosition: SnackPosition.BOTTOM);
+        }
+      }
+    } on FirebaseAuthException catch (e) {
+      Get.snackbar("Login Failed", e.message ?? "Invalid email or password",
+          snackPosition: SnackPosition.BOTTOM);
+    }
+  }
+
   void _signIn() async {
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
+
+    isLoading.value = true;
 
     try {
       UserCredential credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -311,8 +399,14 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           box.write('username', userDoc['username']);
           box.write('email', userDoc['email']);
 
+          // Get.offAll(() => Location());
 
-          Get.offAll(() => Location());
+          if(_selectedUserType == "Organizer"){
+            Get.offAll(OrganizerDashboard());
+          }
+          else if(_selectedUserType == "Audience"){
+            Get.offAll(() => Location());
+          }
         } else {
           Get.snackbar("Login Error", "User data not found in database",
               snackPosition: SnackPosition.BOTTOM);
@@ -321,6 +415,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     } on FirebaseAuthException catch (e) {
       Get.snackbar("Login Failed", e.message ?? "Invalid email or password",
           snackPosition: SnackPosition.BOTTOM);
+    } catch (e) {
+      Get.snackbar("Error", "Something went wrong", snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      isLoading.value = false;
     }
   }
 

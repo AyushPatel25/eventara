@@ -12,6 +12,7 @@ class FilterController extends GetxController {
     'Show': false,
   }.obs;
   RxString searchQuery = ''.obs;
+  var isWrite = true.obs;
 
   @override
   void onInit() {

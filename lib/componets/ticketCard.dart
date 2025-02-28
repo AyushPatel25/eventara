@@ -22,7 +22,7 @@ class Ticketcard extends StatelessWidget {
       bool isMaxTicketsReached = buyTicketController.totalSelectedTickets.value >= 10;
 
       return Opacity(
-        opacity: isOtherCategorySelected ? 0.5 : 1.0, // Fade effect for unselected categories
+        opacity: isOtherCategorySelected ? 0.5 : 1.0,
         child: Card(
           color: AppColors.greyColor,
           margin: EdgeInsets.all(20),

@@ -23,7 +23,8 @@ class HomePage extends StatelessWidget {
 
   HomeController homeController = Get.put(HomeController());
   LocationController locationController = Get.put(LocationController());
-  EventDetailsController eventDetailsController = Get.put(EventDetailsController());
+  EventDetailsController eventDetailsController =
+      Get.put(EventDetailsController());
   ProfileController profileController = Get.put(ProfileController());
 
   List list = ["All", "Concert", "Comedy", "Sport", "Party", "Show"];
@@ -32,8 +33,8 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.black,
-        body:  CustomScrollView(
+          backgroundColor: Colors.black,
+          body: CustomScrollView(
             slivers: [
               //header
               SliverAppBar(
@@ -42,46 +43,65 @@ class HomePage extends StatelessWidget {
                 centerTitle: false,
                 title: GestureDetector(
                   child: Obx(() => Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Icon(Icons.location_on_rounded, color: AppColors.whiteColor,),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          TextStyleHelper.CustomText(
-                              text: locationController
-                                  .isManualSelection.value &&
-                                  locationController
-                                      .selectedCity.value.isNotEmpty
-                                  ? locationController.selectedCity.value
-                                  : (locationController.city.value.isNotEmpty
-                                  ? locationController.city.value
-                                  : "Select location"),
-                              color: AppColors.whiteColor,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                              fontFamily: Assets.fontsPoppinsBold),
-                          TextStyleHelper.CustomText(
-                              text: locationController
-                                  .isManualSelection.value &&
-                                  locationController
-                                      .selectedState.value.isNotEmpty
-                                  ? locationController.selectedState.value
-                                  : (locationController.state.value.isNotEmpty
-                                  ? locationController.state.value
-                                  : "for better usage"),
-                              color: AppColors.whiteColor,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 11,
-                              fontFamily: Assets.fontsPoppinsRegular),
+                          Icon(
+                            Icons.location_on_rounded,
+                            color: AppColors.whiteColor,
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextStyleHelper.CustomText(
+                                  text: locationController
+                                              .isManualSelection.value &&
+                                          locationController
+                                              .selectedCity.value.isNotEmpty
+                                      ? locationController.selectedCity
+                                          .value // If manual selection is on, show selected city
+                                      : (locationController
+                                              .cityLive.value.isNotEmpty
+                                          ? locationController.cityLive
+                                              .value // If manual is off, but city is available, show it
+                                          : (locationController
+                                                  .cityLive.value.isNotEmpty
+                                              ? locationController.cityLive
+                                                  .value // If manual is off but live location is available, show it
+                                              : "Select location")), // Default case
+                                  color: AppColors.whiteColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  fontFamily: Assets.fontsPoppinsBold),
+                              TextStyleHelper.CustomText(
+                                  text: locationController
+                                              .isManualSelection.value &&
+                                          locationController
+                                              .selectedState.value.isNotEmpty
+                                      ? locationController.selectedState
+                                          .value // If manual selection is on, show selected city
+                                      : (locationController
+                                              .state.value.isNotEmpty
+                                          ? locationController.state
+                                              .value // If manual is off, but city is available, show it
+                                          : (locationController
+                                                  .stateLive.value.isNotEmpty
+                                              ? locationController.stateLive
+                                                  .value // If manual is off but live location is available, show it
+                                              : "Select location")), // Default case
+
+                                  color: AppColors.whiteColor,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 11,
+                                  fontFamily: Assets.fontsPoppinsRegular),
+                            ],
+                          ),
+                          Icon(Icons.arrow_forward_ios,
+                              color: AppColors.whiteColor),
                         ],
-                      ),
-                      Icon(Icons.arrow_forward_ios, color: AppColors.whiteColor),
-                    ],
-                  )),
+                      )),
                   onTap: () {
                     showLocationBottomSheet(context);
                   },
@@ -100,19 +120,19 @@ class HomePage extends StatelessWidget {
                 ),
                 actions: [
                   GestureDetector(
-                      onTap: (){
-                        Get.to(ProfilePage());
-                      },
-                      child: SizedBox(
-                          width: 30,
-                          height: 30,
-                          child: Obx((){
-                            return CircleAvatar(
-                              radius: 60,
-                              backgroundImage: NetworkImage("https://ui-avatars.com/api/?name=${Uri.encodeComponent(profileController.username.value)}&background=B0B0B0&color=00000"),
-                            );
-                          })
-                      ),
+                    onTap: () {
+                      Get.to(ProfilePage());
+                    },
+                    child: SizedBox(
+                        width: 30,
+                        height: 30,
+                        child: Obx(() {
+                          return CircleAvatar(
+                            radius: 60,
+                            backgroundImage: NetworkImage(
+                                "https://ui-avatars.com/api/?name=${Uri.encodeComponent(profileController.username.value)}&background=B0B0B0&color=00000"),
+                          );
+                        })),
                   ),
                   SizedBox(width: 20),
                 ],
@@ -131,19 +151,19 @@ class HomePage extends StatelessWidget {
                 flexibleSpace: FlexibleSpaceBar(
                   background: Padding(
                       padding: const EdgeInsets.fromLTRB(20, 7, 20, 4),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 15),
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(10),
-                          border:
-                          Border.all(color: AppColors.lightGrey, width: 1),
-                        ),
-                        child: GestureDetector(
-                          onTap: () {
-                            Get.to(FilterPage());
-                          },
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.to(FilterPage());
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                                color: AppColors.lightGrey, width: 1),
+                          ),
                           child: Row(
                             children: [
                               Icon(Icons.search, color: AppColors.lightGrey),
@@ -186,17 +206,18 @@ class HomePage extends StatelessWidget {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: homeController.indexCategory.value ==
-                                        index
-                                    //? AppColors.primaryColor.withOpacity(0.2)
+                                            index
+                                        //? AppColors.primaryColor.withOpacity(0.2)
                                         ? AppColors.whiteColor
                                         : AppColors.greyColor,
                                     borderRadius: BorderRadius.circular(10),
                                     border: Border.all(
-                                      color: homeController.indexCategory.value ==
-                                          index
-                                      //? AppColors.primaryColor
-                                          ? AppColors.whiteColor
-                                          : AppColors.greyColor,
+                                      color:
+                                          homeController.indexCategory.value ==
+                                                  index
+                                              //? AppColors.primaryColor
+                                              ? AppColors.whiteColor
+                                              : AppColors.greyColor,
                                       width: 1,
                                     ),
                                   ),
@@ -210,16 +231,16 @@ class HomePage extends StatelessWidget {
                                         child: TextStyleHelper.CustomText(
                                           text: list[index],
                                           color: homeController
-                                              .indexCategory.value ==
-                                              index
-                                          //? AppColors.primaryColor
+                                                      .indexCategory.value ==
+                                                  index
+                                              //? AppColors.primaryColor
                                               ? Colors.black
                                               : AppColors.lightGrey,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 14,
                                           fontFamily: homeController
-                                              .indexCategory.value ==
-                                              index
+                                                      .indexCategory.value ==
+                                                  index
                                               ? Assets.fontsPoppinsBold
                                               : Assets.fontsPoppinsRegular,
                                         ),
@@ -252,7 +273,9 @@ class HomePage extends StatelessWidget {
               Obx(() {
                 if (homeController.events.isEmpty) {
                   return SliverToBoxAdapter(
-                    child: Center(child: CircularProgressIndicator(color: AppColors.primaryColor)),
+                    child: Center(
+                        child: CircularProgressIndicator(
+                            color: AppColors.primaryColor)),
                   );
                 }
                 return SliverToBoxAdapter(
@@ -267,17 +290,18 @@ class HomePage extends StatelessWidget {
                             autoPlayInterval: Duration(seconds: 4),
                             enlargeCenterPage: true,
                             enlargeFactor: 0.5,
-                            onPageChanged: (index, _) => homeController.updatePageIndecator(index),
+                            onPageChanged: (index, _) =>
+                                homeController.updatePageIndecator(index),
                           ),
                           items: List.generate(
-                            homeController.events.length,
-                                (index) => ImageSlider(index: index),
+                            homeController.carouselEvents.length,
+                            (index) => ImageSlider(index: index),
                           ),
                         ),
                         const SizedBox(height: 10),
                         Center(
                           child: Obx(
-                                () => Row(
+                            () => Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 for (int i = 0; i < 3; i++)
@@ -286,7 +310,11 @@ class HomePage extends StatelessWidget {
                                     height: 4,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(2),
-                                      color: homeController.curousalCurrentIndex.value == i ? AppColors.whiteColor : AppColors.divider,
+                                      color: homeController
+                                                  .curousalCurrentIndex.value ==
+                                              i
+                                          ? AppColors.whiteColor
+                                          : AppColors.divider,
                                     ),
                                     margin: EdgeInsets.only(right: 10),
                                   ),
@@ -300,20 +328,19 @@ class HomePage extends StatelessWidget {
                 );
               }),
 
-
               SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                  child: Obx(() => TextStyleHelper.CustomText(
-                      text: homeController.selectedCategory.value + " Events",
-                      color: AppColors.whiteColor,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 20,
-                      fontFamily: Assets.fontsPoppinsBold),
+                  child: Obx(
+                    () => TextStyleHelper.CustomText(
+                        text: homeController.selectedCategory.value + " Events",
+                        color: AppColors.whiteColor,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 20,
+                        fontFamily: Assets.fontsPoppinsBold),
                   ),
                 ),
               ),
-
 
               // Obx(() {
               //   child: SliverToBoxAdapter(
@@ -364,20 +391,19 @@ class HomePage extends StatelessWidget {
                                 backgroundColor: AppColors.greyColor,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
-                                    side: BorderSide(color: AppColors.whiteColor, width: 2)
-                                ),
-
+                                    side: BorderSide(
+                                        color: AppColors.whiteColor, width: 2)),
                               ),
                               onPressed: () {
-
-                                homeController.selectedFilters.keys.forEach((filterName) {
-                                  homeController.updateFilter(filterName, false);
+                                homeController.selectedFilters.keys
+                                    .forEach((filterName) {
+                                  homeController.updateFilter(
+                                      filterName, false);
                                 });
 
                                 homeController.indexCategory.value = 0;
                                 homeController.selectedCategory.value == "All";
                                 homeController.updateCategory(0);
-
                               },
                               child: TextStyleHelper.CustomText(
                                 text: "Clear filters",
@@ -399,7 +425,8 @@ class HomePage extends StatelessWidget {
                     itemCount: homeController.filteredEvents.length,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 1,
                       mainAxisSpacing: 16,
                       mainAxisExtent: 320,
@@ -411,12 +438,8 @@ class HomePage extends StatelessWidget {
                   ),
                 );
               })
-
-
             ],
-          )
-
-        ),
+          )),
     );
   }
 

@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eventapp/controller/loc_cont.dart';
 import 'package:get/get.dart';
 import '../model/event_model.dart';
 
 class HomeController extends GetxController {
   static HomeController get instance => Get.find();
+
+  final LocationController locationController = Get.put(LocationController());
 
   final RxInt curousalCurrentIndex = 0.obs;
   var favoriteEvents = <int>{}.obs;
@@ -12,6 +15,7 @@ class HomeController extends GetxController {
 
   var events = <EventModel>[].obs;
   var filteredEvents = <EventModel>[].obs;
+  var carouselEvents = <EventModel>[].obs;
   var selectedCategory = 'All'.obs;
   RxString searchQuery = ''.obs;
 
@@ -27,6 +31,24 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     fetchEvents();
+    locationController.getLocation();
+  }
+
+  DateTime parseEventDate(String dateStr) {
+    try {
+      // Assuming date format is "dd-MM-yyyy" or "dd/MM/yyyy"
+      List<String> parts = dateStr.replaceAll('/', '-').split('-');
+      if (parts.length == 3) {
+        int day = int.parse(parts[0]);
+        int month = int.parse(parts[1]);
+        int year = int.parse(parts[2]);
+        return DateTime(year, month, day);
+      }
+      return DateTime.now(); // fallback to current date if parsing fails
+    } catch (e) {
+      print("Error parsing date: $e");
+      return DateTime.now();
+    }
   }
 
   Future<void> fetchEvents() async {
@@ -35,10 +57,28 @@ class HomeController extends GetxController {
       QuerySnapshot snapshot =
       await FirebaseFirestore.instance.collection('eventDetails').get();
 
+      DateTime now = DateTime.now();
+      // Remove time component from current date for accurate date comparison
+      DateTime today = DateTime(now.year, now.month, now.day);
+
+      // Filter out expired events and convert to EventModel
       events.value = snapshot.docs.map((doc) {
         var data = doc.data() as Map<String, dynamic>;
         return EventModel.fromJson(data);
+      }).where((event) {
+        DateTime eventDate = parseEventDate(event.eventDate);
+        return eventDate.isAfter(today) || eventDate.isAtSameMomentAs(today);
       }).toList();
+
+      // Sort events by date
+      events.sort((a, b) {
+        DateTime dateA = parseEventDate(a.eventDate);
+        DateTime dateB = parseEventDate(b.eventDate);
+        return dateA.compareTo(dateB);
+      });
+
+      // Get the nearest 3 events for carousel
+      carouselEvents.value = events.take(3).toList();
 
       applyFilters();
     } catch (e) {

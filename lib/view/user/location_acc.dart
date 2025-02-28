@@ -38,15 +38,15 @@ class Location extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         ElevatedButton(
-                            onPressed: (){Get.offAll(() => DashboardPage());},
-                            child: Text('Skip', style: TextStyle(
-                              color: AppColors.whiteColor,
-                              backgroundColor: Colors.transparent,
-                              fontFamily: Assets.fontsPoppinsBold,
-                              fontSize: FontSizes.button,
-                              fontWeight: FontWeight.w600,
-                            ),),
-                                                  ),
+                          onPressed: (){Get.offAll(() => DashboardPage());},
+                          child: Text('Skip', style: TextStyle(
+                            color: AppColors.whiteColor,
+                            backgroundColor: Colors.transparent,
+                            fontFamily: Assets.fontsPoppinsBold,
+                            fontSize: FontSizes.button,
+                            fontWeight: FontWeight.w600,
+                          ),),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 490,),
@@ -91,10 +91,10 @@ class Location extends StatelessWidget {
                           showLocationBottomSheet(context);
                         },
                         child: Padding(
-                            padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(8.0),
                           child: Container(
                             decoration: BoxDecoration(
-                              border: Border(bottom: BorderSide(width: 2, color: AppColors.primaryColor),)
+                                border: Border(bottom: BorderSide(width: 2, color: AppColors.primaryColor),)
                             ),
                             child: TextStyleHelper.CustomText(
                               text: "Select location manually",
@@ -102,7 +102,7 @@ class Location extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                               fontSize: FontSizes.button,
                               fontFamily: Assets.fontsPoppinsBold,
-                              ),
+                            ),
                           ),
                         ),
                       ),

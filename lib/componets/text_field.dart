@@ -3,23 +3,25 @@ import 'package:eventapp/utills/appcolors.dart';
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
   final String? label;
   final String hintText;
   final bool? obscureText;
   final VoidCallback? onTap;
   final TextEditingController? controller;
   final IconButton? suffixIcon;
+  final TextOverflow? overflow;
 
   const CustomTextField({
     Key? key,
-    required this.icon,
+    this.icon,
     this.label,
     required this.hintText,
     this.obscureText,
     this.onTap,
     this.controller,
     this.suffixIcon,
+    this.overflow,
   }) : super(key: key);
 
   @override

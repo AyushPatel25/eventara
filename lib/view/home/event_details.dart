@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:eventapp/componets/button.dart';
 import 'package:eventapp/controller/MapThemeController.dart';
 import 'package:eventapp/controller/event_details_cont.dart';
+import 'package:eventapp/controller/loc_cont.dart';
 import 'package:eventapp/view/home/buyTicket_page.dart';
 import 'package:eventapp/view/home/dashboard_page.dart';
 import 'package:eventapp/view/home/eticket.dart';
@@ -24,6 +25,7 @@ class EventDetails extends StatelessWidget {
 
   final EventDetailsController eventDetailsController =
       Get.put(EventDetailsController());
+  final LocationController locationController = Get.put(LocationController());
   final MapThemeController mapThemeController = Get.put(MapThemeController());
   final EticketController eticketController = Get.put(EticketController());
 
@@ -530,7 +532,7 @@ class EventDetails extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
                   child: TextStyleHelper.CustomText(
-                      text: 'Artist',
+                      text: 'Artist/Host',
                       color: AppColors.whiteColor,
                       fontWeight: FontWeight.w600,
                       fontSize: 18,
@@ -675,67 +677,6 @@ class EventDetails extends StatelessWidget {
                         )
                       ],
                     ),
-                    //padding: EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-                    /*height: 130,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(25),
-                    color: AppColors.greyColor,
-                  ),
-                  child: Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(25),
-                        child: ImageFiltered(
-                          imageFilter: ImageFilter.blur(
-                            sigmaX: 2,
-                            sigmaY: 2,
-                          ),
-                          child: Image(
-                            image: AssetImage(Assets.imagesMaps),
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                          ),
-                        ),
-                      ),
-
-                      Padding(
-                        padding: EdgeInsets.all(20),
-
-                        child: Row(
-                          children: [
-                            Icon(Iconsax.location_copy, size: 20, color: AppColors.whiteColor,),
-
-                            const SizedBox(width: 15,),
-
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  TextStyleHelper.CustomText(
-                                      text: 'Jio Garden',
-                                      color: AppColors.whiteColor,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
-                                      fontFamily: Assets.fontsPoppinsBold
-                                  ),
-
-                                  TextStyleHelper.CustomText(
-                                      text: "No 3 & 4, Jio Garden Public Gate, G Block BKC, Greenfiber complex, Vesu south-394110, Surat, Gujarat, India",
-                                      color: AppColors.lightGrey,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 12,
-                                      fontFamily: Assets.fontsPoppinsRegular
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                ],
-                  ),*/
                   ),
                 ),
               ),

@@ -209,16 +209,25 @@ class FilterPage extends StatelessWidget {
                       color: AppColors.whiteColor,
                     ),
                   ),
-                  suffixIcon: GestureDetector(
-                    onTap: () {
-                      searchController.clear();
-                      filterController.updateSearchQuery("");
-                    },
-                    child: Icon(
-                      CupertinoIcons.xmark_circle_fill,
-                      color: AppColors.lightGrey,
-                      size: 20,
-                    ),
+                  suffixIcon: Obx(() {
+                    return Visibility(
+                      //visible: filterController.isWrite.value? false : true,
+                      visible: filterController.searchQuery.isEmpty
+                          ? false
+                          : true,
+                      child: GestureDetector(
+                        onTap: () {
+                          searchController.clear();
+                          filterController.updateSearchQuery("");
+                        },
+                        child: Icon(
+                          CupertinoIcons.xmark_circle_fill,
+                          color: AppColors.lightGrey,
+                          size: 20,
+                        ),
+                      ),
+                    );
+                  }
                   ),
                   hintText: "Search by name, date, artist...",
                   hintStyle: TextStyle(
@@ -362,18 +371,27 @@ class FilterPage extends StatelessWidget {
                       ],
                     );
                   }
-                  return GridView.builder(
-                    padding: EdgeInsets.all(0),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 1,
-                      mainAxisSpacing: 16,
-                      mainAxisExtent: 320,
-                    ),
-                    itemCount: filterController.filteredEvents.length,
+                  // return GridView.builder(
+                  //   padding: EdgeInsets.all(0),
+                  //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  //     crossAxisCount: 1,
+                  //     mainAxisSpacing: 16,
+                  //     mainAxisExtent: 320,
+                  //   ),
+                  //   itemCount: filterController.filteredEvents.length,
+                  //   itemBuilder: (context, index) {
+                  //     return Searchwidget(index: index);
+                  //   },
+                  // );
+                  return ListView.builder(
+                    itemCount:filterController.filteredEvents.length,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
                       return Searchwidget(index: index);
                     },
                   );
+
                 }),
               ),
             ],
