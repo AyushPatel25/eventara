@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eventapp/controller/loc_cont.dart';
 import 'package:eventapp/model/event_model.dart';
 import 'package:eventapp/componets/text_style.dart';
 import 'package:eventapp/generated/assets.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class EventDetailsController extends GetxController {
   final ScrollController scrollController = ScrollController();
+  final LocationController locationController = Get.put(LocationController());
   var isTitleVisible = RxBool(false);
   double titlePosition = 200;
 
@@ -20,8 +22,7 @@ class EventDetailsController extends GetxController {
 
   var currentLocation = Rx<Position?>(null);
   var destinationLocation = Rxn<Coords>();
-
-
+  var manualLocationString = Rxn<String>();
 
   @override
   void onInit() {
@@ -119,12 +120,109 @@ class EventDetailsController extends GetxController {
       Get.snackbar("Error", "Could not get location", backgroundColor: Colors.red);
     }
   }
+  // Future<void> openMaps() async {
+  //   // Assign the manual location string properly using .value
+  //   manualLocationString.value = "${locationController.selectedCity.value}, ${locationController.selectedState.value}, ${locationController.selectedCountry.value}";
+  //
+  //   try {
+  //     Coords? originCoords;
+  //
+  //     // Check if manual location is available
+  //     if (manualLocationString.value != null && manualLocationString.value!.isNotEmpty) {
+  //       // We'll use the manual location string as the origin title, not coordinates
+  //       print("Using manual location: ${manualLocationString.value}");
+  //     } else {
+  //       // Fallback to current location if manual location is not set
+  //       if (currentLocation.value == null) {
+  //         await getUserLocation();
+  //       }
+  //       if (currentLocation.value != null) {
+  //         originCoords = Coords(currentLocation.value!.latitude, currentLocation.value!.longitude);
+  //       }
+  //     }
+  //
+  //     if (destinationLocation.value == null) {
+  //       Get.snackbar("Error", "Destination location not set.", backgroundColor: Colors.red);
+  //       return;
+  //     }
+  //
+  //     final availableMaps = await MapLauncher.installedMaps;
+  //     if (availableMaps.isEmpty) {
+  //       Get.snackbar("Error", "No installed map applications found.", backgroundColor: Colors.red);
+  //       return;
+  //     }
+  //
+  //     showModalBottomSheet(
+  //       backgroundColor: Colors.black,
+  //       context: Get.context!,
+  //       builder: (BuildContext context) {
+  //         return Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             Padding(
+  //               padding: const EdgeInsets.all(20.0),
+  //               child: TextStyleHelper.CustomText(
+  //                 text: 'Open In',
+  //                 color: AppColors.whiteColor,
+  //                 fontWeight: FontWeight.w600,
+  //                 fontSize: 20,
+  //                 fontFamily: Assets.fontsPoppinsRegular,
+  //               ),
+  //             ),
+  //             Divider(color: AppColors.divider, height: 10),
+  //             ListView.builder(
+  //               shrinkWrap: true,
+  //               itemCount: availableMaps.length,
+  //               itemBuilder: (context, index) {
+  //                 final map = availableMaps[index];
+  //                 return ListTile(
+  //                   title: TextStyleHelper.CustomText(
+  //                     text: map.mapName,
+  //                     color: AppColors.whiteColor,
+  //                     fontWeight: FontWeight.w400,
+  //                     fontSize: 15,
+  //                     fontFamily: Assets.fontsPoppinsRegular,
+  //                   ),
+  //                   leading: SvgPicture.asset(
+  //                     map.icon,
+  //                     height: 30.0,
+  //                     width: 30.0,
+  //                   ),
+  //                   onTap: () async {
+  //                     Navigator.of(context).pop();
+  //                     if (manualLocationString.value != null && manualLocationString.value!.isNotEmpty) {
+  //                       // Use manual location string as the origin title
+  //                       await map.showDirections(
+  //                         originTitle: manualLocationString.value, // Pass the string as the origin title
+  //                         destination: destinationLocation.value!,
+  //                       );
+  //                     } else if (originCoords != null) {
+  //                       // Use current location coordinates if manual location is not set
+  //                       await map.showDirections(
+  //                         origin: originCoords,
+  //                         destination: destinationLocation.value!,
+  //                       );
+  //                     } else {
+  //                       Get.snackbar("Error", "No origin location available", backgroundColor: Colors.red);
+  //                     }
+  //                   },
+  //                 );
+  //               },
+  //             ),
+  //           ],
+  //         );
+  //       },
+  //     );
+  //   } catch (e) {
+  //     Get.snackbar("Error", "Could not open maps: $e", backgroundColor: Colors.red);
+  //   }
+  // }
 
   /// **Open Google Maps or Other Map Apps**
   Future<void> openMaps() async {
     try {
       if (currentLocation.value == null) {
-        await getUserLocation();
+        await locationController.getLocation();
       }
 
       if (destinationLocation.value == null) {

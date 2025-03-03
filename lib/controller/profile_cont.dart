@@ -29,6 +29,7 @@ class ProfileController extends GetxController {
   void onInit() {
     super.onInit();
     fetchUserData();
+    fetchOrganizerData();
   }
 
   Future<void> fetchUserData() async {
@@ -49,29 +50,34 @@ class ProfileController extends GetxController {
     }
   }
 
-  // Future<void> fetchOrganizerData() async {
-  //   User? user = _auth.currentUser;
-  //   if (user != null) {
-  //     DocumentSnapshot userDoc = await _firestore.collection('organizers').doc(user.uid).get();
-  //     if (userDoc.exists) {
-  //       uid.value = userDoc['oid'];
-  //       username.value = userDoc['username'];
-  //       email.value = userDoc['email'];
-  //
-  //
-  //       box.write('username', username.value);
-  //       box.write('email', email.value);
-  //     }
-  //   } else {
-  //     Get.snackbar("Error", "User not found", snackPosition: SnackPosition.BOTTOM);
-  //   }
-  // }
+  Future<void> fetchOrganizerData() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      DocumentSnapshot userDoc = await _firestore.collection('organizers').doc(user.uid).get();
+      if (userDoc.exists) {
+        uid.value = userDoc['uid'];
+        username.value = userDoc['organizerName'];
+        email.value = userDoc['organizerEmail'];
+
+
+        box.write('organizerName', username.value);
+        box.write('organizerEmail', email.value);
+      }
+    } else {
+      Get.snackbar("Error", "User not found", snackPosition: SnackPosition.BOTTOM);
+    }
+  }
 
   Future<void> updateUserName(String uid, String newName) async{
     if(newName.isNotEmpty){
       await _firestore.collection('users').doc(uid).update({'username': newName});
       name.value = newName;
-      Get.snackbar("Success", "Profile updated successfully", backgroundColor: Colors.green);
+    }
+  }
+  Future<void> updateOrgName(String uid, String newName) async{
+    if(newName.isNotEmpty){
+      await _firestore.collection('organizers').doc(uid).update({'organizerName': newName});
+      name.value = newName;
     }
   }
   Future<void> logout() async {

@@ -5,10 +5,13 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class EventModel {
   final String ageLimit;
   final String arrangement;
+
   //final Map<String, dynamic> artist;
   // final List<String> artist;
-  final List<Artist> artists; // ✅ Change from Map<String, dynamic> to List<Artist>
-
+  final List<
+      Artist> artists;
+  final String eventCity;
+  final String eventState;
   final String category;
   final String eventDate;
   final String expiryDate;
@@ -23,6 +26,9 @@ class EventModel {
   final String time;
   final String title;
   final LatLng venue;
+  double? latitude;
+  double? longitude;
+
 
   EventModel({
     required this.ageLimit,
@@ -42,15 +48,37 @@ class EventModel {
     required this.time,
     required this.title,
     required this.venue,
+    required this.latitude, // ✅ Add these
+    required this.longitude,
+    required this.eventCity,
+    required this.eventState,
   });
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
     print("🔥 Raw Firebase Data: $json");
 
+    LatLng parsedVenue = _parseVenue(json['venue']);
+    double? latitude = parsedVenue.latitude;
+    double? longitude = parsedVenue.longitude;
+
+    if (json['latitude'] != null) {
+      latitude = json['latitude'] is String ?
+      double.tryParse(json['latitude']) :
+      json['latitude'];
+    }
+
+    if (json['longitude'] != null) {
+      longitude = json['longitude'] is String ?
+      double.tryParse(json['longitude']) :
+      json['longitude'];
+    }
+
     EventModel event = EventModel(
       ageLimit: json['ageLimit'] ?? '',
       arrangement: json['arrangement'] ?? '',
-      artists: (json['artists'] as List?)?.map((e) => Artist.fromJson(e)).toList() ?? [], // ✅ Fix applied here
+      artists: (json['artists'] as List?)
+          ?.map((e) => Artist.fromJson(e))
+          .toList() ?? [],
       category: json['category'] ?? '',
       eventDate: json['eventDate'] ?? '',
       expiryDate: json['expiryDate'] ?? '',
@@ -66,13 +94,20 @@ class EventModel {
       ) ?? {},
       time: json['time'] ?? '',
       title: json['title'] ?? '',
-      venue: _parseVenue(json['venue']),
+      venue: parsedVenue,
+      latitude: latitude,
+      // ✅ Ensure non-nullable values
+      longitude: longitude, // ✅ Ensure non-nullable values
+      eventCity: json['eventCity'] ?? '',
+      eventState: json['eventState'] ?? '',
     );
 
     print("✅ Parsed Venue Coordinates: ${event.venue.latitude}, ${event.venue
         .longitude}");
+    print("✅ Event Lat/Lon: ${event.latitude}, ${event.longitude}");
     return event;
   }
+
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> data = {
@@ -94,6 +129,8 @@ class EventModel {
       'time': time,
       'title': title,
       'venue': [venue.latitude, venue.longitude],
+      'eventCity': eventCity,
+      'eventState': eventState,
     };
 
     print(
@@ -113,39 +150,90 @@ class EventModel {
 
   int getStartingPrice() {
     if (ticketTypes.isEmpty) return 0;
-    return ticketTypes.values.map((e) => e.price).reduce((a, b) => a < b ? a : b);
+    return ticketTypes.values.map((e) => e.price).reduce((a, b) =>
+    a < b
+        ? a
+        : b);
   }
-
 
 
   static LatLng _parseVenue(dynamic venue) {
     print("📍 Raw Venue Data: $venue");
 
-    if (venue is GeoPoint) {
-      print(
-          "✅ Venue parsed as GeoPoint: ${venue.latitude}, ${venue.longitude}");
-      return LatLng(venue.latitude, venue.longitude);
-    } else if (venue is List && venue.length == 2) {
-      print("✅ Venue parsed as List: ${venue[0]}, ${venue[1]}");
-      return LatLng(venue[0], venue[1]);
-    } else if (venue is String) {
-      // Handle string format like "21.15534° N, 72.76881° E"
-      List<String> coords = venue.replaceAll(RegExp(r'[^\d.,-]'), '').split(
-          ',');
-      if (coords.length == 2) {
-        double? lat = double.tryParse(coords[0]);
-        double? lng = double.tryParse(coords[1]);
-        if (lat != null && lng != null) {
-          print("✅ Venue parsed from String: $lat, $lng");
-          return LatLng(lat, lng);
+    double lat = 0.0;
+    double lng = 0.0;
+    bool validCoordinates = false;
+
+    try {
+      if (venue is GeoPoint) {
+        lat = venue.latitude;
+        lng = venue.longitude;
+        validCoordinates = true;
+      } else if (venue is List) {
+        if (venue.length >= 2) {
+          // Try to safely parse each coordinate
+          if (venue[0] is num) {
+            lat = (venue[0] as num).toDouble();
+          } else if (venue[0] is String) {
+            lat = double.tryParse(venue[0]) ?? 0.0;
+          }
+
+          if (venue[1] is num) {
+            lng = (venue[1] as num).toDouble();
+          } else if (venue[1] is String) {
+            lng = double.tryParse(venue[1]) ?? 0.0;
+          }
+
+          validCoordinates = true;
+        }
+      } else if (venue is String) {
+        // Handle string format
+        venue = venue.replaceAll('°', ''); // Remove degree symbols
+        List<String> parts = venue.split(',');
+        if (parts.length >= 2) {
+          String latStr = parts[0].replaceAll(RegExp(r'[^\d.-]'), '');
+          String lngStr = parts[1].replaceAll(RegExp(r'[^\d.-]'), '');
+
+          lat = double.tryParse(latStr) ?? 0.0;
+          lng = double.tryParse(lngStr) ?? 0.0;
+          validCoordinates = true;
+        }
+      } else if (venue is Map) {
+        // Handle map format
+        if (venue.containsKey('latitude') && venue.containsKey('longitude')) {
+          var rawLat = venue['latitude'];
+          var rawLng = venue['longitude'];
+
+          if (rawLat is num) {
+            lat = rawLat.toDouble();
+          } else if (rawLat is String) {
+            lat = double.tryParse(rawLat) ?? 0.0;
+          }
+
+          if (rawLng is num) {
+            lng = rawLng.toDouble();
+          } else if (rawLng is String) {
+            lng = double.tryParse(rawLng) ?? 0.0;
+          }
+
+          validCoordinates = true;
         }
       }
+    } catch (e) {
+      print("❌ Error parsing venue: $e");
     }
 
-    print("❌ Venue parsing failed, returning (0.0, 0.0)");
-    return LatLng(0.0, 0.0);
+    if (validCoordinates) {
+      print("✅ Venue parsed: $lat, $lng");
+    } else {
+      print("❌ Venue parsing failed, returning (0.0, 0.0)");
+    }
+
+    return LatLng(lat, lng);
   }
 }
+
+
 
 
 

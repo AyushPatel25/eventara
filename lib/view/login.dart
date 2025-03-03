@@ -6,7 +6,6 @@ import 'package:eventapp/utills/appcolors.dart';
 import 'package:eventapp/view/forgetpage.dart';
 import 'package:eventapp/view/home/dashboard_page.dart';
 import 'package:eventapp/view/organizer/organizer_dashboard.dart';
-import 'package:eventapp/view/organizer/organizer_home.dart';
 import 'package:eventapp/view/user/location_acc.dart';
 import 'package:eventapp/view/user/signUp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -32,41 +31,29 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   late GifController _controller;
-  //final FirebaseAuthService authService = FirebaseAuthService();
-
   final TextEditingController _emailController = TextEditingController();
-
   final TextEditingController _passwordController = TextEditingController();
-
   final AuthController authController = Get.put(AuthController());
-
   final GetStorage box = GetStorage();
-
   final RxBool isLoading = false.obs;
-
   String _selectedUserType = "Audience";
 
   @override
-  void dispose(){
+  void dispose() {
     _controller.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
-  //late AuthController authController;
 
   @override
   void initState() {
     super.initState();
     _controller = GifController(vsync: this);
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _controller.reset();
     });
-
-    //authController = Get.put(AuthController());
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -135,12 +122,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-
-
                                 ChoiceChip(
                                   label: TextStyleHelper.CustomText(
                                     text: "Audience",
-                                    color: _selectedUserType== "Audience" ? Colors.black : AppColors.whiteColor,
+                                    color: _selectedUserType == "Audience" ? Colors.black : AppColors.whiteColor,
                                     fontWeight: FontWeight.w600,
                                     fontSize: 14,
                                     fontFamily: 'regular',
@@ -151,17 +136,14 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   onSelected: (selected) {
                                     setState(() {
                                       _selectedUserType = "Audience";
-                                      Get.offAll(Location());
                                     });
                                   },
                                 ),
-
                                 const SizedBox(width: 10),
-
                                 ChoiceChip(
                                   label: TextStyleHelper.CustomText(
                                     text: "Organizer",
-                                    color: _selectedUserType== "Organizer" ? Colors.black : AppColors.whiteColor,
+                                    color: _selectedUserType == "Organizer" ? Colors.black : AppColors.whiteColor,
                                     fontWeight: FontWeight.w600,
                                     fontSize: 14,
                                     fontFamily: 'regular',
@@ -183,7 +165,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               icon: Icons.email_outlined,
                               hintText: CustomString().Email,
                             ),
-
                             const SizedBox(height: 10.0),
                             Obx(() => CustomTextField(
                               controller: _passwordController,
@@ -200,73 +181,35 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 ),
                               ),
                             )),
-
-
-
                             const SizedBox(height: 16.0),
-
-                          Center(
-                            child: InkWell(
-                              onTap: () {
-                                Get.to(Forgetpage());
-                              },
-                              child: TextStyleHelper.CustomText(
-                                text: "Forgot Password?",
-                                color: AppColors.primaryColor,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                                fontFamily: Assets.fontsPoppinsBold,
+                            Center(
+                              child: InkWell(
+                                onTap: () {
+                                  Get.to(Forgetpage());
+                                },
+                                child: TextStyleHelper.CustomText(
+                                  text: "Forgot Password?",
+                                  color: AppColors.primaryColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  fontFamily: Assets.fontsPoppinsBold,
+                                ),
                               ),
                             ),
-                          ),
-
                             const SizedBox(height: 16.0),
-                            // Obx(() =>
-                            // authController.isLoading.value? Center(child: CircularProgressIndicator(),)
-                            //     /*:*/ CustomButton(
-                            //     label: 'Continue',
-                            //     onPressed: (){
-                            //       validateEmail(
-                            //         emailController: _emailController,
-                            //         passwordController: _passwordController, // Pass password controller
-                            //         context: context,
-                            //         userType: _selectedUserType,
-                            //         //authController: authController, // Pass AuthController
-                            //       );
-
-                                  //authController.login(email: _emailController.text.trim(), password: _passwordController.text.trim());
-                        // CustomButton(
-                        //     label: 'Continue',
-                        //     onPressed: (){
-                        //       validateEmail(
-                        //         emailController: _emailController,
-                        //         passwordController: _passwordController,
-                        //         context: context,
-                        //         userType: _selectedUserType,
-                        //         //authController: authController,
-                        //       );
-                        //       _signIn();
-                        //       // if(_selectedUserType == "Organizer"){
-                        //       //   _signInOrganizer();
-                        //       // }
-                        //       // else if(_selectedUserType == "Audience"){
-                        //       //   _signIn();
-                        //       // }
-                        //     }
-                        //     ),
                             Obx(() => ElevatedButton(
-                              onPressed: () {
+                              onPressed: isLoading.value
+                                  ? null
+                                  : () {
                                 validateEmail(
                                   emailController: _emailController,
                                   passwordController: _passwordController,
                                   context: context,
                                   userType: _selectedUserType,
-                                            //authController: authController,
                                 );
-                                if(_selectedUserType == "Organizer"){
+                                if (_selectedUserType == "Organizer") {
                                   _signInOrganizer();
-                                }
-                                else if(_selectedUserType == "Audience"){
+                                } else if (_selectedUserType == "Audience") {
                                   _signIn();
                                 }
                               },
@@ -282,15 +225,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   : Text(
                                 "Continue",
                                 style: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: 'bold',
-                                    fontSize: 17
+                                  color: Colors.black,
+                                  fontFamily: 'bold',
+                                  fontSize: 17,
                                 ),
                               ),
                             )),
-
-                            const SizedBox(height: 16,),
-
+                            const SizedBox(height: 16),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -301,9 +242,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   fontSize: 14,
                                   fontFamily: Assets.fontsPoppinsBold,
                                 ),
-
-                                SizedBox(width: 10,),
-
+                                SizedBox(width: 10),
                                 InkWell(
                                   onTap: () {
                                     Get.to(SignUpPage());
@@ -317,7 +256,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   ),
                                 ),
                               ],
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -330,48 +269,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         ),
       ),
     );
-  }
-
-  void _signInOrganizer() async {
-    String email = _emailController.text.trim();
-    String password = _passwordController.text.trim();
-
-    try {
-      UserCredential credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      User? user = credential.user;
-
-      if (user != null) {
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('organizers').doc(user.uid).get();
-
-        if (userDoc.exists) {
-
-          final box = GetStorage();
-          box.write('isLoggedIn', true);
-          box.write('oid', user.uid);
-          box.write('organizerName', userDoc['organizerName']);
-          box.write('organizerEmail', userDoc['organizerEmail']);
-
-          Get.offAll(OrganizerDashboard());
-
-          // if(_selectedUserType == "Organizer"){
-          //   Get.offAll(DashboardPage());
-          // }
-          // else if(_selectedUserType == "Audience"){
-          //   Get.offAll(() => Location());
-          // }
-        } else {
-          Get.snackbar("Login Error", "User data not found in database",
-              snackPosition: SnackPosition.BOTTOM);
-        }
-      }
-    } on FirebaseAuthException catch (e) {
-      Get.snackbar("Login Failed", e.message ?? "Invalid email or password",
-          snackPosition: SnackPosition.BOTTOM);
-    }
   }
 
   void _signIn() async {
@@ -392,21 +289,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
 
         if (userDoc.exists) {
-
           final box = GetStorage();
           box.write('isLoggedIn', true);
           box.write('uid', user.uid);
           box.write('username', userDoc['username']);
           box.write('email', userDoc['email']);
 
-          // Get.offAll(() => Location());
-
-          if(_selectedUserType == "Organizer"){
-            Get.offAll(OrganizerDashboard());
-          }
-          else if(_selectedUserType == "Audience"){
-            Get.offAll(() => Location());
-          }
+          Get.offAll(() => Location()); // Navigate to Location for Audience
         } else {
           Get.snackbar("Login Error", "User data not found in database",
               snackPosition: SnackPosition.BOTTOM);
@@ -422,4 +311,41 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     }
   }
 
+  void _signInOrganizer() async {
+    String email = _emailController.text.trim();
+    String password = _passwordController.text.trim();
+
+    isLoading.value = true;
+
+    try {
+      UserCredential credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      User? user = credential.user;
+
+      if (user != null) {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('organizers').doc(user.uid).get();
+
+        if (userDoc.exists) {
+          final box = GetStorage();
+          box.write('isLoggedIn', true);
+          box.write('oid', user.uid);
+          box.write('organizerName', userDoc['organizerName']);
+          box.write('organizerEmail', userDoc['organizerEmail']);
+
+          Get.offAll(OrganizerDashboard()); // Navigate to OrganizerDashboard for Organizer
+        } else {
+          Get.snackbar("Login Error", "User data not found in database",
+              snackPosition: SnackPosition.BOTTOM);
+        }
+      }
+    } on FirebaseAuthException catch (e) {
+      Get.snackbar("Login Failed", e.message ?? "Invalid email or password",
+          snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }

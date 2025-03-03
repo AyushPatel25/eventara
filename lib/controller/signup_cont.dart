@@ -27,19 +27,19 @@ class UserModel {
 }
 
 class OrganizerModel {
-  final String oid;
+  final String uid;
   final String organizerName;
   final String organizerEmail;
 
   OrganizerModel({
-    required this.oid,
+    required this.uid,
     required this.organizerName,
     required this.organizerEmail,
   });
 
   Map<String, dynamic> toJson() {
     return {
-      "oid": oid,
+      "uid": uid,
       "organizerName": organizerName,
       "organizerEmail": organizerEmail,
     };
@@ -110,20 +110,19 @@ class SignUpController extends GetxController {
           Get.offAll(Location());
         } else {
           // Generate a new unique OID
-          String oid = firestore.collection("organizers").doc().id;
           String organizationName = organizationNameController.text.trim();
 
           // Save organizer details
           OrganizerModel newOrganizer = OrganizerModel(
-            oid: oid, // Use generated oid
+            uid: user.uid, // Use generated oid
             organizerName: organizationName.isNotEmpty ? organizationName : username, // Use org name or username
             organizerEmail: email,
           );
-          await firestore.collection("organizers").doc(oid).set(newOrganizer.toJson());
+          await firestore.collection("organizers").doc(user.uid).set(newOrganizer.toJson());
 
           // Store organizer details in GetStorage
           box.write('isLoggedIn', true);
-          box.write('oid', oid);
+          box.write('uid', user.uid);
           box.write('organizerName', organizationName.isNotEmpty ? organizationName : username);
           box.write('organizerEmail', email);
           box.write('userType', "Organizer");

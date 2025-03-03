@@ -116,7 +116,7 @@ class Searchwidget extends StatelessWidget {
                             FittedBox(
                               child: Container(
                                 height: 20,
-                                width: 150,
+                                width: 140,
                                 child: TextStyleHelper.CustomText(
                                   text: event.location,
                                   color: AppColors.lightGrey,

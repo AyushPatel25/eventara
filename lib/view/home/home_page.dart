@@ -15,6 +15,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 import '../../componets/ImageSlider.dart';
 import '../../controller/loc_cont.dart';
+import '../../model/event_model.dart';
 import '../user/location_bottom_sheet.dart';
 import 'event_details.dart';
 
@@ -383,36 +384,36 @@ class HomePage extends StatelessWidget {
                               fontSize: 16,
                               fontFamily: Assets.fontsPoppinsBold,
                             ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.greyColor,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    side: BorderSide(
-                                        color: AppColors.whiteColor, width: 2)),
-                              ),
-                              onPressed: () {
-                                homeController.selectedFilters.keys
-                                    .forEach((filterName) {
-                                  homeController.updateFilter(
-                                      filterName, false);
-                                });
-
-                                homeController.indexCategory.value = 0;
-                                homeController.selectedCategory.value == "All";
-                                homeController.updateCategory(0);
-                              },
-                              child: TextStyleHelper.CustomText(
-                                text: "Clear filters",
-                                color: AppColors.whiteColor,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                                fontFamily: Assets.fontsPoppinsBold,
-                              ),
-                            )
+                            // const SizedBox(
+                            //   height: 10,
+                            // ),
+                            // ElevatedButton(
+                            //   style: ElevatedButton.styleFrom(
+                            //     backgroundColor: AppColors.greyColor,
+                            //     shape: RoundedRectangleBorder(
+                            //         borderRadius: BorderRadius.circular(10),
+                            //         side: BorderSide(
+                            //             color: AppColors.whiteColor, width: 2)),
+                            //   ),
+                            //   onPressed: () {
+                            //     homeController.selectedFilters.keys
+                            //         .forEach((filterName) {
+                            //       homeController.updateFilter(
+                            //           filterName, false);
+                            //     });
+                            //
+                            //     homeController.indexCategory.value = 0;
+                            //     homeController.selectedCategory.value == "All";
+                            //     homeController.updateCategory(0);
+                            //   },
+                            //   child: TextStyleHelper.CustomText(
+                            //     text: "Clear filters",
+                            //     color: AppColors.whiteColor,
+                            //     fontWeight: FontWeight.w600,
+                            //     fontSize: 14,
+                            //     fontFamily: Assets.fontsPoppinsBold,
+                            //   ),
+                            // )
                           ],
                         ),
                       ),
@@ -437,7 +438,137 @@ class HomePage extends StatelessWidget {
                     },
                   ),
                 );
-              })
+              }),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  child: TextStyleHelper.CustomText(
+                    text: "Near Events",
+                    color: AppColors.whiteColor,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 20,
+                    fontFamily: Assets.fontsPoppinsBold,
+                  ),
+                ),
+              ),
+              Obx(() {
+                // Check if location services are disabled
+                if (!locationController.isLocationEnabled.value) {
+                  print("isLocationEnabled: ${locationController.isLocationEnabled.value}");
+                  return SliverToBoxAdapter(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(80.0),
+                        child: Column(
+                          children: [
+                            Icon(Icons.location_off,
+                                size: 80,
+                                color: AppColors.whiteColor),
+                            const SizedBox(height: 10),
+                            TextStyleHelper.CustomText(
+                              text: "Your live location is off!",
+                              color: AppColors.whiteColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              fontFamily: Assets.fontsPoppinsBold,
+                            ),
+                            const SizedBox(height: 10),
+                            ElevatedButton(
+                              onPressed: () {
+                                locationController.getLocation();
+                              },
+                              child: Text("Turn On Location"),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }
+
+                // Get events based on location mode
+                List<EventModel> nearEvents = [];
+
+                if (locationController.isManualSelection.value) {
+                  // Manual selection: filter events based on selectedCity and selectedState
+                  nearEvents = homeController.events.where((event) {
+                    bool cityMatch = event.eventCity?.toLowerCase() ==
+                        locationController.selectedCity.value.toLowerCase();
+                    bool stateMatch = event.eventState?.toLowerCase() ==
+                        locationController.selectedState.value.toLowerCase();
+                    return cityMatch && stateMatch;
+                  }).toList();
+                } else {
+                  // Live location: use distance-based calculation
+                  nearEvents = homeController.nearEvents;
+                }
+
+                if (nearEvents.isEmpty) {
+                  return SliverToBoxAdapter(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(80.0),
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              Assets.imagesNoEvent,
+                              height: 200,
+                              width: 200,
+                            ),
+                            const SizedBox(height: 10),
+                            TextStyleHelper.CustomText(
+                              text: "No events found near you!",
+                              color: AppColors.whiteColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              fontFamily: Assets.fontsPoppinsBold,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }
+
+                return SliverToBoxAdapter(
+                  child: GridView.builder(
+                    itemCount: nearEvents.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 1,
+                      mainAxisSpacing: 16,
+                      mainAxisExtent: 320,
+                    ),
+                    itemBuilder: (context, index) {
+                      var event = nearEvents[index];
+                      return Cardwidget(
+                        index: index,
+                        // Pass the event if Cardwidget accepts it
+                      );
+                    },
+                  ),
+                );
+              }),
+
+              // Obx(() {
+              //   return SliverToBoxAdapter(
+              //     child: GridView.builder(
+              //       itemCount: homeController.nearEvents.length,
+              //       shrinkWrap: true,
+              //       physics: const NeverScrollableScrollPhysics(),
+              //       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              //         crossAxisCount: 1,
+              //         mainAxisSpacing: 16,
+              //         mainAxisExtent: 320,
+              //       ),
+              //       itemBuilder: (context, index) {
+              //         var event = homeController.nearEvents[index]; // Fixed to use nearEvents
+              //         return Cardwidget(index: index);
+              //       },
+              //     ),
+              //   );
+              // }),
             ],
           )),
     );

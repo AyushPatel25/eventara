@@ -3,6 +3,7 @@ import 'package:eventapp/componets/button.dart';
 import 'package:eventapp/componets/text_field.dart';
 import 'package:eventapp/controller/profile_cont.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
@@ -126,8 +127,15 @@ class EditProfile extends StatelessWidget {
                 label: "Update profile",
                 onPressed: () async {
                   profileController.updateUserName(profileController.uid.value, usernameController.text);
-                  Get.snackbar("Success", "Profile updated successfully", backgroundColor: Colors.green);
+                  profileController.updateOrgName(profileController.uid.value, usernameController.text);
+                  Fluttertoast.showToast(
+                    msg: "Profile updated successfully",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    //timeInSecForIosWeb: 3,
+                  );
                   profileController.fetchUserData();
+                  profileController.fetchOrganizerData();
                 }
             ),
           ),

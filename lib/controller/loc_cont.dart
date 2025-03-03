@@ -568,6 +568,8 @@ class LocationController extends GetxController{
   var isManualSelection = false.obs;
 
   var manualLocation = Rxn<Position>();
+  var isLocationEnabled = false.obs;
+
 
   //var selectedItems = <String>[].obs;
   var displayList = <dynamic>[].obs;
@@ -576,6 +578,8 @@ class LocationController extends GetxController{
   var selectedCountry = "".obs;
   var selectedState = "".obs;
   var selectedCity = "".obs;
+
+  var manualAddress = "".obs;
 
   String selectedCountryCode = "";
   String selectedStateCode = "";
@@ -711,8 +715,8 @@ class LocationController extends GetxController{
             headingAccuracy: 0.0,
           );
 
-          latitude.value = 'Latitude: $lat';
-          longitude.value = 'Longitude: $lng';
+          latitude.value = '$lat';
+          longitude.value = '$lng';
 
           print("Manual Location Set: Lat: $lat, Lng: $lng");
         }
@@ -732,8 +736,8 @@ class LocationController extends GetxController{
     bool serviceEnabled;
     LocationPermission permission;
 
-    // Check if location services are enabled
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    isLocationEnabled.value = serviceEnabled;
     if (!serviceEnabled) {
       await Geolocator.openLocationSettings(); // Prompt user to enable GPS
       return Future.error('Location services are disabled.');
@@ -758,11 +762,13 @@ class LocationController extends GetxController{
 
     try {
       Position position = await Geolocator.getCurrentPosition();
+      isLocationEnabled.value = true;
       if (position.latitude == 0.0 && position.longitude == 0.0) {
         await Geolocator.openLocationSettings();
         return Future.error('GPS seems to be off. Please enable it.');
       }
     } catch (e) {
+      isLocationEnabled.value = false;
       await Geolocator.openLocationSettings();
       return Future.error('Error getting location. Ensure GPS is on.');
     }
@@ -770,8 +776,8 @@ class LocationController extends GetxController{
     streamSubscription = Geolocator.getPositionStream(
       locationSettings: locationSettings,
     ).listen((Position position) {
-      latitude.value = 'Latitude : ${position.latitude}';
-      longitude.value = 'Longitude : ${position.longitude}';
+      latitude.value = '${position.latitude}';
+      longitude.value = '${position.longitude}';
       getAddressFromLatLong(position);
     });
   }

@@ -199,7 +199,7 @@ class EventDetails extends StatelessWidget {
                             FittedBox(
                               child: Container(
                                 height: 25,
-                                width: 275,
+                                width: 265,
                                 child: TextStyleHelper.CustomText(
                                     text: event.location,
                                     color: AppColors.whiteColor,

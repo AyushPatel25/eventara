@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eventapp/controller/loc_cont.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import '../model/event_model.dart';
 
@@ -16,6 +17,7 @@ class HomeController extends GetxController {
   var events = <EventModel>[].obs;
   var filteredEvents = <EventModel>[].obs;
   var carouselEvents = <EventModel>[].obs;
+  var nearEvents = <EventModel>[].obs;
   var selectedCategory = 'All'.obs;
   RxString searchQuery = ''.obs;
 
@@ -31,12 +33,12 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     fetchEvents();
+    fetchNearEvents();
     locationController.getLocation();
   }
 
   DateTime parseEventDate(String dateStr) {
     try {
-      // Assuming date format is "dd-MM-yyyy" or "dd/MM/yyyy"
       List<String> parts = dateStr.replaceAll('/', '-').split('-');
       if (parts.length == 3) {
         int day = int.parse(parts[0]);
@@ -44,10 +46,97 @@ class HomeController extends GetxController {
         int year = int.parse(parts[2]);
         return DateTime(year, month, day);
       }
-      return DateTime.now(); // fallback to current date if parsing fails
+      return DateTime.now();
     } catch (e) {
       print("Error parsing date: $e");
       return DateTime.now();
+    }
+  }
+
+  double calculateDistance(double lat1, double lon1, double? lat2, double? lon2) {
+    if (lat2 == null || lon2 == null) return double.infinity;
+
+    // Make sure all values are double
+    try {
+      return Geolocator.distanceBetween(
+          lat1,
+          lon1,
+          lat2,
+          lon2
+      ) / 1000; // Convert to kilometers
+    } catch (e) {
+      print("❌ Error calculating distance: $e");
+      return double.infinity;
+    }
+  }
+
+
+  // In your fetchNearEvents method:
+  Future<void> fetchNearEvents() async {
+    try {
+      isLoading.value = true;
+
+      // Only fetch if live location is being used
+      if (!locationController.isManualSelection.value) {
+        QuerySnapshot snapshot =
+        await FirebaseFirestore.instance.collection('eventDetails').get();
+        await locationController.getLocation();
+
+        double? userLat;
+        double? userLon;
+
+        try {
+          String latString = locationController.latitude.value.toString().trim();
+          String lonString = locationController.longitude.value.toString().trim();
+
+          if (latString.isNotEmpty) userLat = double.parse(latString);
+          if (lonString.isNotEmpty) userLon = double.parse(lonString);
+        } catch (e) {
+          print("❌ Conversion error: $e");
+          userLat = 0.0;
+          userLon = 0.0;
+        }
+
+        if (userLat == null || userLon == null) {
+          print("⚠️ Could not get valid user coordinates");
+          nearEvents.value = [];
+          return;
+        }
+
+        List<EventModel> nearEventsList = [];
+
+        for (var doc in snapshot.docs) {
+          try {
+            var data = doc.data() as Map<String, dynamic>;
+            var event = EventModel.fromJson(data);
+
+            double? eventLat = event.latitude;
+            double? eventLon = event.longitude;
+
+            if (eventLat == null || eventLon == null) {
+              continue;
+            }
+
+            double distance = Geolocator.distanceBetween(
+                userLat, userLon, eventLat, eventLon) / 1000; // km
+
+            if (distance <= 200) { // 200 km radius
+              nearEventsList.add(event);
+            }
+          } catch (e) {
+            print("❌ Error processing event document: $e");
+          }
+        }
+
+        nearEvents.value = nearEventsList;
+      }
+      // For manual selection, we'll handle it in the UI directly from events list
+
+    } catch (e) {
+      print("❌ Error fetching near events: $e");
+      nearEvents.value = [];
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -58,10 +147,8 @@ class HomeController extends GetxController {
       await FirebaseFirestore.instance.collection('eventDetails').get();
 
       DateTime now = DateTime.now();
-      // Remove time component from current date for accurate date comparison
       DateTime today = DateTime(now.year, now.month, now.day);
 
-      // Filter out expired events and convert to EventModel
       events.value = snapshot.docs.map((doc) {
         var data = doc.data() as Map<String, dynamic>;
         return EventModel.fromJson(data);
@@ -70,14 +157,12 @@ class HomeController extends GetxController {
         return eventDate.isAfter(today) || eventDate.isAtSameMomentAs(today);
       }).toList();
 
-      // Sort events by date
       events.sort((a, b) {
         DateTime dateA = parseEventDate(a.eventDate);
         DateTime dateB = parseEventDate(b.eventDate);
         return dateA.compareTo(dateB);
       });
 
-      // Get the nearest 3 events for carousel
       carouselEvents.value = events.take(3).toList();
 
       applyFilters();
@@ -124,7 +209,6 @@ class HomeController extends GetxController {
   void applyFilters() {
     List<EventModel> tempEvents = List.from(events);
 
-    // Apply Category Filter
     if (selectedCategory.value != "All") {
       tempEvents = tempEvents.where((event) => event.category == selectedCategory.value).toList();
     }
@@ -137,7 +221,6 @@ class HomeController extends GetxController {
       tempEvents = tempEvents.where((event) => selectedCategories.contains(event.category)).toList();
     }
 
-    // Apply Search Query (Name, Date, Artist, Location)
     if (searchQuery.value.isNotEmpty) {
       tempEvents = tempEvents.where((event) {
         String eventName = event.title.toLowerCase();
