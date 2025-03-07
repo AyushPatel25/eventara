@@ -1,15 +1,10 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class EventModel {
   final String ageLimit;
   final String arrangement;
-
-  //final Map<String, dynamic> artist;
-  // final List<String> artist;
-  final List<
-      Artist> artists;
+  final List<Artist> artists;
   final String eventCity;
   final String eventState;
   final String category;
@@ -26,9 +21,8 @@ class EventModel {
   final String time;
   final String title;
   final LatLng venue;
-  double? latitude;
-  double? longitude;
-
+  double? latitude; // Nullable field
+  double? longitude; // Nullable field
 
   EventModel({
     required this.ageLimit,
@@ -48,8 +42,8 @@ class EventModel {
     required this.time,
     required this.title,
     required this.venue,
-    required this.latitude, // ✅ Add these
-    required this.longitude,
+    this.latitude, // Made optional (not required)
+    this.longitude, // Made optional (not required)
     required this.eventCity,
     required this.eventState,
   });
@@ -62,15 +56,15 @@ class EventModel {
     double? longitude = parsedVenue.longitude;
 
     if (json['latitude'] != null) {
-      latitude = json['latitude'] is String ?
-      double.tryParse(json['latitude']) :
-      json['latitude'];
+      latitude = json['latitude'] is String
+          ? double.tryParse(json['latitude'])
+          : json['latitude']?.toDouble();
     }
 
     if (json['longitude'] != null) {
-      longitude = json['longitude'] is String ?
-      double.tryParse(json['longitude']) :
-      json['longitude'];
+      longitude = json['longitude'] is String
+          ? double.tryParse(json['longitude'])
+          : json['longitude']?.toDouble();
     }
 
     EventModel event = EventModel(
@@ -78,7 +72,8 @@ class EventModel {
       arrangement: json['arrangement'] ?? '',
       artists: (json['artists'] as List?)
           ?.map((e) => Artist.fromJson(e))
-          .toList() ?? [],
+          .toList() ??
+          [],
       category: json['category'] ?? '',
       eventDate: json['eventDate'] ?? '',
       expiryDate: json['expiryDate'] ?? '',
@@ -91,23 +86,22 @@ class EventModel {
       location: json['location'] ?? '',
       ticketTypes: (json['ticketTypes'] as Map<String, dynamic>?)?.map(
             (key, value) => MapEntry(key, TicketType.fromJson(value)),
-      ) ?? {},
+      ) ??
+          {},
       time: json['time'] ?? '',
       title: json['title'] ?? '',
       venue: parsedVenue,
       latitude: latitude,
-      // ✅ Ensure non-nullable values
-      longitude: longitude, // ✅ Ensure non-nullable values
+      longitude: longitude,
       eventCity: json['eventCity'] ?? '',
       eventState: json['eventState'] ?? '',
     );
 
-    print("✅ Parsed Venue Coordinates: ${event.venue.latitude}, ${event.venue
-        .longitude}");
+    print(
+        "✅ Parsed Venue Coordinates: ${event.venue.latitude}, ${event.venue.longitude}");
     print("✅ Event Lat/Lon: ${event.latitude}, ${event.longitude}");
     return event;
   }
-
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> data = {
@@ -124,17 +118,17 @@ class EventModel {
       'language': language,
       'layout': layout,
       'location': location,
-      'ticketTypes': ticketTypes.map((key, value) =>
-          MapEntry(key, value.toJson())),
+      'ticketTypes': ticketTypes.map((key, value) => MapEntry(key, value.toJson())),
       'time': time,
       'title': title,
-      'venue': [venue.latitude, venue.longitude],
+      'venue': GeoPoint(venue.latitude, venue.longitude), // Store as GeoPoint in Firestore
+      'latitude': latitude,
+      'longitude': longitude,
       'eventCity': eventCity,
       'eventState': eventState,
     };
 
-    print(
-        "📤 EventModel converted to JSON: $data"); // Logs converted data before saving
+    print("📤 EventModel converted to JSON: $data");
     return data;
   }
 
@@ -150,12 +144,8 @@ class EventModel {
 
   int getStartingPrice() {
     if (ticketTypes.isEmpty) return 0;
-    return ticketTypes.values.map((e) => e.price).reduce((a, b) =>
-    a < b
-        ? a
-        : b);
+    return ticketTypes.values.map((e) => e.price).reduce((a, b) => a < b ? a : b);
   }
-
 
   static LatLng _parseVenue(dynamic venue) {
     print("📍 Raw Venue Data: $venue");
@@ -171,7 +161,6 @@ class EventModel {
         validCoordinates = true;
       } else if (venue is List) {
         if (venue.length >= 2) {
-          // Try to safely parse each coordinate
           if (venue[0] is num) {
             lat = (venue[0] as num).toDouble();
           } else if (venue[0] is String) {
@@ -187,8 +176,7 @@ class EventModel {
           validCoordinates = true;
         }
       } else if (venue is String) {
-        // Handle string format
-        venue = venue.replaceAll('°', ''); // Remove degree symbols
+        venue = venue.replaceAll('°', '');
         List<String> parts = venue.split(',');
         if (parts.length >= 2) {
           String latStr = parts[0].replaceAll(RegExp(r'[^\d.-]'), '');
@@ -199,7 +187,6 @@ class EventModel {
           validCoordinates = true;
         }
       } else if (venue is Map) {
-        // Handle map format
         if (venue.containsKey('latitude') && venue.containsKey('longitude')) {
           var rawLat = venue['latitude'];
           var rawLng = venue['longitude'];
@@ -233,10 +220,6 @@ class EventModel {
   }
 }
 
-
-
-
-
 class Artist {
   final String artistImage;
   final String artistName;
@@ -246,20 +229,18 @@ class Artist {
   factory Artist.fromJson(Map<String, dynamic> json) {
     print("🎭 Artist Data: $json");
     return Artist(
-      artistImage: json['artistImage'] ?? '', // ✅ Match Firestore field names
+      artistImage: json['artistImage'] ?? '',
       artistName: json['artistName'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'artistImage': artistImage, // ✅ Match Firestore field names
+      'artistImage': artistImage,
       'artistName': artistName,
     };
   }
 }
-
-
 
 class TicketType {
   final int available;

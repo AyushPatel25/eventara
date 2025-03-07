@@ -223,11 +223,11 @@ class Cardwidget extends StatelessWidget {
 
               // Event Date Box
               Positioned(
-                top: 150,
+                top: 182,
                 right: 10,
                 child: Container(
                   height: 50,
-                  width: 40,
+                  width: 50,
                   decoration: BoxDecoration(
                     color: Colors.black,
                     borderRadius: BorderRadius.circular(8),
@@ -260,13 +260,26 @@ class Cardwidget extends StatelessWidget {
                         fontSize: 18,
                         fontFamily: Assets.fontsPoppinsBold,
                       ),
-                      TextStyleHelper.CustomText(
-                        text: event.getMonth(),
-                        color: AppColors.lightGrey,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12,
-                        fontFamily: Assets.fontsPoppinsRegular,
-                      ),
+                      Container(
+                        height: 20,
+                        width: 46,
+                        decoration: BoxDecoration(
+                          color: AppColors.divider,
+                          borderRadius: BorderRadius.only(
+                            bottomRight: Radius.circular(8),
+                            bottomLeft: Radius.circular(8)
+                          ),
+                        ),
+                        child:Center(
+                          child: TextStyleHelper.CustomText(
+                            text: event.getMonth(),
+                            color: AppColors.lightGrey,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                            fontFamily: Assets.fontsPoppinsRegular,
+                          ),
+                        )
+                      )
                     ],
                   ),
                 ),

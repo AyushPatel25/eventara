@@ -33,8 +33,16 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     fetchEvents();
-    fetchNearEvents();
+    //fetchNearEvents();
+    ever(locationController.isLocationEnabled, (_) => _updateNearEvents());
+    ever(locationController.isManualSelection, (_) => _updateNearEvents());
     locationController.getLocation();
+  }
+
+  void _updateNearEvents() {
+    if (!locationController.isManualSelection.value && locationController.isLocationEnabled.value) {
+      fetchNearEvents();
+    }
   }
 
   DateTime parseEventDate(String dateStr) {
@@ -69,15 +77,10 @@ class HomeController extends GetxController {
       return double.infinity;
     }
   }
-
-
   // In your fetchNearEvents method:
   Future<void> fetchNearEvents() async {
     try {
       isLoading.value = true;
-
-      // Only fetch if live location is being used
-      if (!locationController.isManualSelection.value) {
         QuerySnapshot snapshot =
         await FirebaseFirestore.instance.collection('eventDetails').get();
         await locationController.getLocation();
@@ -85,17 +88,22 @@ class HomeController extends GetxController {
         double? userLat;
         double? userLon;
 
+      print("📍 Raw location values: lat=${locationController.latitude.value}, lon=${locationController.longitude.value}");
+
         try {
           String latString = locationController.latitude.value.toString().trim();
           String lonString = locationController.longitude.value.toString().trim();
 
           if (latString.isNotEmpty) userLat = double.parse(latString);
           if (lonString.isNotEmpty) userLon = double.parse(lonString);
+
+          print("📍 Converted location: lat=$userLat, lon=$userLon");
         } catch (e) {
           print("❌ Conversion error: $e");
           userLat = 0.0;
           userLon = 0.0;
         }
+      print("📍 Final user location: $userLat, $userLon");
 
         if (userLat == null || userLon == null) {
           print("⚠️ Could not get valid user coordinates");
@@ -123,13 +131,72 @@ class HomeController extends GetxController {
             if (distance <= 200) { // 200 km radius
               nearEventsList.add(event);
             }
+            print("📍 Event ${event.title} is at distance $distance km");
           } catch (e) {
             print("❌ Error processing event document: $e");
           }
         }
 
         nearEvents.value = nearEventsList;
-      }
+      print("📍 Found ${nearEvents.length} events near user");
+
+      // Only fetch if live location is being used
+      // if (!locationController.isManualSelection.value) {
+      //   QuerySnapshot snapshot =
+      //   await FirebaseFirestore.instance.collection('eventDetails').get();
+      //   await locationController.getLocation();
+      //
+      //   double? userLat;
+      //   double? userLon;
+      //
+      //   try {
+      //     String latString = locationController.latitude.value.toString().trim();
+      //     String lonString = locationController.longitude.value.toString().trim();
+      //
+      //     if (latString.isNotEmpty) userLat = double.parse(latString);
+      //     if (lonString.isNotEmpty) userLon = double.parse(lonString);
+      //   } catch (e) {
+      //     print("❌ Conversion error: $e");
+      //     userLat = 0.0;
+      //     userLon = 0.0;
+      //   }
+      //
+      //   if (userLat == null || userLon == null) {
+      //     print("⚠️ Could not get valid user coordinates");
+      //     nearEvents.value = [];
+      //     return;
+      //   }
+      //
+      //   List<EventModel> nearEventsList = [];
+      //
+      //   for (var doc in snapshot.docs) {
+      //     try {
+      //       var data = doc.data() as Map<String, dynamic>;
+      //       var event = EventModel.fromJson(data);
+      //
+      //       double? eventLat = event.latitude;
+      //       double? eventLon = event.longitude;
+      //
+      //       if (eventLat == null || eventLon == null) {
+      //         continue;
+      //       }
+      //
+      //       double distance = Geolocator.distanceBetween(
+      //           userLat, userLon, eventLat, eventLon) / 1000; // km
+      //
+      //       if (distance <= 200) { // 200 km radius
+      //         nearEventsList.add(event);
+      //       }
+      //     } catch (e) {
+      //       print("❌ Error processing event document: $e");
+      //     }
+      //   }
+      //
+      //   nearEvents.value = nearEventsList;
+      // }
+      // else {
+      //   nearEvents.value = []; // Clear nearEvents if not using live location
+      // }
       // For manual selection, we'll handle it in the UI directly from events list
 
     } catch (e) {

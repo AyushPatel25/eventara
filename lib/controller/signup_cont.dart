@@ -30,11 +30,13 @@ class OrganizerModel {
   final String uid;
   final String organizerName;
   final String organizerEmail;
+  final List<int> eventIds; // Add eventIds as a list of integers
 
   OrganizerModel({
     required this.uid,
     required this.organizerName,
     required this.organizerEmail,
+    this.eventIds = const [], // Default to an empty list if not provided
   });
 
   Map<String, dynamic> toJson() {
@@ -42,7 +44,18 @@ class OrganizerModel {
       "uid": uid,
       "organizerName": organizerName,
       "organizerEmail": organizerEmail,
+      "eventIds": eventIds, // Include eventIds in the JSON representation
     };
+  }
+
+  // Optional: Factory method to create an OrganizerModel from Firestore data
+  factory OrganizerModel.fromJson(Map<String, dynamic> json) {
+    return OrganizerModel(
+      uid: json['uid'] ?? '',
+      organizerName: json['organizerName'] ?? '',
+      organizerEmail: json['organizerEmail'] ?? '',
+      eventIds: (json['eventIds'] as List<dynamic>?)?.map((e) => e as int).toList() ?? [],
+    );
   }
 }
 
