@@ -30,13 +30,13 @@ class OrganizerModel {
   final String uid;
   final String organizerName;
   final String organizerEmail;
-  final List<int> eventIds; // Add eventIds as a list of integers
+  final Map<String, dynamic> events;
 
   OrganizerModel({
     required this.uid,
     required this.organizerName,
     required this.organizerEmail,
-    this.eventIds = const [], // Default to an empty list if not provided
+    this.events = const {},
   });
 
   Map<String, dynamic> toJson() {
@@ -44,17 +44,16 @@ class OrganizerModel {
       "uid": uid,
       "organizerName": organizerName,
       "organizerEmail": organizerEmail,
-      "eventIds": eventIds, // Include eventIds in the JSON representation
+      "events": events,
     };
   }
 
-  // Optional: Factory method to create an OrganizerModel from Firestore data
   factory OrganizerModel.fromJson(Map<String, dynamic> json) {
     return OrganizerModel(
       uid: json['uid'] ?? '',
       organizerName: json['organizerName'] ?? '',
       organizerEmail: json['organizerEmail'] ?? '',
-      eventIds: (json['eventIds'] as List<dynamic>?)?.map((e) => e as int).toList() ?? [],
+      events: json['events'] != null ? Map<String, dynamic>.from(json['events']) : {},
     );
   }
 }
@@ -128,7 +127,7 @@ class SignUpController extends GetxController {
           // Save organizer details
           OrganizerModel newOrganizer = OrganizerModel(
             uid: user.uid, // Use generated oid
-            organizerName: organizationName.isNotEmpty ? organizationName : username, // Use org name or username
+            organizerName: organizationName.isNotEmpty ? organizationName : username,
             organizerEmail: email,
           );
           await firestore.collection("organizers").doc(user.uid).set(newOrganizer.toJson());

@@ -1,21 +1,20 @@
-import 'package:eventapp/componets/otp_pinput.dart';
 import 'package:eventapp/componets/text_style.dart';
-import 'package:eventapp/controller/event_details_cont.dart';
-import 'package:eventapp/controller/home_cont.dart';
 import 'package:eventapp/utills/appcolors.dart';
-import 'package:eventapp/view/home/event_details.dart';
+import 'package:eventapp/view/organizer/org_statstics.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:shimmer/shimmer.dart';
-import '../controller/favourite_cont.dart';
 import '../generated/assets.dart';
 
 class OrgPastCard extends StatelessWidget {
   final int index;
+  final Map<String, dynamic> eventData;
 
-  const OrgPastCard({required this.index, super.key}); // Fixed constructor
+  const OrgPastCard({
+    required this.index,
+    required this.eventData,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,18 +34,20 @@ class OrgPastCard extends StatelessWidget {
                 topLeft: Radius.circular(20),
                 topRight: Radius.circular(20),
               ),
-              child: Opacity(
-                opacity: 0.8,
-                child: FadeInImage(
-                  placeholder: const AssetImage("assets/images/placeholder.png"),
-                  image: const AssetImage(Assets.imagesPoster),
+              child: SizedBox(
+                height: 200,
+                child: eventData['eventImage'] != null && eventData['eventImage'].toString().isNotEmpty
+                    ? Image.network(
+                  eventData['eventImage'],
                   fit: BoxFit.cover,
-                  imageErrorBuilder: (context, error, stackTrace) {
-                    return const Center(
-                      child: Icon(Icons.error, color: Colors.red, size: 50),
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      Assets.imagesPoster,
+                      fit: BoxFit.cover,
                     );
                   },
-                  placeholderErrorBuilder: (context, error, stackTrace) {
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
                     return Shimmer.fromColors(
                       baseColor: Colors.grey[800]!,
                       highlightColor: Colors.grey[500]!,
@@ -57,55 +58,88 @@ class OrgPastCard extends StatelessWidget {
                       ),
                     );
                   },
+                )
+                    : Image.asset(
+                  Assets.imagesPoster,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(10),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    flex: 3,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextStyleHelper.CustomText(
-                          text: "Arijit Singh",
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: TextStyleHelper.CustomText(
+                          text: eventData['title'] ?? "Unnamed Event",
                           color: AppColors.whiteColor,
                           fontWeight: FontWeight.w600,
                           fontSize: 16,
                           fontFamily: Assets.fontsPoppinsBold,
                         ),
-                        const SizedBox(height: 10),
-
-                        Row(
-                          children: [
-                            Expanded(
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.whiteColor,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      side: BorderSide(color: AppColors.whiteColor, width: 2)
-                                  ),
-
-                                ),
-                                onPressed: () {
-                                },
-                                child: TextStyleHelper.CustomText(
-                                  text: "User Feedback",
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                  fontFamily: Assets.fontsPoppinsBold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
+                      ),
+                      TextStyleHelper.CustomText(
+                        text: eventData['eventDate'] ?? "",
+                        color: AppColors.whiteColor,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 12,
+                        fontFamily: Assets.fontsPoppinsRegular,
+                      ),
+                    ],
                   ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.greyColor,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                side: BorderSide(color: AppColors.whiteColor, width: 2)
+                            ),
+                          ),
+                          onPressed: () {
+                            Get.to(OrgStatstics(eventId: eventData['eventId']));
+                          },
+                          child: TextStyleHelper.CustomText(
+                            text: "Statistics",
+                            color: AppColors.whiteColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            fontFamily: Assets.fontsPoppinsBold,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.whiteColor,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                side: BorderSide(color: AppColors.whiteColor, width: 2)
+                            ),
+                          ),
+                          onPressed: () {
+                            // Navigate to feedback page
+                            // Get.to(EventFeedbackPage(eventId: eventData['eventId']));
+                          },
+                          child: TextStyleHelper.CustomText(
+                            text: "User Feedback",
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            fontFamily: Assets.fontsPoppinsBold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
                 ],
               ),
             ),

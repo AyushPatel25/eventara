@@ -26,7 +26,6 @@ class CreateEventController extends GetxController {
   final Rx<LatLng?> selectedLocation = Rx<LatLng?>(null);
   final RxString locationAddress = RxString('');
 
-  // New properties for image confirmation
   final Rx<bool> eventImageConfirmed = Rx<bool>(false);
   final Rx<bool> artistImageConfirmed = Rx<bool>(false);
   final Rx<String> tempEventImageUrl = Rx<String>('');
@@ -37,7 +36,6 @@ class CreateEventController extends GetxController {
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Declare controllers globally
   TextEditingController descriptionController = TextEditingController();
   TextEditingController durationController = TextEditingController();
   TextEditingController languageController = TextEditingController();
@@ -479,39 +477,55 @@ class CreateEventController extends GetxController {
         eventState: eventStateController.text,
       );
 
-      // Save to Firestore
-      await _firestore
-          .collection('eventDetails')
-          .add(event.toJson());
+      // Save to Firestore eventDetails collection
+      await _firestore.collection('eventDetails').add(event.toJson());
 
       String? orgId = _auth.currentUser?.uid;
       if (orgId == null) {
         throw Exception("No authenticated user found");
       }
 
-      DocumentReference organizerRef =
-      _firestore.collection('organizers').doc(orgId);
+      DocumentReference organizerRef = _firestore.collection('organizers').doc(orgId);
 
       DocumentSnapshot organizerSnapshot = await organizerRef.get();
 
       if (!organizerSnapshot.exists) {
+        // If organizer doesn't exist, create a new one with the events map
         OrganizerModel newOrganizer = OrganizerModel(
           uid: orgId,
           organizerName: _auth.currentUser?.displayName ?? "Unknown Organizer",
           organizerEmail: _auth.currentUser?.email ?? "unknown@example.com",
-          eventIds: [eventId],
+          events: {}, // Fixed: Use 'events' instead of 'eventIds'
         );
         await organizerRef.set(newOrganizer.toJson());
+
+        // Add the event details as a map
+        await organizerRef.update({
+          'events': {
+            eventId.toString(): {
+              'eventId': eventId,
+              'eventImage': eventImageUrl,
+              'eventDate': eventDate,
+            }
+          }
+        });
       } else {
+        // If organizer exists, update the events map
         Map<String, dynamic> organizerData =
             organizerSnapshot.data() as Map<String, dynamic>? ?? {};
-        List<dynamic> existingEventIds = organizerData['eventIds'] ?? [];
-        if (!existingEventIds.contains(eventId)) {
-          existingEventIds.add(eventId);
-          await organizerRef.update({
-            'eventIds': existingEventIds,
-          });
-        }
+        Map<String, dynamic> existingEvents =
+            organizerData['events'] as Map<String, dynamic>? ?? {};
+
+        // Add new event to the map
+        existingEvents[eventId.toString()] = {
+          'eventId': eventId,
+          'eventImage': eventImageUrl,
+          'eventDate': eventDate,
+        };
+
+        await organizerRef.update({
+          'events': existingEvents,
+        });
       }
 
       print("Event ID: $eventId");
@@ -548,7 +562,6 @@ class CreateEventController extends GetxController {
       eventCityController.clear();
       eventStateController.clear();
     } catch (e) {
-      // Close loading dialog in case of error
       Get.back();
 
       print("Error saving event: $e");
