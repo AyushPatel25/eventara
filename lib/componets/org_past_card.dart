@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import '../generated/assets.dart';
+import '../view/organizer/org_feedback.dart';
 
 class OrgPastCard extends StatelessWidget {
   final int index;
@@ -104,7 +105,7 @@ class OrgPastCard extends StatelessWidget {
                             ),
                           ),
                           onPressed: () {
-                            Get.to(OrgStatstics(eventId: eventData['eventId']));
+                            Get.to(() => OrgStatistics(eventId: eventData['eventId']));
                           },
                           child: TextStyleHelper.CustomText(
                             text: "Statistics",
@@ -126,8 +127,7 @@ class OrgPastCard extends StatelessWidget {
                             ),
                           ),
                           onPressed: () {
-                            // Navigate to feedback page
-                            // Get.to(EventFeedbackPage(eventId: eventData['eventId']));
+                            Get.to(() => EventFeedbackPage(eventId: eventData['eventId'].toString()));
                           },
                           child: TextStyleHelper.CustomText(
                             text: "User Feedback",

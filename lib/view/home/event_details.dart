@@ -38,18 +38,22 @@ class EventDetails extends StatelessWidget {
       body: Obx(
         () {
           final eventId = Get.arguments?['eventId'];
-          if (eventId != null && eventDetailsController.event.value == null) {
-            eventDetailsController.fetchEventDetails(eventId);
-            print("event id = $eventId");
-          };
+
+          // Make sure we refresh the data when a new eventId is received
+          if (eventId != null && (eventDetailsController.currentEventId != eventId || eventDetailsController.event.value == null)) {
+            print("Refreshing event data for eventId: $eventId");
+            eventDetailsController.refreshEvent(eventId);
+          }
+
           if (eventDetailsController.isLoading.value) {
             return Center(child: CircularProgressIndicator(color: AppColors.primaryColor));
           }
+
           final event = eventDetailsController.event.value;
           if (event == null) {
             return Center(
-                child: Text("Event not found",
-                    style: TextStyle(color: Colors.white)));
+                child: Text("Event not found", style: TextStyle(color: Colors.white))
+            );
           }
 
           return CustomScrollView(

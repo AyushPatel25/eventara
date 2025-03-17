@@ -398,34 +398,15 @@ class CreateEventController extends GetxController {
 
     try {
       Get.dialog(
-        Center(child: CircularProgressIndicator(color: AppColors.whiteColor,)),
+        Center(child: CircularProgressIndicator(color: AppColors.whiteColor)),
         barrierDismissible: false,
       );
 
-      print("===== EVENT DATA =====");
-      print("Title: ${titleController.text}");
-      print("Description: ${descriptionController.text}");
-      print("Duration: ${durationController.text}");
-      print("Language: ${languageController.text}");
-      print("Event City: ${eventCityController.text}");
-      print("Event State: ${eventStateController.text}");
-      print("Age Limit: ${ageLimit.value}");
-      print("Category: ${category.value}");
-      print("Arrangement: ${arrangement.value}");
-      print("Layout: ${layout.value}");
-      print("Event Date: ${selectedDate.value}");
-      print("Event Time: ${selectedTime.value}");
-      print("Location: ${locationAddress.value}");
-      print("Venue coordinates: ${selectedLocation.value}");
-      print("Artists: $artists");
-      print("Tickets: $tickets");
-      print("Event Image URL: ${tempEventImageUrl.value}");
-      print("=====================");
-
+      // Generate unique event ID
       int eventId = await generateUniqueEventId();
-
       String eventImageUrl = tempEventImageUrl.value;
 
+      // Process artists
       List<Artist> artistList = [];
       for (var artist in artists) {
         artistList.add(Artist(
@@ -434,15 +415,28 @@ class CreateEventController extends GetxController {
         ));
       }
 
+      // Process tickets and calculate statistics
       Map<String, TicketType> ticketTypes = {};
+      Map<String, int> categoryWiseSeats = {}; // Store category-wise seat count
+      int totalSeats = 0; // Track total seats across all categories
+
       for (var ticket in tickets) {
-        ticketTypes[ticket['name']] = TicketType(
-          available: int.tryParse(ticket['seat']) ?? 0,
-          price: int.tryParse(ticket['price']) ?? 0,
+        String ticketName = ticket['name'];
+        int seats = int.tryParse(ticket['seat']) ?? 0;
+        int price = int.tryParse(ticket['price']) ?? 0;
+
+        // Add to ticketTypes
+        ticketTypes[ticketName] = TicketType(
+          available: seats,
+          price: price,
         );
+
+        // Update statistics
+        categoryWiseSeats[ticketName] = seats;
+        totalSeats += seats;
       }
 
-      // Prepare the event data
+      // Prepare dates and time
       String eventDate = selectedDate.value != null
           ? DateFormat('dd MMM yyyy').format(selectedDate.value!)
           : '';
@@ -453,6 +447,7 @@ class CreateEventController extends GetxController {
           ? DateFormat('dd MMM yyyy').format(selectedDate.value!.add(Duration(days: 1)))
           : '';
 
+      // Create event model
       EventModel event = EventModel(
         ageLimit: ageLimit.value,
         arrangement: arrangement.value,
@@ -477,25 +472,42 @@ class CreateEventController extends GetxController {
         eventState: eventStateController.text,
       );
 
-      // Save to Firestore eventDetails collection
-      await _firestore.collection('eventDetails').add(event.toJson());
+      // Convert to JSON
+      Map<String, dynamic> eventJson = event.toJson();
 
+      // Add statistics data to the event JSON
+      eventJson['statistics'] = {
+        'totalIncome': 0, // Initial income is zero
+        'totalSeats': totalSeats,
+        'availableSeats': totalSeats, // Initially, all seats are available
+        'bookedSeats': 0, // Initially, no seats are booked
+        'categoryWiseSeats': categoryWiseSeats,
+        'categoryWiseBookedSeats': Map<String, int>.fromIterable(
+            categoryWiseSeats.keys,
+            key: (k) => k,
+            value: (k) => 0 // Initially, no seats are booked in any category
+        ),
+      };
+
+      // Save to Firestore eventDetails collection
+      await _firestore.collection('eventDetails').add(eventJson);
+
+      // Handle organizer data
       String? orgId = _auth.currentUser?.uid;
       if (orgId == null) {
         throw Exception("No authenticated user found");
       }
 
       DocumentReference organizerRef = _firestore.collection('organizers').doc(orgId);
-
       DocumentSnapshot organizerSnapshot = await organizerRef.get();
 
       if (!organizerSnapshot.exists) {
-        // If organizer doesn't exist, create a new one with the events map
+        // If organizer doesn't exist, create a new one
         OrganizerModel newOrganizer = OrganizerModel(
           uid: orgId,
           organizerName: _auth.currentUser?.displayName ?? "Unknown Organizer",
           organizerEmail: _auth.currentUser?.email ?? "unknown@example.com",
-          events: {}, // Fixed: Use 'events' instead of 'eventIds'
+          events: {},
         );
         await organizerRef.set(newOrganizer.toJson());
 
@@ -529,7 +541,7 @@ class CreateEventController extends GetxController {
       }
 
       print("Event ID: $eventId");
-      print("Event Document: ${event.toJson()}");
+      print("Event Document: $eventJson");
 
       Get.back();
 
@@ -543,24 +555,7 @@ class CreateEventController extends GetxController {
       );
 
       // Clear form after successful save
-      eventImage.value = null;
-      artistImage.value = null;
-      selectedDate.value = null;
-      selectedTime.value = null;
-      artists.clear();
-      tickets.clear();
-      selectedLocation.value = null;
-      locationAddress.value = '';
-      eventImageConfirmed.value = false;
-      artistImageConfirmed.value = false;
-      tempEventImageUrl.value = '';
-      tempArtistImageUrl.value = '';
-      descriptionController.clear();
-      durationController.clear();
-      languageController.clear();
-      titleController.clear();
-      eventCityController.clear();
-      eventStateController.clear();
+      clearForm();
     } catch (e) {
       Get.back();
 
@@ -574,6 +569,28 @@ class CreateEventController extends GetxController {
         duration: Duration(seconds: 5),
       );
     }
+  }
+
+// Add this method to clean up form fields
+  void clearForm() {
+    eventImage.value = null;
+    artistImage.value = null;
+    selectedDate.value = null;
+    selectedTime.value = null;
+    artists.clear();
+    tickets.clear();
+    selectedLocation.value = null;
+    locationAddress.value = '';
+    eventImageConfirmed.value = false;
+    artistImageConfirmed.value = false;
+    tempEventImageUrl.value = '';
+    tempArtistImageUrl.value = '';
+    descriptionController.clear();
+    durationController.clear();
+    languageController.clear();
+    titleController.clear();
+    eventCityController.clear();
+    eventStateController.clear();
   }
 
   @override

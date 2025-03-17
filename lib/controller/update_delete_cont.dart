@@ -497,25 +497,8 @@ class UpdateDeleteEventController extends GetxController {
       _firestore.collection('organizers').doc(orgId);
       await organizerRef.update({
         'events.$eventIdString.eventDate': eventDate,
-        'events.$eventIdString.time': eventTime,
-        'events.$eventIdString.eventTime': eventTime,
-        'events.$eventIdString.description': descriptionController.text,
-        'events.$eventIdString.duration': durationController.text,
-        'events.$eventIdString.language': languageController.text,
-        'events.$eventIdString.eventCity': eventCityController.text,
-        'events.$eventIdString.eventState': eventStateController.text,
         'events.$eventIdString.eventImage': tempEventImageUrl.value,
-        'events.$eventIdString.artists': artistsData,
-        'events.$eventIdString.ticketTypes': ticketTypes,
-        'events.$eventIdString.location': locationAddress.value,
-        'events.$eventIdString.latitude': selectedLocation.value?.latitude,
-        'events.$eventIdString.longitude': selectedLocation.value?.longitude,
-        'events.$eventIdString.venue': selectedLocation.value != null
-            ? GeoPoint(
-          selectedLocation.value!.latitude,
-          selectedLocation.value!.longitude,
-        )
-            : null,
+
       });
 
       Get.back();

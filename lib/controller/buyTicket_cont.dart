@@ -10,7 +10,7 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class BuyTicketController extends GetxController {
   var categories = <TicketCategory>[].obs;
-  final  isLoading = true.obs;
+  final isLoading = true.obs;
   var event = Rxn<EventModel>();
   var selectedCategoryIndex = RxnInt();
   var totalSelectedTickets = 0.obs;
@@ -19,13 +19,11 @@ class BuyTicketController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   var newAvitic = 0.obs;
 
-
   late Razorpay _razorpay;
 
   bool get isButtonEnabled =>
       selectedCategoryIndex.value != null &&
           totalSelectedTickets.value > 0;
-
 
   @override
   void onInit() {
@@ -44,18 +42,16 @@ class BuyTicketController extends GetxController {
   }
 
   void openCheckout() {
+    if (selectedCategoryIndex.value == null || totalSelectedTickets.value == 0) {
+      Get.snackbar("Error", "No tickets selected", backgroundColor: Colors.red);
+      return;
+    }
+
     var options = {
       'key': 'rzp_test_af0CuAn19pEBjw',
       'amount': (categories[selectedCategoryIndex.value!].price * totalSelectedTickets.value) * 100,
       'name': 'eventara',
-      //'order_id': 'order_EMBFqjDHEEn80l',
-      //'description': 'Payment for Order #1234',
-      'timeout' : 120,
-      // 'prefill': {
-      //   'contact': '9876543210',
-      //   'email': 'user@example.com',
-      // },
-      // 'theme': {'color': '#00000'}
+      'timeout': 120,
     };
 
     try {
@@ -106,22 +102,56 @@ class BuyTicketController extends GetxController {
           throw Exception('Event does not exist!');
         }
 
+        // Get current ticket data
         final currentAvailable = snapshot.get('ticketTypes.${category.name.toLowerCase()}.available') as int;
+
+        // Get current statistics
+        Map<String, dynamic> statistics = snapshot.get('statistics') ?? {
+          'availableSeats': 0,
+          'bookedSeats': 0,
+          'categoryWiseBookedSeats': {},
+          'categoryWiseSeats': {},
+          'totalIncome': 0
+        };
+
+        // Calculate new statistics
+        int availableSeats = statistics['availableSeats'] ?? 0;
+        int bookedSeats = statistics['bookedSeats'] ?? 0;
+        Map<String, dynamic> categoryWiseBookedSeats = statistics['categoryWiseBookedSeats'] ?? {};
+        int totalIncome = statistics['totalIncome'] ?? 0;
+
+        // Update statistics
+        availableSeats -= totalSelectedTickets.value;
+        bookedSeats += totalSelectedTickets.value;
+
+        // Update category-wise booked seats
+        String categoryName = category.name;
+        categoryWiseBookedSeats[categoryName] = (categoryWiseBookedSeats[categoryName] ?? 0) + totalSelectedTickets.value;
+
+        // Update total income
+        totalIncome += category.price * totalSelectedTickets.value;
 
         if (currentAvailable < totalSelectedTickets.value) {
           throw Exception('Not enough tickets available!');
         }
 
+        // Generate ticket numbers
         for (int i = 0; i < totalSelectedTickets.value; i++) {
           String categoryPrefix = category.name[0].toUpperCase();
           int ticketNum = currentAvailable - i;
           ticketNumbers.add('$categoryPrefix$ticketNum');
         }
 
+        // Update both ticket type availability and statistics
         transaction.update(docRef, {
-          'ticketTypes.${category.name.toLowerCase()}.available': newAvailable
+          'ticketTypes.${category.name.toLowerCase()}.available': newAvailable,
+          'statistics.availableSeats': availableSeats,
+          'statistics.bookedSeats': bookedSeats,
+          'statistics.categoryWiseBookedSeats.${category.name}': categoryWiseBookedSeats[category.name],
+          'statistics.totalIncome': totalIncome
         });
 
+        // Rest of the booking process remains the same
         final eventBookingRef = _firestore
             .collection('eventBookings')
             .doc(event.value?.eventId.toString());
@@ -149,10 +179,10 @@ class BuyTicketController extends GetxController {
           'eventId': event.value?.eventId,
           'eventName': event.value?.title,
           'eventLocation': event.value!.location,
-          'eventImage' : event.value!.eventImage,
+          'eventImage': event.value!.eventImage,
           'ticketCount': totalSelectedTickets.value,
-          'eventDate' : event.value?.eventDate,
-          'expiryDate' : event.value?.expiryDate,
+          'eventDate': event.value?.eventDate,
+          'expiryDate': event.value?.expiryDate,
           'ticketCategory': category.name,
           'ticketPrice': category.price,
           'eventTime': event.value!.time,
@@ -192,10 +222,8 @@ class BuyTicketController extends GetxController {
     }
   }
 
-
-
-
   void _handlePaymentError(PaymentFailureResponse response) {
+    print("Payment failed: ${response.code} - ${response.message}");
     Get.snackbar("Error", "Payment Failed! Error: ${response.message}");
   }
 
@@ -239,6 +267,7 @@ class BuyTicketController extends GetxController {
         Get.snackbar("Error", "Event not found", backgroundColor: Colors.red);
       }
     } catch (e) {
+      print("Error fetching event details: $e");
       Get.snackbar("Error", "Failed to load event", backgroundColor: Colors.red);
     } finally {
       isLoading.value = false;
@@ -251,9 +280,13 @@ class BuyTicketController extends GetxController {
         categories[index].selectedTickets.value++;
         totalSelectedTickets.value++;
         selectedCategoryIndex.value = index;
+      } else if (totalSelectedTickets.value >= 10) {
+        Get.snackbar("Limit Reached", "You can only purchase up to 10 tickets at once", backgroundColor: Colors.orange);
+      } else if (categories[index].selectedTickets.value >= categories[index].availableSpots.value) {
+        Get.snackbar("Sold Out", "No more tickets available in this category", backgroundColor: Colors.orange);
       }
     } else {
-      Get.snackbar("Error", "You can only select tickets from one category at a time.", backgroundColor: Colors.red);
+      Get.snackbar("Error", "You can only select tickets from one category at a time", backgroundColor: Colors.red);
     }
   }
 
@@ -274,48 +307,7 @@ class BuyTicketController extends GetxController {
       return;
     }
 
-    int index = selectedCategoryIndex.value!;
-    var category = categories[index];
-
-    try {
-      if (category.availableSpots.value >= category.selectedTickets.value) {
-        int newAvailable = category.availableSpots.value - category.selectedTickets.value;
-
-        await FirebaseFirestore.instance
-            .collection('eventDetails')
-            .doc(event.value!.eventId.toString())
-            .update({
-          'ticketTypes.${category.name}.available': newAvailable,
-        });
-
-        categories[index].availableSpots.value = newAvailable;
-        categories[index].selectedTickets.value = 0;
-        totalSelectedTickets.value = 0;
-        selectedCategoryIndex.value = null;
-
-        try {
-          Get.to(() => Eticket(), arguments: {
-            'eventImage': event.value!.eventImage,
-            'eventName': event.value!.title,
-            'eventLocation': event.value!.location,
-            'eventDate': event.value!.eventDate,
-            'ticketCategory': category.name,
-            'ticketPrice': category.price,
-            'ticketCount': totalSelectedTickets.value,
-            'eventTime': event.value!.time,
-          });
-        } catch (e) {
-          print("Error navigating to Eticket: $e");
-          Get.snackbar("Error", "Navigation failed", backgroundColor: Colors.red);
-        }
-
-
-        Get.snackbar("Success", "Tickets purchased successfully!", backgroundColor: Colors.green);
-      } else {
-        Get.snackbar("Error", "Not enough tickets available", backgroundColor: Colors.red);
-      }
-    } catch (e) {
-      Get.snackbar("Error", "Purchase failed", backgroundColor: Colors.red);
-    }
+    // Open the Razorpay checkout
+    openCheckout();
   }
 }

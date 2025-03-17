@@ -23,6 +23,7 @@ class EventModel {
   final LatLng venue;
   double? latitude; // Nullable field
   double? longitude; // Nullable field
+  final Map<String, dynamic>? statistics;
 
   EventModel({
     required this.ageLimit,
@@ -46,6 +47,7 @@ class EventModel {
     this.longitude, // Made optional (not required)
     required this.eventCity,
     required this.eventState,
+    this.statistics,
   });
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
@@ -95,6 +97,7 @@ class EventModel {
       longitude: longitude,
       eventCity: json['eventCity'] ?? '',
       eventState: json['eventState'] ?? '',
+      statistics: json['statistics'] is Map<String, dynamic> ? json['statistics'] : null, // Updated only this line
     );
 
     print(
@@ -126,6 +129,7 @@ class EventModel {
       'longitude': longitude,
       'eventCity': eventCity,
       'eventState': eventState,
+      'statistics': statistics,
     };
 
     print("📤 EventModel converted to JSON: $data");

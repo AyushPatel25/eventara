@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../../controller/profile_cont.dart';
+
 class OrganizerEventsController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -109,7 +111,6 @@ class OrganizerEventsController extends GetxController {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
-  // Refresh events data
   void refreshEvents() {
     fetchOrganizerEvents();
   }

@@ -1,5 +1,6 @@
 import 'package:eventapp/componets/text_style.dart';
 import 'package:eventapp/utills/appcolors.dart';
+import 'package:eventapp/view/organizer/controller/org_home_cont.dart';
 import 'package:eventapp/view/organizer/org_statstics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,7 +12,7 @@ class OrgUpcomingCard extends StatelessWidget {
   final int index;
   final Map<String, dynamic> eventData;
 
-  const OrgUpcomingCard({
+  OrgUpcomingCard({
     required this.index,
     required this.eventData,
     super.key,
@@ -105,7 +106,7 @@ class OrgUpcomingCard extends StatelessWidget {
                             ),
                           ),
                           onPressed: () {
-                            Get.to(OrgStatstics(eventId: eventData['eventId']));
+                            Get.to(() => OrgStatistics(eventId: eventData['eventId']));
                           },
                           child: TextStyleHelper.CustomText(
                             text: "Statistics",

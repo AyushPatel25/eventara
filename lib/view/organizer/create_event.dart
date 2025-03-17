@@ -40,7 +40,7 @@ class CreateEvent extends StatelessWidget {
               title: Text(
                 'Create event',
                 style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.whiteColor,
                     fontSize: 25,
                     fontWeight: FontWeight.w700,
                     fontFamily: Assets.fontsPoppinsBold),
@@ -1046,7 +1046,7 @@ class LocationPickerScreen extends StatefulWidget {
 class _LocationPickerScreenState extends State<LocationPickerScreen> {
   GoogleMapController? mapController;
   final TextEditingController _searchController = TextEditingController();
-  LatLng _center = const LatLng(37.7, -122.4);
+  LatLng _center = const LatLng(21.2049, 72.8411);
   String _currentAddress = "";
 
   @override
@@ -1344,7 +1344,11 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Select Location'),
+        title: Text('Select Location', style: TextStyle(
+          color: AppColors.whiteColor,
+          fontFamily: Assets.fontsPoppinsBold,
+          fontSize: 25
+        ),),
         backgroundColor: Colors.black,
         actions: [
           IconButton(
@@ -1352,6 +1356,7 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
             onPressed: () {
               widget.controller.setLocation(_center, _currentAddress);
               Get.back();
+              //Get.offAll(CreateEvent());
             },
           ),
         ],
