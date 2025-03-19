@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../../controller/profile_cont.dart';
 
 class OrganizerEventsController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -44,10 +43,8 @@ class OrganizerEventsController extends GetxController {
       Map<String, dynamic> orgData = orgDoc.data() as Map<String, dynamic>;
       Map<String, dynamic> events = orgData['events'] as Map<String, dynamic>? ?? {};
 
-      // Today's date for comparison
       DateTime today = DateTime.now();
 
-      // List of futures to fetch event details
       List<Future<void>> eventFutures = [];
 
       events.forEach((eventId, eventData) {
@@ -59,7 +56,6 @@ class OrganizerEventsController extends GetxController {
           if (querySnapshot.docs.isNotEmpty) {
             Map<String, dynamic> eventDetails = querySnapshot.docs.first.data();
 
-            // Parse event date
             DateTime? eventDate;
             try {
               eventDate = DateFormat('dd MMM yyyy').parse(eventDetails['eventDate']);
@@ -67,7 +63,6 @@ class OrganizerEventsController extends GetxController {
               print("Error parsing date: ${eventDetails['eventDate']}");
             }
 
-            // Add event to the appropriate list
             if (eventDate != null) {
               if (eventDate.isAfter(today) || isSameDay(eventDate, today)) {
                 upcomingEvents.add(eventDetails);
@@ -81,10 +76,8 @@ class OrganizerEventsController extends GetxController {
         eventFutures.add(fetchEvent);
       });
 
-      // Wait for all events to be fetched
       await Future.wait(eventFutures);
 
-      // Sort events by date
       upcomingEvents.sort((a, b) => _compareEventDates(a['eventDate'], b['eventDate']));
       pastEvents.sort((a, b) => _compareEventDates(b['eventDate'], a['eventDate'])); // Reverse order for past events
 
@@ -95,7 +88,6 @@ class OrganizerEventsController extends GetxController {
     }
   }
 
-  // Helper function to compare dates
   int _compareEventDates(String dateA, String dateB) {
     try {
       DateTime a = DateFormat('dd MMM yyyy').parse(dateA);
@@ -106,7 +98,6 @@ class OrganizerEventsController extends GetxController {
     }
   }
 
-  // Helper function to check if two dates are the same day
   bool isSameDay(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }

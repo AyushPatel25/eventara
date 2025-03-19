@@ -127,7 +127,7 @@ class OrgPastCard extends StatelessWidget {
                             ),
                           ),
                           onPressed: () {
-                            Get.to(() => EventFeedbackPage(eventId: eventData['eventId'].toString()));
+                            Get.to(() => OrgFeedbackPage(eventId: eventData['eventId'].toString()));
                           },
                           child: TextStyleHelper.CustomText(
                             text: "User Feedback",

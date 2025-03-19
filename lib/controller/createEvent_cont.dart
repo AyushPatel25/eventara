@@ -9,7 +9,9 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'dart:math';
+import '../generated/assets.dart';
 import '../model/event_model.dart';
 
 class CreateEventController extends GetxController {
@@ -545,13 +547,11 @@ class CreateEventController extends GetxController {
 
       Get.back();
 
-      Get.snackbar(
-        "Success",
-        "Event created successfully with ID: $eventId",
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        duration: Duration(seconds: 5),
+      Lottie.asset(
+        Assets.imagesCreate,
+        width: 120,
+        height: 120,
+        fit: BoxFit.fill,
       );
 
       // Clear form after successful save

@@ -7,6 +7,8 @@ class Assets {
   static const String iconDownArrow = 'assets/icon/down_arrow.png';
   static const String imagesApptitle = 'assets/images/apptitle.png';
   static const String imagesBackGif = 'assets/images/BackGif.gif';
+  static const String imagesCrack = 'assets/images/crack.json';
+  static const String imagesCreate = 'assets/images/create.json';
   static const String imagesDarkmap = 'assets/images/darkmap.json';
   static const String imagesEmptySearch = 'assets/images/emptySearch.png';
   static const String imagesEmptyState = 'assets/images/emptyState.png';

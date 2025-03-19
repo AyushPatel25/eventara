@@ -44,6 +44,13 @@ class EventController extends GetxController {
         date1.day == date2.day;
   }
 
+  bool isDateInFutureOrToday(DateTime date) {
+    DateTime now = DateTime.now();
+    DateTime today = DateTime(now.year, now.month, now.day);
+    DateTime compareDate = DateTime(date.year, date.month, date.day);
+    return compareDate.isAfter(today) || compareDate.isAtSameMomentAs(today);
+  }
+
   Future<void> fetchEvents() async {
     try {
       isLoading.value = true;
@@ -53,18 +60,24 @@ class EventController extends GetxController {
           .collection('eventDetails')
           .get();
 
+      // Get today's date for comparison
+      DateTime now = DateTime.now();
+      DateTime today = DateTime(now.year, now.month, now.day);
+
       for (var doc in snapshot.docs) {
         var data = doc.data();
         var event = EventModel.fromJson(data);
 
         DateTime eventDate = convertStringToDate(event.eventDate);
-
         eventDate = DateTime(eventDate.year, eventDate.month, eventDate.day);
 
-        if (events.containsKey(eventDate)) {
-          events[eventDate]!.add(event);
-        } else {
-          events[eventDate] = [event];
+        // Only add the event if it's today or in the future
+        if (eventDate.isAfter(today) || eventDate.isAtSameMomentAs(today)) {
+          if (events.containsKey(eventDate)) {
+            events[eventDate]!.add(event);
+          } else {
+            events[eventDate] = [event];
+          }
         }
       }
 
@@ -79,12 +92,23 @@ class EventController extends GetxController {
 
   List<EventModel> getEventsForDay(DateTime day) {
     DateTime dateWithoutTime = DateTime(day.year, day.month, day.day);
-    return events[dateWithoutTime] ?? [];
+
+    // Only return events for today or future dates
+    if (isDateInFutureOrToday(dateWithoutTime)) {
+      return events[dateWithoutTime] ?? [];
+    }
+    return [];
   }
 
   void updateSelectedEvents(DateTime date) {
     DateTime dateWithoutTime = DateTime(date.year, date.month, date.day);
-    selectedEvents.assignAll(events[dateWithoutTime] ?? []);
+
+    // Only show events in the selected events list if the date is today or in the future
+    if (isDateInFutureOrToday(dateWithoutTime)) {
+      selectedEvents.assignAll(events[dateWithoutTime] ?? []);
+    } else {
+      selectedEvents.clear();
+    }
   }
 
   void onDaySelected(DateTime selectedDay, DateTime focusedDay) {

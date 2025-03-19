@@ -6,7 +6,6 @@ import '../../controller/org_stat_cont.dart';
 import '../../generated/assets.dart';
 import '../../utills/appcolors.dart';
 
-
 class OrgStatistics extends StatelessWidget {
   final int eventId;
 
@@ -17,15 +16,14 @@ class OrgStatistics extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Initialize and fetch data with the statistics controller
-    final StatisticsController statsController = Get.put(StatisticsController());
+    final StatisticsController statsController =
+        Get.put(StatisticsController());
     statsController.fetchEventStatistics(eventId);
 
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,
         body: Obx(() {
-          // Show loading indicator while data is being fetched
           if (statsController.isLoading.value) {
             return Center(
               child: CircularProgressIndicator(
@@ -34,8 +32,10 @@ class OrgStatistics extends StatelessWidget {
             );
           }
 
-          // Get category names for bar chart
           List<String> categoryNames = statsController.getCategoryNames();
+
+          double totalSeats = statsController.bookedSeats.value.toDouble() +
+              statsController.availableSeats.value.toDouble();
 
           return CustomScrollView(
             slivers: [
@@ -53,35 +53,31 @@ class OrgStatistics extends StatelessWidget {
               ),
               SliverToBoxAdapter(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            TextStyleHelper.CustomText(
-                              text: "Event ID: $eventId",
-                              color: AppColors.whiteColor,
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextStyleHelper.CustomText(
+                            text: "Event ID: $eventId",
+                            color: AppColors.whiteColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            fontFamily: Assets.fontsPoppinsBold,
+                          ),
+                          SizedBox(height: 10),
+                          FittedBox(
+                            child: TextStyleHelper.CustomText(
+                              text: "Track \nYour Events \nLive Data.",
+                              color: AppColors.lightGrey,
                               fontWeight: FontWeight.w600,
-                              fontSize: 16,
+                              fontSize: 40,
                               fontFamily: Assets.fontsPoppinsBold,
                             ),
-                            SizedBox(height: 10),
-                            FittedBox(
-                              child: TextStyleHelper.CustomText(
-                                text: "Track \nYour Events \nLive Data.",
-                                color: AppColors.lightGrey,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 40,
-                                fontFamily: Assets.fontsPoppinsBold,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -89,59 +85,54 @@ class OrgStatistics extends StatelessWidget {
               ),
               SliverToBoxAdapter(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Total Sales Container
+                    // Total Sales
                     Container(
-                      color: Colors.yellow,
+                      color: Colors.grey[800],
                       width: double.infinity,
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            TextStyleHelper.CustomText(
-                              text: "\u{20B9}${statsController.totalIncome.value.toStringAsFixed(0)}",
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 35,
-                              fontFamily: Assets.fontsPoppinsBold,
-                            ),
-                            TextStyleHelper.CustomText(
-                              text: "Total Sales",
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 25,
-                              fontFamily: Assets.fontsPoppinsBold,
-                            ),
-                          ],
-                        ),
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextStyleHelper.CustomText(
+                            text:
+                                "\u{20B9}${statsController.totalIncome.value.toStringAsFixed(0)}",
+                            color: AppColors.whiteColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 35,
+                            fontFamily: Assets.fontsPoppinsBold,
+                          ),
+                          TextStyleHelper.CustomText(
+                            text: "Total Sales",
+                            color: AppColors.whiteColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 25,
+                            fontFamily: Assets.fontsPoppinsBold,
+                          ),
+                        ],
                       ),
                     ),
-                    // Tickets Container
+
+                    // Tickets Container with custom PieChart animation
                     Container(
-                      color: Colors.red,
+                      color: Colors.grey[700],
                       width: double.infinity,
-                      height: 220,
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Column(
+                      height: 250,
+                      padding: const EdgeInsets.all(20.0),
+                      child: Row(
+                        children: [
+                          // Ticket Info
+                          Expanded(
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
                                   children: [
                                     Container(
-                                      height: 15,
-                                      width: 15,
-                                      color: Colors.black,
-                                    ),
+                                        height: 15,
+                                        width: 15,
+                                        color: Colors.black),
                                     SizedBox(width: 10),
                                     TextStyleHelper.CustomText(
                                       text: "Booked Tickets",
@@ -164,14 +155,13 @@ class OrgStatistics extends StatelessWidget {
                                 Row(
                                   children: [
                                     Container(
-                                      height: 15,
-                                      width: 15,
-                                      color: Colors.white,
-                                    ),
+                                        height: 15,
+                                        width: 15,
+                                        color: Colors.white),
                                     SizedBox(width: 10),
                                     TextStyleHelper.CustomText(
                                       text: "Available Tickets",
-                                      color: Colors.white,
+                                      color: AppColors.whiteColor,
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                       fontFamily: Assets.fontsPoppinsBold,
@@ -180,123 +170,140 @@ class OrgStatistics extends StatelessWidget {
                                 ),
                                 SizedBox(height: 5),
                                 TextStyleHelper.CustomText(
-                                  text: '${statsController.availableSeats.value}',
-                                  color: Colors.white,
+                                  text:
+                                      '${statsController.availableSeats.value}',
+                                  color: AppColors.whiteColor,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 35,
                                   fontFamily: Assets.fontsPoppinsBold,
                                 ),
                               ],
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: FittedBox(
-                                child: Container(
-                                  width: 150,
-                                  height: 100,
-                                  child: PieChart(
-                                    PieChartData(
-                                      sections: [
-                                        PieChartSectionData(
-                                          value: statsController.bookedSeats.value.toDouble(),
-                                          color: Colors.black,
-                                          radius: 40,
-                                          showTitle: false,
-                                        ),
-                                        PieChartSectionData(
-                                          value: statsController.availableSeats.value.toDouble(),
-                                          color: Colors.white,
-                                          radius: 40,
-                                          showTitle: false,
-                                        ),
-                                      ],
-                                      centerSpaceRadius: 50,
-                                      sectionsSpace: 0,
-                                      startDegreeOffset: 270,
-                                      pieTouchData: PieTouchData(enabled: false),
-                                    ),
+                          ),
+
+                          // Animated Pie Chart
+                          Expanded(
+                            child: TweenAnimationBuilder<double>(
+                              tween: Tween<double>(
+                                  begin: -0.5,
+                                  end: statsController.bookedSeats.value
+                                      .toDouble()),
+                              duration: Duration(seconds: 2),
+                              curve: Curves.linear,
+                              builder: (context, bookedSeatsAnimated, child) {
+                                return PieChart(
+                                  PieChartData(
+                                    sections: [
+                                      PieChartSectionData(
+                                        value: bookedSeatsAnimated,
+                                        color: Colors.black,
+                                        radius: 40,
+                                        showTitle: false,
+                                      ),
+                                      PieChartSectionData(
+                                        value:
+                                            (totalSeats - bookedSeatsAnimated),
+                                        color: AppColors.whiteColor,
+                                        radius: 40,
+                                        showTitle: false,
+                                      ),
+                                    ],
+                                    centerSpaceRadius: 50,
+                                    sectionsSpace: 0,
+                                    startDegreeOffset: 270,
+                                    pieTouchData: PieTouchData(enabled: false),
                                   ),
-                                ),
-                              ),
+                                );
+                              },
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                    // Bar Chart Container
+
+                    // Category-wise Bar Chart
                     Container(
-                      color: Color(0xFFD4F0C7),
+                      color: Colors.grey[600],
                       width: double.infinity,
                       height: 330,
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Category-wise Booked Tickets',
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                  fontFamily: Assets.fontsPoppinsBold
-                              ),
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Category-wise Booked Tickets',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              fontFamily: Assets.fontsPoppinsBold,
                             ),
-                            SizedBox(height: 15),
-                            Container(
-                              height: 250,
-                              child: BarChart(
-                                BarChartData(
-                                  alignment: BarChartAlignment.spaceAround,
-                                  maxY: 100, // 100% is the maximum
-                                  barGroups: statsController.getCategoryBarData(),
-                                  titlesData: FlTitlesData(
-                                    leftTitles: AxisTitles(
-                                      sideTitles: SideTitles(
-                                        showTitles: true,
-                                        reservedSize: 30,
-                                        interval: 25, // Show 0, 25, 50, 75, 100
-                                        getTitlesWidget: (value, meta) {
-                                          return Text(
-                                            '${value.toInt()}%',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 11,
-                                            ),
-                                          );
-                                        },
+                          ),
+                          SizedBox(height: 15),
+                          Expanded(
+                            child: TweenAnimationBuilder<double>(
+                                tween: Tween<double>(begin: 0, end: 1),
+                                duration: Duration(seconds: 2),
+                                curve: Curves.easeInOut,
+                                builder: (context, animationValue, child) {
+                                  return BarChart(
+                                    BarChartData(
+                                      alignment: BarChartAlignment.spaceAround,
+                                      maxY: 100,
+                                      barGroups:
+                                          statsController.getCategoryBarData(),
+                                      titlesData: FlTitlesData(
+                                        leftTitles: AxisTitles(
+                                          sideTitles: SideTitles(
+                                            showTitles: true,
+                                            reservedSize: 30,
+                                            interval: 25,
+                                            getTitlesWidget: (value, meta) {
+                                              return Text(
+                                                '${value.toInt()}%',
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 11,
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                        bottomTitles: AxisTitles(
+                                          sideTitles: SideTitles(
+                                            showTitles: true,
+                                            reservedSize: 30,
+                                            getTitlesWidget: (value, meta) {
+                                              int index = value.toInt();
+                                              if (index >= 0 &&
+                                                  index <
+                                                      categoryNames.length) {
+                                                return Text(
+                                                  categoryNames[index],
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 12,
+                                                  ),
+                                                );
+                                              }
+                                              return Text("");
+                                            },
+                                          ),
+                                        ),
+                                        topTitles: AxisTitles(
+                                            sideTitles:
+                                                SideTitles(showTitles: false)),
+                                        rightTitles: AxisTitles(
+                                            sideTitles:
+                                                SideTitles(showTitles: false)),
                                       ),
+                                      gridData: FlGridData(show: false),
+                                      borderData: FlBorderData(show: false),
                                     ),
-                                    bottomTitles: AxisTitles(
-                                      sideTitles: SideTitles(
-                                        showTitles: true,
-                                        reservedSize: 30,
-                                        getTitlesWidget: (value, meta) {
-                                          int index = value.toInt();
-                                          if (index >= 0 && index < categoryNames.length) {
-                                            return Text(
-                                              categoryNames[index],
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12,
-                                              ),
-                                            );
-                                          }
-                                          return Text("");
-                                        },
-                                      ),
-                                    ),
-                                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                                  ),
-                                  gridData: FlGridData(show: false),
-                                  borderData: FlBorderData(show: false),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                                  );
+                                }),
+                          ),
+                        ],
                       ),
                     ),
                   ],

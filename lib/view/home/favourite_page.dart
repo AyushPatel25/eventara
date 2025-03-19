@@ -16,22 +16,22 @@ class FavouritePage extends GetView<FavouriteController> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-          backgroundColor: Colors.black,
+        backgroundColor: Colors.black,
         body: CustomScrollView(
           slivers: [
-          SliverAppBar(
+            SliverAppBar(
 
-          pinned: true,
-          surfaceTintColor: Colors.black,
-          backgroundColor: Colors.black,
-          title: TextStyleHelper.CustomText(
-            text: 'Favourites',
-            color: AppColors.whiteColor,
-            fontWeight: FontWeight.w700,
-            fontSize: 25,
-            fontFamily: Assets.fontsPoppinsBold,
-          ),
-        ),
+              pinned: true,
+              surfaceTintColor: Colors.black,
+              backgroundColor: Colors.black,
+              title: TextStyleHelper.CustomText(
+                text: 'Favourites',
+                color: AppColors.whiteColor,
+                fontWeight: FontWeight.w700,
+                fontSize: 25,
+                fontFamily: Assets.fontsPoppinsBold,
+              ),
+            ),
             SliverToBoxAdapter(
               child: Obx(() {
                 if (controller.favoriteEvents.isEmpty) {
@@ -48,7 +48,6 @@ class FavouritePage extends GetView<FavouriteController> {
                     ),
                   );
                 }
-
                 return GridView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),

@@ -8,6 +8,7 @@ import 'package:eventapp/view/home/buyTicket_page.dart';
 import 'package:eventapp/view/home/dashboard_page.dart';
 import 'package:eventapp/view/home/eticket.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
@@ -732,6 +733,7 @@ class EventDetails extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
+                    HapticFeedback.mediumImpact();
                     Get.to(BuyticketPage());
                   },
                   child: Text(

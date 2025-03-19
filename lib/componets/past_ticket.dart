@@ -16,18 +16,23 @@ class PastTicket extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String eventName = ticket['eventName'] ?? 'Unknown Event';
-    String location = ticket['eventLocation'] ?? 'Unknown Location';
-    String eventImage = ticket['eventImage'] ?? '';
-    String date = ticket['eventDate'] ?? 'N/A';
-    String time = ticket['eventTime'].toString() ?? 'N/A';
-    String seatNo = ticket['seatNo'] ?? 'Standing';
-    String gateNo = ticket['gateNo'] ?? 'N/A';
-    String ticketCategory = ticket['ticketCategory'];
-    int ticketPrice = ticket['ticketPrice'];
-    int ticketCount = ticket['ticketCount'];
-    String arrangement = ticket['arrangement'];
+    String eventName = ticket['eventName']?.toString() ?? 'Unknown Event';
+    String location = ticket['eventLocation']?.toString() ?? 'Unknown Location';
+    String eventImage = ticket['eventImage']?.toString() ?? '';
+    String date = ticket['eventDate'] is String
+        ? ticket['eventDate']
+        : ticket['eventDate'] != null
+        ? ticket['eventDate'].toString()
+        : 'N/A';
+    String time = ticket['eventTime']?.toString() ?? 'N/A';
+    String seatNo = ticket['seatNo']?.toString() ?? 'Standing';
+    String gateNo = ticket['gateNo']?.toString() ?? 'N/A';
+    String ticketCategory = ticket['ticketCategory']?.toString() ?? 'N/A';
+    String ticketPrice = ticket['ticketPrice']?.toString() ?? '0';
+    String ticketCount = ticket['ticketCount']?.toString() ?? '1';
+    String arrangement = ticket['arrangement']?.toString() ?? 'N/A';
     List<String> ticketNumbers = List<String>.from(ticket['ticketNumbers'] ?? []);
+    String eventId = ticket['eventId']?.toString() ?? '';
 
     return SingleChildScrollView(
       child: Container(
@@ -43,7 +48,6 @@ class PastTicket extends StatelessWidget {
                   Flexible(
                     flex: 4,
                     child: Container(
-                      //color: Colors.red,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -60,70 +64,66 @@ class PastTicket extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 7),
-
                           Container(
-                              height: 24,
-                              child: FittedBox(
-                                  alignment: Alignment.centerLeft,
-                                  fit: BoxFit.scaleDown,
-                                  child: _ticketDetail("Location", location)
-                              )
+                            height: 24,
+                            child: FittedBox(
+                              alignment: Alignment.centerLeft,
+                              fit: BoxFit.scaleDown,
+                              child: _ticketDetail("Location", location),
+                            ),
                           ),
                           const SizedBox(height: 3),
-
                           Row(
                             children: [
                               Flexible(
                                 flex: 1,
                                 child: Container(
-                                    height: 24,
-                                    child: FittedBox(
-                                        alignment: Alignment.centerLeft,
-                                        fit: BoxFit.scaleDown,
-                                        child: _ticketDetail("Date", date)
-                                    )
+                                  height: 24,
+                                  child: FittedBox(
+                                    alignment: Alignment.centerLeft,
+                                    fit: BoxFit.scaleDown,
+                                    child: _ticketDetail("Date", date),
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 15),
                               Flexible(
                                 flex: 1,
                                 child: Container(
-                                    height: 24,
-                                    child: FittedBox(
-                                        alignment: Alignment.centerLeft,
-                                        fit: BoxFit.scaleDown,
-                                        child: _ticketDetail("Time", time)
-                                    )
+                                  height: 24,
+                                  child: FittedBox(
+                                    alignment: Alignment.centerLeft,
+                                    fit: BoxFit.scaleDown,
+                                    child: _ticketDetail("Time", time),
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 3),
-
-
                           Row(
                             children: [
                               Flexible(
                                 flex: 1,
                                 child: Container(
-                                    height: 24,
-                                    child: FittedBox(
-                                        alignment: Alignment.centerLeft,
-                                        fit: BoxFit.scaleDown,
-                                        child: _ticketDetail("Category", ticketCategory)
-                                    )
+                                  height: 24,
+                                  child: FittedBox(
+                                    alignment: Alignment.centerLeft,
+                                    fit: BoxFit.scaleDown,
+                                    child: _ticketDetail("Category", ticketCategory),
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 15),
                               Flexible(
                                 flex: 1,
                                 child: Container(
-                                    height: 24,
-                                    child: FittedBox(
-                                        alignment: Alignment.centerLeft,
-                                        fit: BoxFit.scaleDown,
-                                        child: _ticketDetail("Price", ticketPrice.toString())
-                                    )
+                                  height: 24,
+                                  child: FittedBox(
+                                    alignment: Alignment.centerLeft,
+                                    fit: BoxFit.scaleDown,
+                                    child: _ticketDetail("Price", ticketPrice),
+                                  ),
                                 ),
                               ),
                             ],
@@ -132,12 +132,9 @@ class PastTicket extends StatelessWidget {
                       ),
                     ),
                   ),
-
-
                   Flexible(
                     flex: 1,
                     child: Container(
-                      //color: Colors.red,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -151,7 +148,15 @@ class PastTicket extends StatelessWidget {
                           ),
                           IconButton(
                             onPressed: () {
-                              Get.to(() => FeedbackPage,);
+                              if (eventId.isNotEmpty) {
+                                Get.to(() => FeedbackPage(
+                                  eventId: eventId,
+                                  eventName: eventName,
+                                  eventImage: eventImage,
+                                ));
+                              } else {
+                                Get.snackbar('Error', 'Event ID not found for this ticket');
+                              }
                             },
                             color: AppColors.whiteColor,
                             iconSize: 50,
@@ -163,7 +168,7 @@ class PastTicket extends StatelessWidget {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

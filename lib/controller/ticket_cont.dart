@@ -59,7 +59,7 @@ class TicketController extends GetxController {
       for (var bookingData in bookings) {
         Map<String, dynamic> ticket = Map<String, dynamic>.from(bookingData);
         _ensureTicketFields(ticket);
-        DateTime expiryDate = _parseExpiryDate(ticket);
+        DateTime expiryDate = DateFormat('dd MMM yyyy').parse(bookingData['eventDate']);
 
         if (expiryDate.isAfter(today)) {
           newUpcomingTickets.add(ticket);

@@ -1,44 +1,87 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eventapp/componets/text_style.dart';
+import 'package:eventapp/utills/appcolors.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../generated/assets.dart';
 
 class OrgFeedbackController extends GetxController {
-  final RxList<Map<String, dynamic>> feedbackList = RxList<Map<String, dynamic>>([]);
-
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Fetch feedback for a specific event
+  final RxList<Map<String, dynamic>> feedbackList = <Map<String, dynamic>>[].obs;
+  final RxBool isLoading = true.obs;
+  final RxString errorMessage = ''.obs;
+  final RxString eventTitle = 'Event Feedback'.obs;
+
   Future<void> fetchFeedback(String eventId) async {
     try {
-      // Query all organizers to find the one with the event
-      QuerySnapshot organizersSnapshot = await _firestore.collection('organizers').get();
+      isLoading.value = true;
+      errorMessage.value = '';
 
-      for (var organizerDoc in organizersSnapshot.docs) {
-        DocumentSnapshot eventDoc = await _firestore
-            .collection('organizers')
-            .doc(organizerDoc.id)
-            .get();
+      // Get current organizer ID
+      String? orgId = _auth.currentUser?.uid;
+      if (orgId == null) {
+        throw Exception("No authenticated user found");
+      }
 
-        if (eventDoc.exists) {
-          var data = eventDoc.data() as Map<String, dynamic>?;
-          if (data != null && data.containsKey(eventId)) {
-            var feedback = data[eventId]['feedback'] as Map<String, dynamic>?;
-            if (feedback != null) {
-              feedbackList.clear();
-              feedbackList.add({
-                'username': feedback['username'] ?? 'Unknown User',
-                'rating': feedback['rating'] ?? 0.0,
-                'comment': feedback['comment'] ?? 'No comment',
-                'timestamp': feedback['timestamp']?.toDate().toString() ?? 'No timestamp',
-              });
-              break;
-            }
-          }
+      print("Fetching feedback for eventId: $eventId, orgId: $orgId");
+
+      // Access the correct path in Firestore based on your structure
+      DocumentSnapshot orgDoc = await _firestore
+          .collection('organizers')
+          .doc(orgId)
+          .get();
+
+      if (!orgDoc.exists) {
+        throw Exception("Organizer profile not found");
+      }
+
+      // Get the events map from the organizer document
+      Map<String, dynamic> orgData = orgDoc.data() as Map<String, dynamic>;
+      Map<String, dynamic>? events = orgData['events'] as Map<String, dynamic>?;
+
+      if (events == null || !events.containsKey(eventId)) {
+        throw Exception("Event not found or you don't have permission");
+      }
+
+      // Get the specific event
+      Map<String, dynamic> eventData = events[eventId] as Map<String, dynamic>;
+
+      // Store event title if available
+      if (eventData.containsKey('title')) {
+        eventTitle.value = eventData['title'] ?? 'Event Feedback';
+      }
+
+      // Get feedback array from the event
+      List<dynamic>? feedbacks = eventData['feedback'] as List<dynamic>?;
+
+      feedbackList.clear();
+
+      if (feedbacks != null && feedbacks.isNotEmpty) {
+        // Convert each feedback item to a Map
+        for (var feedback in feedbacks) {
+          feedbackList.add(feedback as Map<String, dynamic>);
         }
       }
     } catch (e) {
       print("Error fetching feedback: $e");
-      Get.snackbar("Error", "Failed to load feedback: $e", backgroundColor: Colors.red);
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
     }
   }
+
+  // Calculate average rating
+  double get averageRating {
+    if (feedbackList.isEmpty) return 0;
+
+    double sum = 0;
+    for (var feedback in feedbackList) {
+      sum += (feedback['rating'] ?? 0).toDouble();
+    }
+    return sum / feedbackList.length;
+  }
 }
+

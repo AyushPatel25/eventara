@@ -151,7 +151,7 @@ class ProfileController extends GetxController {
                       onPressed: logout,
                       child: TextStyleHelper.CustomText(
                           text: 'Log Out',
-                          color: AppColors.whiteColor,
+                          color: Colors.red,
                           fontWeight: FontWeight.w400,
                           fontSize: 16,
                           fontFamily: Assets.fontsPoppinsRegular),

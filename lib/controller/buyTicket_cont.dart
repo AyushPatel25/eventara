@@ -210,6 +210,7 @@ class BuyTicketController extends GetxController {
         'eventTime': event.value!.time,
         'arrangement': event.value!.arrangement,
         'ticketNumbers': ticketNumbers,
+        'fromBookTicket': true,
       });
 
       Get.snackbar("Success", "Tickets booked successfully!", backgroundColor: Colors.green);

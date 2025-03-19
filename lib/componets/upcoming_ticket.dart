@@ -161,6 +161,7 @@ class UpcomingTicket extends StatelessWidget {
                                 'eventTime': time,
                                 'arrangement': arrangement,
                                 'ticketNumbers': ticketNumbers,
+                                'fromBookTicket': false,
                               })!.then((_) {
                                 ticketController.fetchUserTickets(); // Refresh tickets after returning
                               });
