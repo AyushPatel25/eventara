@@ -65,19 +65,19 @@ class HomeController extends GetxController {
   double calculateDistance(double lat1, double lon1, double? lat2, double? lon2) {
     if (lat2 == null || lon2 == null) return double.infinity;
 
-    // Make sure all values are double
     try {
       return Geolocator.distanceBetween(
           lat1,
           lon1,
           lat2,
           lon2
-      ) / 1000; // Convert to kilometers
+      ) / 1000;
     } catch (e) {
       print("❌ Error calculating distance: $e");
       return double.infinity;
     }
   }
+
   Future<void> fetchNearEvents() async {
     try {
       isLoading.value = true;
@@ -87,7 +87,6 @@ class HomeController extends GetxController {
       double? userLat;
       double? userLon;
 
-      // Clean up location parsing
       try {
         String latString = locationController.latitude.value.toString().trim();
         String lonString = locationController.longitude.value.toString().trim();
@@ -106,7 +105,6 @@ class HomeController extends GetxController {
         return;
       }
 
-      // Get current date for filtering
       DateTime today = DateTime.now();
 
       List<EventModel> nearEventsList = [];
@@ -116,7 +114,6 @@ class HomeController extends GetxController {
           var data = doc.data() as Map<String, dynamic>;
           var event = EventModel.fromJson(data);
 
-          // Filter by date - only show upcoming events
           DateTime eventDate = DateFormat('dd MMM yyyy').parse(event.eventDate);
           if (!(eventDate.isAfter(today) || eventDate.isAtSameMomentAs(today))) {
             continue; // Skip past events
@@ -157,7 +154,6 @@ class HomeController extends GetxController {
       QuerySnapshot snapshot =
       await FirebaseFirestore.instance.collection('eventDetails').get();
 
-      DateTime now = DateTime.now();
       DateTime today = DateTime.now();
 
       events.value = snapshot.docs.map((doc) {
@@ -187,6 +183,14 @@ class HomeController extends GetxController {
   void updateCategory(int index) {
     indexCategory.value = index;
     selectedCategory.value = _getCategoryName(index);
+
+    // Clear any selected filters when changing category
+    if (index != 0) { // If not "All"
+      selectedFilters.forEach((key, value) {
+        selectedFilters[key] = false;
+      });
+    }
+
     applyFilters();
   }
 
@@ -219,32 +223,39 @@ class HomeController extends GetxController {
 
   void applyFilters() {
     List<EventModel> tempEvents = List.from(events);
+    print("Total events before filtering: ${tempEvents.length}");
+    print("Selected category: ${selectedCategory.value}");
 
+    // Apply category filter
     if (selectedCategory.value != "All") {
-      tempEvents = tempEvents.where((event) => event.category == selectedCategory.value).toList();
+      tempEvents = tempEvents.where((event) {
+        print("Event category: ${event.category}, Selected: ${selectedCategory.value}");
+        return event.category.toLowerCase() == selectedCategory.value.toLowerCase();
+      }).toList();
+      print("Events after category filtering: ${tempEvents.length}");
     }
 
-    List<String> selectedCategories = selectedFilters.entries
-        .where((entry) => entry.value)
-        .map((entry) => entry.key)
-        .toList();
-    if (selectedCategories.isNotEmpty) {
-      tempEvents = tempEvents.where((event) => selectedCategories.contains(event.category)).toList();
+    // Apply individual filters if All is selected but filters are checked
+    if (selectedCategory.value == "All") {
+      bool anyFilterSelected = selectedFilters.values.contains(true);
+
+      if (anyFilterSelected) {
+        tempEvents = tempEvents.where((event) {
+          return selectedFilters[event.category] == true;
+        }).toList();
+      }
     }
 
+    // Apply search query filter
     if (searchQuery.value.isNotEmpty) {
       tempEvents = tempEvents.where((event) {
-        String eventName = event.title.toLowerCase();
-        String eventDate = event.eventDate.toLowerCase();
-        String artistNames = event.artists.map((artist) => artist.artistName.toLowerCase()).join(", ");
-        String eventLoc = event.location.toLowerCase();
-        return eventName.contains(searchQuery.value) ||
-            eventDate.contains(searchQuery.value) ||
-            artistNames.contains(searchQuery.value) ||
-            eventLoc.contains(searchQuery.value);
+        return event.title.toLowerCase().contains(searchQuery.value) ||
+            event.description.toLowerCase().contains(searchQuery.value) ||
+            event.location.toLowerCase().contains(searchQuery.value);
       }).toList();
     }
 
     filteredEvents.assignAll(tempEvents);
+    print("Final filtered events: ${filteredEvents.length}");
   }
 }

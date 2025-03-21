@@ -1,16 +1,15 @@
-import 'package:eventapp/componets/button.dart';
-import 'package:eventapp/componets/text_field.dart';
-import 'package:eventapp/componets/text_style.dart';
-import 'package:eventapp/generated/assets.dart';
-import 'package:eventapp/utills/appcolors.dart';
-import 'package:eventapp/view/home/dashboard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:country_state_city/country_state_city.dart';
-
-import '../../controller/loc_cont.dart';
+import '../../componets/button.dart';
+import '../../componets/text_field.dart';
+import '../../componets/text_style.dart';
+import '../../generated/assets.dart';
+import '../../utills/appcolors.dart';
+import '../home/dashboard_page.dart';
 import '../home/home_page.dart';
+import '../../controller/loc_cont.dart';
 
 showLocationBottomSheet(BuildContext context) {
   showModalBottomSheet(
@@ -27,39 +26,41 @@ showLocationBottomSheet(BuildContext context) {
 class LocationBottomSheet extends StatelessWidget {
   final LocationController locationController = Get.put(LocationController());
   final TextEditingController _searchController = TextEditingController();
+  // Add a reactive loading state
+  final RxBool isLoading = false.obs;
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Column(
         children: [
-          SizedBox(height: 57,),
+          SizedBox(height: 57),
           // AppBar
           AppBar(
-              systemOverlayStyle: SystemUiOverlayStyle(
-                statusBarColor: Colors.black,
-                systemNavigationBarColor: Colors.black,
-              ),
-              leading: IconButton(
-                  onPressed: (){
-                    Get.offAll(DashboardPage());
-                    Future.delayed(Duration(milliseconds: 300), () {
-                      FocusScope.of(context).requestFocus(FocusNode());
-                    });
-                    locationController.displayList.clear();
-                  }, 
-                  icon: Icon(Icons.arrow_back)
-              ),
-              elevation: 1,
-              backgroundColor: Colors.black,
-              surfaceTintColor: Colors.black,
-              title: TextStyleHelper.CustomText(
-                text: "Location",
-                color: AppColors.whiteColor,
-                fontWeight: FontWeight.w600,
-                fontSize: 25,
-                fontFamily: Assets.fontsPoppinsBold,
-              )
+            systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: Colors.black,
+              systemNavigationBarColor: Colors.black,
+            ),
+            leading: IconButton(
+              onPressed: () {
+                Get.offAll(DashboardPage());
+                Future.delayed(Duration(milliseconds: 300), () {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                });
+                locationController.displayList.clear();
+              },
+              icon: Icon(Icons.arrow_back),
+            ),
+            elevation: 1,
+            backgroundColor: Colors.black,
+            surfaceTintColor: Colors.black,
+            title: TextStyleHelper.CustomText(
+              text: "Location",
+              color: AppColors.whiteColor,
+              fontWeight: FontWeight.w600,
+              fontSize: 25,
+              fontFamily: Assets.fontsPoppinsBold,
+            ),
           ),
           SizedBox(height: 20),
 
@@ -77,7 +78,6 @@ class LocationBottomSheet extends StatelessWidget {
                   locationController.chips.clear();
                   locationController.displayList.clear();
                   locationController.loadCountries();
-
                 },
                 onChanged: locationController.filterList,
                 decoration: InputDecoration(
@@ -106,7 +106,10 @@ class LocationBottomSheet extends StatelessWidget {
             )),
           ),
 
-          Visibility(visible: locationController.selectedCountry.isNotEmpty?true:false, child: SizedBox(height: 10)),
+          Visibility(
+            visible: locationController.selectedCountry.isNotEmpty ? true : false,
+            child: SizedBox(height: 10),
+          ),
 
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
@@ -116,7 +119,13 @@ class LocationBottomSheet extends StatelessWidget {
                 children: [
                   if (locationController.selectedCountry.isNotEmpty)
                     Chip(
-                      label: Text(locationController.selectedCountry.value, style: TextStyle(color: AppColors.whiteColor, fontFamily: Assets.fontsPoppinsRegular),),
+                      label: Text(
+                        locationController.selectedCountry.value,
+                        style: TextStyle(
+                          color: AppColors.whiteColor,
+                          fontFamily: Assets.fontsPoppinsRegular,
+                        ),
+                      ),
                       onDeleted: () {
                         locationController.selectedCountry.value = "";
                         locationController.selectedState.value = "";
@@ -126,10 +135,16 @@ class LocationBottomSheet extends StatelessWidget {
                         locationController.currentType.value = "Country";
                       },
                     ),
-                  const SizedBox(width: 5,),
+                  const SizedBox(width: 5),
                   if (locationController.selectedState.isNotEmpty)
                     Chip(
-                      label: Text(locationController.selectedState.value, style: TextStyle(color: AppColors.whiteColor, fontFamily: Assets.fontsPoppinsRegular),),
+                      label: Text(
+                        locationController.selectedState.value,
+                        style: TextStyle(
+                          color: AppColors.whiteColor,
+                          fontFamily: Assets.fontsPoppinsRegular,
+                        ),
+                      ),
                       onDeleted: () {
                         locationController.selectedState.value = "";
                         locationController.selectedCity.value = "";
@@ -137,13 +152,22 @@ class LocationBottomSheet extends StatelessWidget {
                         locationController.currentType.value = "State";
                       },
                     ),
-                  const SizedBox(width: 5,),
+                  const SizedBox(width: 5),
                   if (locationController.selectedCity.isNotEmpty)
                     Chip(
-                      label: Text(locationController.selectedCity.value, style: TextStyle(color: AppColors.whiteColor, fontFamily: Assets.fontsPoppinsRegular),),
+                      label: Text(
+                        locationController.selectedCity.value,
+                        style: TextStyle(
+                          color: AppColors.whiteColor,
+                          fontFamily: Assets.fontsPoppinsRegular,
+                        ),
+                      ),
                       onDeleted: () {
                         locationController.selectedCity.value = "";
-                        locationController.loadCities(locationController.selectedCountryCode, locationController.selectedStateCode);
+                        locationController.loadCities(
+                          locationController.selectedCountryCode,
+                          locationController.selectedStateCode,
+                        );
                         locationController.currentType.value = "City";
                       },
                     ),
@@ -151,10 +175,13 @@ class LocationBottomSheet extends StatelessWidget {
               ),
             )),
           ),
-          Visibility(visible: locationController.selectedCountry.isNotEmpty?true:false, child: SizedBox(height: 10)),
+          Visibility(
+            visible: locationController.selectedCountry.isNotEmpty ? true : false,
+            child: SizedBox(height: 10),
+          ),
 
           Visibility(
-            visible: locationController.displayList.isEmpty?false:true,
+            visible: locationController.displayList.isEmpty ? false : true,
             child: Expanded(
               child: Obx(() => ListView.builder(
                 itemCount: locationController.displayList.length,
@@ -163,21 +190,22 @@ class LocationBottomSheet extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                     child: ListTile(
-                        title: Text(item.name, style: TextStyle(color: AppColors.whiteColor, fontFamily: Assets.fontsPoppinsRegular)),
-                        onTap: () {
-                          locationController.handleSelection(item);
-                          _searchController.clear();
+                      title: Text(
+                        item.name,
+                        style: TextStyle(
+                          color: AppColors.whiteColor,
+                          fontFamily: Assets.fontsPoppinsRegular,
+                        ),
+                      ),
+                      onTap: () {
+                        locationController.handleSelection(item);
+                        _searchController.clear();
 
-                          if (locationController.selectedCity.isNotEmpty) {
-                            locationController.displayList.clear();
-                            Get.offAll(DashboardPage());
-
-                            // Future.delayed(Duration(milliseconds: 300), () {
-                            //   FocusScope.of(context).requestFocus(FocusNode());
-                            // });
-
-                          }
+                        if (locationController.selectedCity.isNotEmpty) {
+                          locationController.displayList.clear();
+                          Get.offAll(DashboardPage());
                         }
+                      },
                     ),
                   );
                 },
@@ -185,43 +213,79 @@ class LocationBottomSheet extends StatelessWidget {
             ),
           ),
 
-
           Visibility(
-            visible: locationController.displayList.isEmpty?true:false,
+            visible: locationController.displayList.isEmpty ? true : false,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
-              child: ElevatedButton.icon(
-                onPressed: () async {
+              child: Obx(() => ElevatedButton(
+                onPressed: isLoading.value
+                    ? null // Disable button while loading
+                    : () async {
+                  isLoading.value = true; // Start loading
                   final locationController = Get.find<LocationController>();
                   locationController.isManualSelection.value = false;
-                  await locationController.getLocation();
 
-                  if (locationController.latitude.value != 'Getting Latitude..') {
-                    Get.offAll(() => DashboardPage());
-                  } else {
-                    Get.snackbar("Location Error", "Please allow location access.");
+                  try {
+                    await locationController.getLocation();
+
+                    if (locationController.latitude.value != 'Getting Latitude..') {
+                      Get.offAll(() => DashboardPage());
+                    } else {
+                      Get.snackbar(
+                        "Location Error",
+                        "Please allow location access.",
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: Colors.red,
+                        colorText: Colors.white,
+                      );
+                    }
+                  } catch (e) {
+                    Get.snackbar(
+                      "Error",
+                      "Failed to fetch location: $e",
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: Colors.red,
+                      colorText: Colors.white,
+                    );
+                  } finally {
+                    isLoading.value = false; // Stop loading
                   }
                 },
-                icon: Icon(
-                  Icons.location_searching_outlined,
-                  color: AppColors.whiteColor,
-                  size: 16,
-                ),
-                label: TextStyleHelper.CustomText(
-                  text: 'Use my current location',
-                  color: AppColors.whiteColor,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16,
-                  fontFamily: Assets.fontsPoppinsBold,
-                ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.divider,
+                  backgroundColor: AppColors.divider, // Default background
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                   minimumSize: const Size.fromHeight(43),
                 ),
-              ),
+                child: isLoading.value
+                    ? SizedBox(
+                  height: 24,
+                  width: 24,
+                  child: CircularProgressIndicator(
+                    color: AppColors.whiteColor, // Black loader
+                    strokeWidth: 2.5,
+                  ),
+                )
+                    : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.location_searching_outlined,
+                      color: AppColors.whiteColor,
+                      size: 16,
+                    ),
+                    SizedBox(width: 8),
+                    TextStyleHelper.CustomText(
+                      text: 'Use my current location',
+                      color: AppColors.whiteColor,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      fontFamily: Assets.fontsPoppinsBold,
+                    ),
+                  ],
+                ),
+              )),
             ),
           ),
         ],

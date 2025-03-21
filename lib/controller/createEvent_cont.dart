@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'dart:math';
+import '../componets/text_style.dart';
 import '../generated/assets.dart';
 import '../model/event_model.dart';
 
@@ -393,6 +394,7 @@ class CreateEventController extends GetxController {
   }
 
   // Save event to Firestore
+  // Inside CreateEventController class
   Future<void> saveEvent(BuildContext context) async {
     if (!validateEventData()) {
       return;
@@ -419,26 +421,23 @@ class CreateEventController extends GetxController {
 
       // Process tickets and calculate statistics
       Map<String, TicketType> ticketTypes = {};
-      Map<String, int> categoryWiseSeats = {}; // Store category-wise seat count
-      int totalSeats = 0; // Track total seats across all categories
+      Map<String, int> categoryWiseSeats = {};
+      int totalSeats = 0;
 
       for (var ticket in tickets) {
         String ticketName = ticket['name'];
         int seats = int.tryParse(ticket['seat']) ?? 0;
         int price = int.tryParse(ticket['price']) ?? 0;
 
-        // Add to ticketTypes
         ticketTypes[ticketName] = TicketType(
           available: seats,
           price: price,
         );
 
-        // Update statistics
         categoryWiseSeats[ticketName] = seats;
         totalSeats += seats;
       }
 
-      // Prepare dates and time
       String eventDate = selectedDate.value != null
           ? DateFormat('dd MMM yyyy').format(selectedDate.value!)
           : '';
@@ -446,10 +445,10 @@ class CreateEventController extends GetxController {
           ? selectedTime.value!.format(context)
           : '';
       String expiryDate = selectedDate.value != null
-          ? DateFormat('dd MMM yyyy').format(selectedDate.value!.add(Duration(days: 1)))
+          ? DateFormat('dd MMM yyyy')
+          .format(selectedDate.value!.add(Duration(days: 1)))
           : '';
 
-      // Create event model
       EventModel event = EventModel(
         ageLimit: ageLimit.value,
         arrangement: arrangement.value,
@@ -474,37 +473,32 @@ class CreateEventController extends GetxController {
         eventState: eventStateController.text,
       );
 
-      // Convert to JSON
       Map<String, dynamic> eventJson = event.toJson();
 
-      // Add statistics data to the event JSON
       eventJson['statistics'] = {
-        'totalIncome': 0, // Initial income is zero
+        'totalIncome': 0,
         'totalSeats': totalSeats,
-        'availableSeats': totalSeats, // Initially, all seats are available
-        'bookedSeats': 0, // Initially, no seats are booked
+        'availableSeats': totalSeats,
+        'bookedSeats': 0,
         'categoryWiseSeats': categoryWiseSeats,
         'categoryWiseBookedSeats': Map<String, int>.fromIterable(
             categoryWiseSeats.keys,
             key: (k) => k,
-            value: (k) => 0 // Initially, no seats are booked in any category
-        ),
+            value: (k) => 0),
       };
 
-      // Save to Firestore eventDetails collection
       await _firestore.collection('eventDetails').add(eventJson);
 
-      // Handle organizer data
       String? orgId = _auth.currentUser?.uid;
       if (orgId == null) {
         throw Exception("No authenticated user found");
       }
 
-      DocumentReference organizerRef = _firestore.collection('organizers').doc(orgId);
+      DocumentReference organizerRef =
+      _firestore.collection('organizers').doc(orgId);
       DocumentSnapshot organizerSnapshot = await organizerRef.get();
 
       if (!organizerSnapshot.exists) {
-        // If organizer doesn't exist, create a new one
         OrganizerModel newOrganizer = OrganizerModel(
           uid: orgId,
           organizerName: _auth.currentUser?.displayName ?? "Unknown Organizer",
@@ -513,7 +507,6 @@ class CreateEventController extends GetxController {
         );
         await organizerRef.set(newOrganizer.toJson());
 
-        // Add the event details as a map
         await organizerRef.update({
           'events': {
             eventId.toString(): {
@@ -524,13 +517,11 @@ class CreateEventController extends GetxController {
           }
         });
       } else {
-        // If organizer exists, update the events map
         Map<String, dynamic> organizerData =
             organizerSnapshot.data() as Map<String, dynamic>? ?? {};
         Map<String, dynamic> existingEvents =
             organizerData['events'] as Map<String, dynamic>? ?? {};
 
-        // Add new event to the map
         existingEvents[eventId.toString()] = {
           'eventId': eventId,
           'eventImage': eventImageUrl,
@@ -545,19 +536,18 @@ class CreateEventController extends GetxController {
       print("Event ID: $eventId");
       print("Event Document: $eventJson");
 
-      Get.back();
+      Get.back(); // Close loading dialog
 
-      Lottie.asset(
-        Assets.imagesCreate,
-        width: 120,
-        height: 120,
-        fit: BoxFit.fill,
-      );
+      // Show success dialog with Lottie animation
+      await _showSuccessDialog(context);
 
       // Clear form after successful save
       clearForm();
+
+      // Navigate back or to another screen if needed
+      Get.back(); // This will close the CreateEvent screen if desired
     } catch (e) {
-      Get.back();
+      Get.back(); // Close loading dialog
 
       print("Error saving event: $e");
       Get.snackbar(
@@ -569,6 +559,61 @@ class CreateEventController extends GetxController {
         duration: Duration(seconds: 5),
       );
     }
+  }
+
+// New method to show success dialog with Lottie animation
+  Future<void> _showSuccessDialog(BuildContext context) async {
+    await Get.dialog(
+      Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: AppColors.greyColor,
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Lottie.asset(
+                Assets.imagesCreate, // Your Lottie animation asset
+                width: 120,
+                height: 120,
+                fit: BoxFit.fill,
+                repeat: false, // Play once
+              ),
+              SizedBox(height: 20),
+              TextStyleHelper.CustomText(
+                text: "Event Created Successfully!",
+                color: AppColors.whiteColor,
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
+                fontFamily: Assets.fontsPoppinsBold,
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () => Get.back(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.whiteColor,
+                  foregroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Text(
+                  "OK",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
   }
 
 // Add this method to clean up form fields

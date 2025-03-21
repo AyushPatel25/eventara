@@ -10,6 +10,7 @@ import 'package:eventapp/view/user/location_acc.dart';
 import 'package:eventapp/view/user/signUp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:gif/gif.dart';
@@ -136,6 +137,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   onSelected: (selected) {
                                     setState(() {
                                       _selectedUserType = "Audience";
+                                      HapticFeedback.mediumImpact();
                                     });
                                   },
                                 ),
@@ -154,6 +156,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   onSelected: (selected) {
                                     setState(() {
                                       _selectedUserType = "Organizer";
+                                      HapticFeedback.mediumImpact();
                                     });
                                   },
                                 ),
@@ -212,6 +215,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 } else if (_selectedUserType == "Audience") {
                                   _signIn();
                                 }
+                                HapticFeedback.mediumImpact();
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.primaryColor,
@@ -221,7 +225,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 minimumSize: Size.fromHeight(43),
                               ),
                               child: isLoading.value
-                                  ? CircularProgressIndicator(color: Colors.black)
+                                  ? CircularProgressIndicator(color: AppColors.whiteColor)
                                   : Text(
                                 "Continue",
                                 style: TextStyle(

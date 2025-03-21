@@ -1,6 +1,7 @@
 
 import 'package:eventapp/view/user/location_acc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
@@ -72,6 +73,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         selected: signUpController.selectedUserType.value == "Audience",
                         onSelected: (selected) {
                           signUpController.setUserType("Audience");
+                          HapticFeedback.mediumImpact();
                         },
                       )),
 
@@ -92,6 +94,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         selected: signUpController.selectedUserType.value == "Organizer",
                         onSelected: (selected) {
                           signUpController.setUserType("Organizer");
+                          HapticFeedback.mediumImpact();
                         },
                       )),
                     ],
@@ -192,37 +195,6 @@ class _SignUpPageState extends State<SignUpPage> {
                     value!.length < 6 ? "Password must be 6+ characters" : null,
                   )),
 
-                  // // Organizer-specific fields
-                  // Obx(() => signUpController.selectedUserType.value == "Organizer"
-                  //     ? Column(
-                  //   children: [
-                  //     SizedBox(height: 10),
-                  //     TextFormField(
-                  //       controller: signUpController.organizationNameController,
-                  //       decoration: InputDecoration(
-                  //         prefixIcon: Icon(Icons.business, color: AppColors.lightGrey),
-                  //         hintText: "Organization name (optional)",
-                  //         hintStyle: TextStyle(color: AppColors.lightGrey),
-                  //         filled: true,
-                  //         fillColor: AppColors.greyColor,
-                  //         enabledBorder: OutlineInputBorder(
-                  //           borderRadius: BorderRadius.circular(10),
-                  //           borderSide: BorderSide(color: AppColors.lightGrey),
-                  //         ),
-                  //         focusedBorder: OutlineInputBorder(
-                  //           borderRadius: BorderRadius.circular(10),
-                  //           borderSide: BorderSide(color: AppColors.lightGrey),
-                  //         ),
-                  //         border: OutlineInputBorder(
-                  //           borderRadius: BorderRadius.circular(10),
-                  //           borderSide: BorderSide.none,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ],
-                  // )
-                  //     : SizedBox.shrink()),
-
                   SizedBox(height: 40),
 
                   // Sign Up button
@@ -231,6 +203,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       if (signUpController.signupFormKey.currentState!.validate()) {
                         signUpController.signup();
                       }
+                      HapticFeedback.mediumImpact();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryColor,

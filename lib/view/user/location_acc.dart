@@ -1,22 +1,21 @@
-
-import 'package:eventapp/componets/text_field.dart';
-import 'package:eventapp/utills/stringconstant.dart';
-import 'package:eventapp/view/home/dashboard_page.dart';
-import 'package:eventapp/view/user/location_bottom_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import '../../componets/button.dart';
 import '../../componets/text_style.dart';
 import '../../controller/loc_cont.dart';
 import '../../generated/assets.dart';
 import '../../utills/appcolors.dart';
 import '../../utills/font_constant.dart';
 import '../../componets/loc_image.dart';
+import '../home/dashboard_page.dart';
+import 'location_bottom_sheet.dart';
 
 class Location extends StatelessWidget {
   Location({super.key});
 
-  LocationController controller = Get.put(LocationController());
+  final LocationController controller = Get.put(LocationController());
+  // Add a reactive loading state
+  final RxBool isLoading = false.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -38,18 +37,24 @@ class Location extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         ElevatedButton(
-                          onPressed: (){Get.offAll(() => DashboardPage());},
-                          child: Text('Skip', style: TextStyle(
-                            color: AppColors.whiteColor,
-                            backgroundColor: Colors.transparent,
-                            fontFamily: Assets.fontsPoppinsBold,
-                            fontSize: FontSizes.button,
-                            fontWeight: FontWeight.w600,
-                          ),),
+                          onPressed: () {
+                            Get.offAll(() => DashboardPage());
+                            HapticFeedback.mediumImpact();
+                          },
+                          child: Text(
+                            'Skip',
+                            style: TextStyle(
+                              color: AppColors.whiteColor,
+                              backgroundColor: Colors.transparent,
+                              fontFamily: Assets.fontsPoppinsBold,
+                              fontSize: FontSizes.button,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 490,),
+                    const SizedBox(height: 490),
                     Center(
                       child: TextStyleHelper.CustomText(
                         text: "Let's find!",
@@ -70,31 +75,75 @@ class Location extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16.0),
-                    CustomButton(
-                      label: 'Use current location',
-                      onPressed: () async {
+                    Obx(() => ElevatedButton(
+                      onPressed: isLoading.value
+                          ? null
+                          : () async {
+                        isLoading.value = true;
                         final locationController = Get.find<LocationController>();
-                        await locationController.getLocation();
 
-                        if (locationController.latitude.value != 'Getting Latitude..') {
-                          Get.offAll(() => DashboardPage());
-                        } else {
-                          Get.snackbar("Location Error", "Please allow location access.");
+                        try {
+                          await locationController.getLocation();
+
+                          if (locationController.latitude.value != 'Getting Latitude..') {
+                            Get.offAll(() => DashboardPage());
+                          } else {
+                            Get.snackbar(
+                              "Location Error",
+                              "Please allow location access.",
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.red,
+                              colorText: Colors.white,
+                            );
+                          }
+                        } catch (e) {
+                          Get.snackbar(
+                            "Error",
+                            "Failed to fetch location: $e",
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white,
+                          );
+                        } finally {
+                          isLoading.value = false; // Stop loading
                         }
-                      },
-                    ),
 
+                        HapticFeedback.mediumImpact();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        minimumSize: Size.fromHeight(43),
+                      ),
+                      child: isLoading.value
+                          ? CircularProgressIndicator(color: AppColors.whiteColor)
+                          : Text(
+                        "Use current location",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'bold',
+                          fontSize: 17,
+                        ),
+                      ),
+                    )),
                     const SizedBox(height: 16.0),
                     Center(
                       child: InkWell(
-                        onTap: (){
+                        onTap: () {
                           showLocationBottomSheet(context);
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Container(
                             decoration: BoxDecoration(
-                                border: Border(bottom: BorderSide(width: 2, color: AppColors.primaryColor),)
+                              border: Border(
+                                bottom: BorderSide(
+                                  width: 2,
+                                  color: AppColors.primaryColor,
+                                ),
+                              ),
                             ),
                             child: TextStyleHelper.CustomText(
                               text: "Select location manually",

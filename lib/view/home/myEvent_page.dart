@@ -1,8 +1,9 @@
-import 'package:eventapp/componets/searchWidget.dart';
+
 import 'package:eventapp/controller/myevent_cont.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:table_calendar/table_calendar.dart';
+import '../../componets/filterDateWidget.dart';
 import '../../componets/text_style.dart';
 import '../../generated/assets.dart';
 import '../../model/event_model.dart';
@@ -53,8 +54,7 @@ class EventPage extends GetView<EventController> {
                     ),
                     todayDecoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.primaryColor)
-                    ),
+                        border: Border.all(color: AppColors.primaryColor)),
                     selectedTextStyle: TextStyle(
                       color: Colors.black,
                     ),
@@ -120,17 +120,15 @@ class EventPage extends GetView<EventController> {
               return SliverList(
                 delegate: SliverChildBuilderDelegate(
                       (context, index) {
-                    final event = eventController.selectedEvents[index];
                     return Padding(
                       padding: const EdgeInsets.only(left: 20, right: 20),
-                      child: Searchwidget(index: index),
+                      child: FilterDateWidget(index: index), // Updated to FilterDateWidget
                     );
                   },
                   childCount: eventController.selectedEvents.length,
                 ),
               );
-
-           }),
+            }),
           ],
         ),
       ),

@@ -3,6 +3,7 @@ import 'package:eventapp/controller/ticket_cont.dart';
 import 'package:eventapp/view/home/eticket.dart';
 import 'package:eventapp/view/home/feedback_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../generated/assets.dart';
 import '../utills/appcolors.dart';
@@ -148,6 +149,7 @@ class PastTicket extends StatelessWidget {
                           ),
                           IconButton(
                             onPressed: () {
+                              HapticFeedback.mediumImpact();
                               if (eventId.isNotEmpty) {
                                 Get.to(() => FeedbackPage(
                                   eventId: eventId,

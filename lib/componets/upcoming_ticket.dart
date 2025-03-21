@@ -2,6 +2,7 @@ import 'package:eventapp/componets/text_style.dart';
 import 'package:eventapp/controller/ticket_cont.dart';
 import 'package:eventapp/view/home/eticket.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../generated/assets.dart';
 import '../utills/appcolors.dart';
@@ -150,6 +151,7 @@ class UpcomingTicket extends StatelessWidget {
                           ),
                           IconButton(
                             onPressed: () {
+                              HapticFeedback.mediumImpact();
                               Get.to(() => Eticket(), arguments: {
                                 'eventImage': eventImage,
                                 'eventName': eventName,

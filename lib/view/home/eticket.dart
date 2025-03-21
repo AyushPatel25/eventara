@@ -23,7 +23,6 @@ class Eticket extends StatelessWidget {
 
     print("Received arguments: $arguments");
 
-    // Extract ticket details
     final String eventImage = arguments['eventImage'];
     final String eventName = arguments['eventName'];
     final String eventLocation = arguments['eventLocation'];
@@ -431,12 +430,12 @@ class Eticket extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Container(
-                      color: Colors.black.withOpacity(0.8),
+                      color: Colors.transparent,
                       child: Center(
                         child: Lottie.asset(
                           Assets.imagesCrack,
-                          width: 200,
-                          height: 200,
+                          width: 400,
+                          height: 400,
                           fit: BoxFit.contain,
                           repeat: false,
                         ),

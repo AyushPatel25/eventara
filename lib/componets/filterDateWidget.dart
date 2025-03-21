@@ -1,5 +1,5 @@
 import 'package:eventapp/componets/text_style.dart';
-import 'package:eventapp/controller/filter_cont.dart';
+import 'package:eventapp/controller/myevent_cont.dart';
 import 'package:eventapp/utills/appcolors.dart';
 import 'package:eventapp/view/home/event_details.dart';
 import 'package:flutter/material.dart';
@@ -7,19 +7,19 @@ import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import '../generated/assets.dart';
 
-class Searchwidget extends StatelessWidget {
+class FilterDateWidget extends StatelessWidget {
   final int index;
 
-  const Searchwidget({required this.index, super.key});
+  const FilterDateWidget({required this.index, super.key});
 
   @override
   Widget build(BuildContext context) {
-    final FilterController filterController = Get.find<FilterController>();
+    final EventController eventController = Get.find<EventController>();
 
     return Obx(() {
-      if (filterController.filteredEvents.isEmpty ||
-          index >= filterController.filteredEvents.length) {
-        print("ERROR: No event found at index $index in filteredEvents");
+      if (eventController.selectedEvents.isEmpty ||
+          index >= eventController.selectedEvents.length) {
+        print("ERROR: No event found at index $index in selectedEvents");
         return const Center(
           child: Text(
             "Event not found",
@@ -28,18 +28,18 @@ class Searchwidget extends StatelessWidget {
         );
       }
 
-      final event = filterController.filteredEvents[index];
+      final event = eventController.selectedEvents[index];
 
-      // Access the artist name from the 'artists' list
+      // Get artist name from the artists list in EventModel
       String artistName = 'Unknown Artist';
-      if (event['artists'] != null && (event['artists'] as List).isNotEmpty) {
-        artistName = (event['artists'] as List).first['artistName']?.toString() ?? 'Unknown Artist';
+      if (event.artists.isNotEmpty) {
+        artistName = event.artists.first.artistName;
       }
 
       return GestureDetector(
         onTap: () {
-          print("Opening Event Details for eventId: ${event['eventId']}");
-          Get.to(() => EventDetails(), arguments: {'eventId': event['eventId']});
+          print("Opening Event Details for eventId: ${event.eventId}");
+          Get.to(() => EventDetails(), arguments: {'eventId': event.eventId});
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -55,7 +55,7 @@ class Searchwidget extends StatelessWidget {
                     opacity: 0.8,
                     child: FadeInImage(
                       placeholder: AssetImage("assets/images/placeholder.png"),
-                      image: NetworkImage(event['eventImage'] ?? ''),
+                      image: NetworkImage(event.eventImage),
                       fit: BoxFit.cover,
                       imageErrorBuilder: (context, error, stackTrace) {
                         return const Center(
@@ -83,7 +83,7 @@ class Searchwidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextStyleHelper.CustomText(
-                      text: event['title'] ?? 'No Title',
+                      text: event.title,
                       color: AppColors.whiteColor,
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
@@ -101,7 +101,7 @@ class Searchwidget extends StatelessWidget {
                     Row(
                       children: [
                         TextStyleHelper.CustomText(
-                          text: "${event['eventDate'] ?? 'No Date'} | ",
+                          text: "${event.eventDate} | ",
                           color: AppColors.lightGrey,
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
@@ -109,7 +109,7 @@ class Searchwidget extends StatelessWidget {
                         ),
                         Expanded(
                           child: TextStyleHelper.CustomText(
-                            text: event['location'] ?? 'No Location',
+                            text: event.location,
                             color: AppColors.lightGrey,
                             fontWeight: FontWeight.w600,
                             fontSize: 14,

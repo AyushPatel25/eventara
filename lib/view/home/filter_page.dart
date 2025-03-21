@@ -161,6 +161,7 @@
 // }
 
 import 'package:eventapp/componets/button.dart';
+import 'package:eventapp/componets/filterDateWidget.dart';
 import 'package:eventapp/componets/text_style.dart';
 import 'package:eventapp/controller/filter_cont.dart';
 import 'package:eventapp/generated/assets.dart';
@@ -191,7 +192,7 @@ class FilterPage extends StatelessWidget {
                 onChanged: (value) => filterController.updateSearchQuery(value),
                 decoration: InputDecoration(
                   contentPadding:
-                      EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide(color: AppColors.whiteColor),
@@ -201,20 +202,12 @@ class FilterPage extends StatelessWidget {
                     borderSide: BorderSide(color: AppColors.whiteColor),
                   ),
                   prefixIcon: GestureDetector(
-                    onTap: () {
-                      Get.offAll(DashboardPage());
-                    },
-                    child: Icon(
-                      Icons.arrow_back,
-                      color: AppColors.whiteColor,
-                    ),
+                    onTap: () => Get.offAll(DashboardPage()),
+                    child: Icon(Icons.arrow_back, color: AppColors.whiteColor),
                   ),
                   suffixIcon: Obx(() {
                     return Visibility(
-                      //visible: filterController.isWrite.value? false : true,
-                      visible: filterController.searchQuery.isEmpty
-                          ? false
-                          : true,
+                      visible: filterController.searchQuery.isEmpty ? false : true,
                       child: GestureDetector(
                         onTap: () {
                           searchController.clear();
@@ -227,8 +220,7 @@ class FilterPage extends StatelessWidget {
                         ),
                       ),
                     );
-                  }
-                  ),
+                  }),
                   hintText: "Search by name, date, artist...",
                   hintStyle: TextStyle(
                     color: AppColors.lightGrey,
@@ -239,9 +231,7 @@ class FilterPage extends StatelessWidget {
                   fillColor: AppColors.greyColor,
                 ),
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               Obx(() {
                 return SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -249,7 +239,7 @@ class FilterPage extends StatelessWidget {
                     spacing: 10,
                     runSpacing: 10,
                     children:
-                        filterController.selectedFilters.keys.map((filterName) {
+                    filterController.selectedFilters.keys.map((filterName) {
                       return FilterChip(
                         checkmarkColor: Colors.black,
                         label: Text(
@@ -274,9 +264,17 @@ class FilterPage extends StatelessWidget {
               const SizedBox(height: 20),
               Expanded(
                 child: Obx(() {
+                  if (filterController.isLoading.value) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.whiteColor,
+                      ),
+                    );
+                  }
+
                   bool noSearchQuery = searchController.text.isEmpty;
                   bool noFiltersSelected =
-                      !filterController.selectedFilters.values.contains(true);
+                  !filterController.selectedFilters.values.contains(true);
 
                   if (noSearchQuery && noFiltersSelected) {
                     return Text(
@@ -288,7 +286,6 @@ class FilterPage extends StatelessWidget {
                   }
 
                   if (filterController.filteredEvents.isEmpty) {
-
                     return Column(
                       children: [
                         Image.asset(
@@ -296,9 +293,7 @@ class FilterPage extends StatelessWidget {
                           height: 200,
                           width: 200,
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
+                        const SizedBox(height: 10),
                         TextStyleHelper.CustomText(
                           text: "No events found!",
                           color: AppColors.whiteColor,
@@ -306,92 +301,44 @@ class FilterPage extends StatelessWidget {
                           fontSize: 16,
                           fontFamily: Assets.fontsPoppinsBold,
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
+                        const SizedBox(height: 10),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.greyColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
-                              side: BorderSide(color: AppColors.whiteColor, width: 2)
+                              side:
+                              BorderSide(color: AppColors.whiteColor, width: 2),
                             ),
-
                           ),
-                            onPressed: () {
-                              searchController.clear();
-                              filterController.updateSearchQuery("");
-
-                              filterController.selectedFilters.keys.forEach((filterName) {
-                                filterController.updateFilter(filterName, false);
-                              });
-                            },
-                            child: TextStyleHelper.CustomText(
-                              text: "Clear filters",
-                              color: AppColors.whiteColor,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                              fontFamily: Assets.fontsPoppinsBold,
-                            ),
-                        )
-                        // SizedBox(
-                        //   width: 150,
-                        //   child: CustomButton(
-                        //       label: "Clear Filters",
-                        //       onPressed: () {
-                        //
-                        //           searchController.clear();
-                        //           filterController.updateSearchQuery("");
-                        //
-                        //           filterController.selectedFilters.keys.forEach((filterName) {
-                        //             filterController.updateFilter(filterName, false);
-                        //           });
-                        //         },
-                        //   ),
-                        // )
-                        // ElevatedButton(
-                        //   onPressed: () {
-                        //
-                        //     searchController.clear();
-                        //     filterController.updateSearchQuery("");
-                        //
-                        //     filterController.selectedFilters.keys.forEach((filterName) {
-                        //       filterController.updateFilter(filterName, false);
-                        //     });
-                        //   },
-                        //   style: ElevatedButton.styleFrom(
-                        //     primary: AppColors.greyColor,
-                        //     onPrimary: AppColors.whiteColor,
-                        //     shape: RoundedRectangleBorder(
-                        //       borderRadius: BorderRadius.circular(10),
-                        //     ),
-                        //   ),
-                        //   child: Text("Remove Filter"),
-                        // ),
+                          onPressed: () {
+                            searchController.clear();
+                            filterController.updateSearchQuery("");
+                            filterController.selectedFilters.keys
+                                .forEach((filterName) {
+                              filterController.updateFilter(filterName, false);
+                            });
+                          },
+                          child: TextStyleHelper.CustomText(
+                            text: "Clear filters",
+                            color: AppColors.whiteColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            fontFamily: Assets.fontsPoppinsBold,
+                          ),
+                        ),
                       ],
                     );
                   }
-                  // return GridView.builder(
-                  //   padding: EdgeInsets.all(0),
-                  //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  //     crossAxisCount: 1,
-                  //     mainAxisSpacing: 16,
-                  //     mainAxisExtent: 320,
-                  //   ),
-                  //   itemCount: filterController.filteredEvents.length,
-                  //   itemBuilder: (context, index) {
-                  //     return Searchwidget(index: index);
-                  //   },
-                  // );
+
                   return ListView.builder(
-                    itemCount:filterController.filteredEvents.length,
+                    itemCount: filterController.filteredEvents.length,
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
                       return Searchwidget(index: index);
                     },
                   );
-
                 }),
               ),
             ],

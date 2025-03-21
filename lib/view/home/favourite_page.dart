@@ -1,12 +1,13 @@
-import 'package:eventapp/componets/CardWidget.dart';
-import 'package:eventapp/controller/favourite_cont.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../componets/CardWidget.dart';
 import '../../componets/text_style.dart';
+import '../../controller/favourite_cont.dart';
 import '../../controller/home_cont.dart';
 import '../../generated/assets.dart';
 import '../../utills/appcolors.dart';
+
 
 class FavouritePage extends GetView<FavouriteController> {
   FavouritePage({super.key});
@@ -20,7 +21,6 @@ class FavouritePage extends GetView<FavouriteController> {
         body: CustomScrollView(
           slivers: [
             SliverAppBar(
-
               pinned: true,
               surfaceTintColor: Colors.black,
               backgroundColor: Colors.black,
@@ -34,7 +34,31 @@ class FavouritePage extends GetView<FavouriteController> {
             ),
             SliverToBoxAdapter(
               child: Obx(() {
-                if (controller.favoriteEvents.isEmpty) {
+
+
+                // if (controller.favoriteEvents.isEmpty) {
+                //   return Padding(
+                //     padding: const EdgeInsets.only(top: 50),
+                //     child: Center(
+                //       child: TextStyleHelper.CustomText(
+                //         text: "No liked events yet!",
+                //         color: AppColors.whiteColor,
+                //         fontWeight: FontWeight.w500,
+                //         fontSize: 18,
+                //         fontFamily: Assets.fontsPoppinsBold,
+                //       ),
+                //     ),
+                //   );
+                // }
+
+                // Filter events based on favorite event IDs
+                final favoriteEvents = homeController.events
+                    .where((event) => controller.favoriteEvents.contains(event.eventId.toString()))
+                    .toList();
+
+                if (favoriteEvents.isEmpty) {
+                  print("No matching events found for favoriteEvents: ${controller.favoriteEvents}");
+                  print("Available events: ${homeController.events.map((e) => e.eventId)}");
                   return Padding(
                     padding: const EdgeInsets.only(top: 50),
                     child: Center(
@@ -48,29 +72,26 @@ class FavouritePage extends GetView<FavouriteController> {
                     ),
                   );
                 }
+
                 return GridView.builder(
+                  padding: EdgeInsets.only(top: 10, bottom: 20), // Control spacing
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  itemCount: controller.favoriteEvents.length,
+                  itemCount: favoriteEvents.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 1,
                     mainAxisExtent: 320,
                     mainAxisSpacing: 16,
                   ),
                   itemBuilder: (context, index) {
-                    String eventId = controller.favoriteEvents.elementAt(index);
-                    int eventIndex = homeController.events.indexWhere(
-                            (event) => event.eventId.toString() == eventId
+                    return Cardwidget(
+                      index: index,
+                      eventModel: favoriteEvents[index], // Pass the EventModel directly
                     );
-
-                    if (eventIndex == -1) return SizedBox();
-
-                    return Cardwidget(index: eventIndex);
                   },
                 );
               }),
             ),
-
           ],
         ),
       ),

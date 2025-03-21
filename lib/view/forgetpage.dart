@@ -1,5 +1,6 @@
 import 'package:eventapp/controller/forgetpage_cont.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../componets/text_style.dart';
@@ -62,6 +63,7 @@ class Forgetpage extends StatelessWidget {
                 Obx(() => ElevatedButton(
                   onPressed: () {
                     forgetController.sendpasswordresetemail();
+                    HapticFeedback.mediumImpact();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryColor,

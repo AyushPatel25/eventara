@@ -1306,7 +1306,7 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
             icon: Icon(Icons.check),
             onPressed: () {
               widget.controller.setLocation(_center, _currentAddress);
-              Get.back();
+              Navigator.pop(context);
             },
           ),
         ],
